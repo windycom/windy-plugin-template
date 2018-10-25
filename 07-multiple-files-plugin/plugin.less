@@ -1,0 +1,88 @@
+@import "dev/variables.less";
+
+
+#windy-plugin-examples {
+	font-size: 12px;
+	padding: .5em .7em;
+	line-height: 2;
+	z-index: 100;
+
+	@h: 440px;
+
+	width: 360px;
+	height: @h;
+
+	margin-left: -10px;
+
+	h3 {
+		margin: 0 0 .3em .6em;
+	}
+
+	.closing-x {
+		display: block;
+	}
+
+	section {
+		margin-left: 10px;
+		line-height: 1.5;
+
+		span:not(:first-child) {
+			margin-left: 1em;
+		}
+		&:first-of-type {
+			color: black;
+		}
+		&:last-of-type {
+			font-size: .9em;
+		}
+		[data-ref="modelAlt"] {
+			&.red {
+				color: red;
+			}
+		}
+	}
+
+	[data-ref="zoom"] {
+		position: absolute;
+		right: 20px;
+		bottom: 15px;
+		font-size: 25px;
+		color: @myred;
+	}
+
+	.mobile({
+		display: block;
+		left: 0;
+		top: 0;
+		right: 0;
+		width: ~"calc(100% - 20px)";
+		margin: 10px;
+	});
+
+	//=================================
+	//
+	// SVG items
+	//
+	//=================================
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	#sounding-chart {
+		height: @h - 80px;
+		position: relative;
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+
+		.infoLine .dewpoint { fill: steelblue; }
+		.infoLine .temp { fill: red; }
+		.zoomButton { cursor: pointer; }
+	}
+}
+

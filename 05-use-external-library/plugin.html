@@ -1,0 +1,121 @@
+<plugin>
+	<h3>My graph</h3>
+	<div>
+		I was opened at <b data-ref="coords"></b>. You can
+		place any graph, video, picture, or simly anything that relates to the coordinates.
+		<br />
+		This plugin also demonstrates loading of external library <b>d3</b>
+		<div id="my-graph" data-ref="graph"></div>
+	</div>
+	<script>
+
+	import map from '@windy/map'
+	import rs from '@windy/rootScope'
+	import $ from '@windy/$'
+
+	let marker = null
+
+	// You do NOT NEED jQuery!!!
+
+	console.log( this.node )
+  // -> el containing this plugin
+
+	console.log( this.refs.graph )
+  // -> el with data-ref="graph"
+
+	const closingBtn = $('.closing-x', this.node )
+  // -> el with closing button
+
+	//	Whenever your plugin is opened from context menu
+	//	it recieves { lat, lon } object with required coordinates
+	this.onopen = latLonObject => {
+		let lat, lon
+
+		// Opening from other location than contextmenu
+		if(!latLonObject) {
+			const c = map.getCenter()
+			lat = c.lat
+			lon = c.lng
+		} else {
+			lat = latLonObject.lat
+			lon = latLonObject.lon
+		}
+
+		// d3 library was loaded from external source SWEET!
+		renderGraph()
+
+		const leafletCoords = { lng: lon, lat }
+		, { x,y } = map.latLngToLayerPoint(leafletCoords)
+
+		// Desktop version
+		if(!rs.isMobile ) {
+
+			// this.node contains el of your mounted plugin
+			this.node.style.left = `${ x - 15 }px`
+			this.node.style.top = `${ y + 15 }px`
+
+		// Mobile version
+		} else {
+
+			let height = this.node.clientHeight
+
+			map.center( latLonObject, false )
+				.panBy( [ 0, - 0.5 * height + 50 ] )
+
+		}
+
+		if( marker ) {
+
+			marker.setLatLng([lat,lon])
+
+		} else {
+
+			marker = L.marker( [lat,lon],
+					{ 	icon: map.myMarkers.pulsatingIcon,
+						zIndexOffset: -300 }
+					).addTo(map)
+		}
+
+		this.refs.coords.textContent = `${ lat.toFixed(3) }, ${ lon.toFixed(3) }`
+
+		// Catch all unhandled clicks not to fall into Leaflet map
+		this.node.oncontextmenu
+			= this.node.ondblclick
+			= this.node.onclick = ev => ev.stopPropagation()
+
+
+
+	}
+
+	this.onclose = () => {
+		if( marker ) {
+			map.removeLayer( marker )
+			marker = null
+		}
+	}
+
+	const renderGraph = () => {
+
+		this.refs.graph.innerHTML = ''
+
+		//Make an SVG Container
+		var svg = d3.select("#my-graph")
+					.append("svg")
+                    .attr("width", '100%')
+                    .attr("height", 80);
+
+		//Draw the Circle
+		svg.append("circle")
+            .attr("cx",'50%')
+            .attr("cy",'50%')
+            .attr("r", 20);
+
+		svg.append('text')
+			.text('This circle was drawn with d3')
+			.attr('x', 0)
+			.attr('y', '95%')
+
+	}
+
+	</script>
+</plugin>

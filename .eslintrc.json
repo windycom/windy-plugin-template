@@ -1,0 +1,30 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "globals": {
+        "L": true,
+        "W": true,
+        "console": true,
+        "riot": true,
+        "opts": true,
+        "d3": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent":"off",
+        "no-mixed-spaces-and-tabs":"off",
+        "no-fallthrough":"off",
+        "no-cond-assign":"off",
+        "no-console":"off"
+    }
+}
