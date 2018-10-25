@@ -16,17 +16,17 @@
 
 <!-- tocstop -->
 
-# How Windy Plugin works
+### How Windy Plugin works
 Windy plugin is piece of `js`, `css` and `html` that is compiled together into single `plugin.js` file.
 
 The file is then published as `npm` package, and upon user's selection, loaded into Windy.com to be launched upon user's action.
 
-## Name of your plugin
+### Name of your plugin
 Most important configuration variable is name of your plugin, which is `name` of your `package.json` (since the name of your plugin must be the same as the name of your npm package).
 
 The name of your plugin, and your npm package must have form `windy-plugin-anyName`
 
-## Source files
+### Source files
 Your `src/` directory should look like this:
 ```sh
 config.js
@@ -35,7 +35,7 @@ plugin.less 	// <-- optional
 otherFiles.mjs 	// <-- optional
 ```
 
-### plugin.html
+**plugin.html**
 Similar to vue, svelte or riot tag, contains html, and also js code of your plugin.
 
 ```html
@@ -55,7 +55,7 @@ Similar to vue, svelte or riot tag, contains html, and also js code of your plug
 </plugin>
 ```
 
-### plugin.less
+**plugin.less**
 Your plugin will be wrapped inside `#windy-plugin-anyName` DIV. Whenever `.onwindy-plugin-anyName` class is applied to `<body>` of the page, you have chance to modify other styles on page.
 
 ```css
@@ -68,7 +68,7 @@ Your plugin will be wrapped inside `#windy-plugin-anyName` DIV. Whenever `.onwin
 }
 ```
 
-### config.js
+**config.js**
 Basic configuration of your plugin has node.js module syntax. Remember, that `name` of your plugin, `description` and `author` is defined in your `package.json`.
 
 ```js
@@ -104,7 +104,7 @@ module.exports = {
 }
 ```
 
-# The life cycle of the plugin
+## The life cycle of the plugin
 ### Loading of the plugin
 Whenever Windy loads your plugin, following actions will happen:
 1) You `plugin.js` is loaded into Windy, and function `W.loadPlugin` is executed.
