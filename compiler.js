@@ -16,9 +16,12 @@ const prog = require('commander')
 , less = require('less')
 , chokidar = require('chokidar')
 , decache = require('decache')
+, https = require('https')
 , babel = require("@babel/core");
 
 const utils = require('./dev/utils.js')
+
+const port = 9999
 
 const { version
 	, name
@@ -29,7 +32,7 @@ const { version
 prog
   .option('-b, --build', 'Build the plugin in required directory (default src)')
   .option('-w, --watch', 'Build plugin and watch file changes in required directory')
-  .option('-s, --serve', 'Serve dist directory on port 9999')
+  .option('-s, --serve', `Serve dist directory on port ${ port }`)
   .option('-p, --prompt', 'Show command line promt with all the examples')
   .option('-t, --transpile', 'Transpile your code with Babel')
   .parse(process.argv);
@@ -69,18 +72,11 @@ let config
 		// Tasks
 		if( prog.watch || prog.build ) await build()
 
-		if( prog.serve ) {
-			app.use( express.static( 'dist' ))
-			app.listen( 9999 )
-			c.success(`Your plugin is published at ${ gray( 'http://localhost:9999/plugin.js') }.
-
-  Use ${ yellow( 'https://www.windy.com/dev/' ) } to test it\n`)
-
-		}
+		if( prog.serve ) await startServer()
 
 		if(prog.watch) {
 			c.start(`Staring watch on ${ gray( srcDir )}...`)
-			chokidar.watch([srcDir]).on('change', onChange )
+      chokidar.watch([srcDir]).on('change', onChange )
 		}
 
 
@@ -91,6 +87,32 @@ let config
 	}
 })();
 
+
+function startServer() {
+
+  return new Promise( resolve => {
+    const httpsOptions = {
+
+      // https://www.ibm.com/support/knowledgecenter/en/SSWHYP_4.0.0/com.ibm.apimgmt.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html
+      key:  fs.readFileSync( join(__dirname,'dev','key.pem'),'utf8' ),
+      cert: fs.readFileSync( join(__dirname,'dev','certificate.pem'), 'utf8' )
+
+    }
+
+    app.use( express.static( 'dist' ) )
+
+    https.createServer( httpsOptions, app)
+      .listen( port, () => {
+
+        c.success(`Your plugin is published at ${ gray( `https://localhost:${ port }/plugin.js`) }.
+
+    Use ${ yellow( 'https://www.windy.com/dev' ) } to test it\n`)
+
+        resolve()
+
+    })
+  })
+}
 
 /* This is main build function
 

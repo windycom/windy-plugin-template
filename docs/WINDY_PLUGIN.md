@@ -19,7 +19,7 @@
 # How Windy Plugin works
 Windy plugin is piece of `js`, `css` and `html` that is compiled together into single `plugin.js` file.
 
-The file is then published as `npm` package, and upon user's selection, loaded into Windy.com and launched upon user's action.
+The file is then published as `npm` package, and upon user's selection, loaded into Windy.com to be launched upon user's action.
 
 ## Name of your plugin
 Most important configuration variable is name of your plugin, which is `name` of your `package.json` (since the name of your plugin must be the same as the name of your npm package).
@@ -36,7 +36,7 @@ otherFiles.mjs 	// <-- optional
 ```
 
 ### plugin.html
-Similar to `vue`, `svelte` or `riot` tag, defines `html`, and also `js` of the code.
+Similar to vue, svelte or riot tag, contains html, and also js code of your plugin.
 
 ```html
 <plugin>
