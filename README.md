@@ -1,6 +1,7 @@
 <p align="center"><img src="https://www.windy.com/img/logo201802/logo-full-windycom-gray-v3.svg"></p>
 
-This repository acts as an documentation, playground and **boilerplate** for your own **Windy plugin**.
+### Windy plugins
+This repository acts as an documentation, playground and boilerplate for your own Windy plugin.
 
 Therefore always **fork this repository** before editing it.
 
@@ -20,7 +21,7 @@ Then open your browser at [www.windy.com/dev](https://www.windy.com/dev) to test
 
 If it fails, make sure that your plugin is correctly built and accessible with your browser at [https://localhost:9999/plugin.js](https://localhost:9999/plugin.js).
 
-<p align="center"><img src="https://www.windy.com/img/windy-plugins/tutorial2.gif" width="80%"></p>
+<p align="center"><img src="https://www.windy.com/img/windy-plugins/tutorial3.gif" width="80%"></p>
 
 ### Tutorials
  - [Hello World](01-hello-world)
