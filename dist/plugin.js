@@ -7,8 +7,8 @@
 W.loadPlugin(
 /* Mounting options */
 {
-  "name": "windy-plugin-example",
-  "version": "0.1.0",
+  "name": "windy-plugin-examples",
+  "version": "0.2.0",
   "author": "Windyty, S.E.",
   "repository": {
     "type": "git",

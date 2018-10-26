@@ -81,6 +81,8 @@ Drop a line in our [Windy Plugins section](https://community.windy.com/category/
  - Create system so anyone can publish its own forecast/climatological model on Windy
 
 ### CHANGELOG
+* 0.2.0
+  - Fixed wrong examples
 * 0.1.1
     - Initial version of this repo
 
