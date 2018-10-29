@@ -1,4 +1,4 @@
-![](https://www.windy.com/img/windy-plugins/example01.gif)
+![](https://www.windy.com/img/windy-plugins/example07.gif)
 # Building plugin from multiple files
 Windy plugins compiler can build your plugin from more files. But is has some limitations:
  - Main js code inside `plugin.html` can not export anything
