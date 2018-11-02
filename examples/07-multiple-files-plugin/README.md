@@ -23,4 +23,4 @@ Windy plugins compiler will throws an error if you will try to import something 
 
 -----------------
 
-See [Windy Plugins API](../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../docs/WINDY_API.md)
+See [Windy Plugins API](../../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../../docs/WINDY_API.md)

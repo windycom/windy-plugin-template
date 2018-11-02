@@ -12,7 +12,7 @@ const mjs2js = require('./mjs2js.js')
 exports.prompt = async () => {
   let dir = 'src'
 
-    const list = fs.readdirSync( join(__dirname,'..' ))
+    const list = fs.readdirSync( join(__dirname,'..','examples' ))
           .filter( d => /\d\d-/.test(d) )
 
     console.log(`\nSelect which example you want to test:\n`)
@@ -28,12 +28,12 @@ exports.prompt = async () => {
 
     if(value > 0) {
 
-      dir = list[ value - 1 ]
+      dir = join('examples',list[ value - 1 ])
 
     } else if(value === 0) {
 
       console.log(`----------------------------------------------------
-Please change ${ yellow( 'package.json' )} now:
+Please change ${ yellow( 'package.json' ) } now:
 
   ${ yellow( 'name') }: Must contain name of your plugin in a form windy-plugin-AnyName
   ${ yellow( 'description') }: Should be description of what your plugin does

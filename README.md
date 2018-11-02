@@ -24,14 +24,14 @@ If it fails, make sure that your plugin is correctly built and accessible with y
 <p align="center"><img src="https://www.windy.com/img/windy-plugins/tutorial3.gif" width="80%"></p>
 
 ### Tutorials
- - [Hello World](01-hello-world)
- - [Left side window](02-window-on-left-side)
- - [Right side window](03-window-on-right-side)
- - [Boat tracker](04-boat-tracker)
- - [Loading external library](05-use-external-library)
- - [Use weather picker](06-weather-picker)
- - [Working with multiple files](07-multiple-files-plugin)
- - [Display CSV, GPX, KML, WKT and other](08-display-csv-gpx-kml-formats)
+ - [Hello World](examples/01-hello-world)
+ - [Left side window](examples/02-window-on-left-side)
+ - [Right side window](examples/03-window-on-right-side)
+ - [Boat tracker](examples/04-boat-tracker)
+ - [Loading external library](examples/05-use-external-library)
+ - [Use weather picker](examples/06-weather-picker)
+ - [Working with multiple files](examples/07-multiple-files-plugin)
+ - [Display CSV, GPX, KML, WKT and other](examples/08-display-csv-gpx-kml-formats)
 
 ### Other resources
  - [How Windy Plugin work](docs/WINDY_PLUGIN.md)
@@ -81,10 +81,12 @@ Drop a line in our [Windy Plugins section](https://community.windy.com/category/
  - Create system so anyone can publish its own forecast/climatological model on Windy
 
 ### CHANGELOG
+* 0.3.0
+ - Examples moved to examples dir
 * 0.2.0
-  - Fixed wrong examples
+ - Fixed wrong examples
 * 0.1.1
-    - Initial version of this repo
+ - Initial version of this repo
 
 <small>This is default readme - please do not remove this line</small>
 

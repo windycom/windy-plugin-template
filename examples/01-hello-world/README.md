@@ -27,6 +27,7 @@ to any listener twice.
 
 `this.onclose` method is called when your plugin is being closed. Unsubscribe from all your listeners, and remove all your stuff from a map.
 
+
 -----------------
 
-See [Windy Plugins API](../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../docs/WINDY_API.md)
+See [Windy Plugins API](../../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../../docs/WINDY_API.md)

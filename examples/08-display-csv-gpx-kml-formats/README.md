@@ -60,4 +60,4 @@ MultiPoint(20 20, 10 10, 30 30)
 
 -----------------
 
-See [Windy Plugins API](../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../docs/WINDY_API.md)
+See [Windy Plugins API](../../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../../docs/WINDY_API.md)

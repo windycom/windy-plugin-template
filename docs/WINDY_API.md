@@ -1,28 +1,35 @@
-# Windy API (client v17+)
+# Windy API (client v16.15)
 
-<!-- toc -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
-- [About Windy API](#about-windy-api)
-- [Module: $](#module-)
-- [Module: map](#module-map)
-  * [map.myMarkers: Predefined Leaflet markers](#mapmymarkers-predefined-leaflet-markers)
-- [Class: Evented](#class-evented)
-- [Module: brodacast](#module-brodacast)
-  * [Main broadcasted messages are:](#main-broadcasted-messages-are)
-- [Module: store](#module-store)
-  * [Main items stored in store](#main-items-stored-in-store)
-- [Module: overlays](#module-overlays)
-  * [overlays.ident.convertMetric(number,separator)](#overlaysidentconvertmetricnumberseparator)
-  * [overlays.ident.convertMetric(number)](#overlaysidentconvertmetricnumber)
-- [Module: utils](#module-utils)
-  * [utils.loadScript(url)](#utilsloadscripturl)
-  * [utils.wind2obj](#utilswind2obj)
-  * [utils.wave2obj](#utilswave2obj)
-- [Module: plugins](#module-plugins)
-- [Module: picker](#module-picker)
-  * [Converting raw meteorological values to readable numbers](#converting-raw-meteorological-values-to-readable-numbers)
+<!-- code_chunk_output -->
 
-<!-- tocstop -->
+* [Windy API (client v16.15)](#windy-api-client-v1615)
+	* [About Windy API](#about-windy-api)
+	* [Module: $](#module)
+	* [Module: map](#module-map)
+		* [map.myMarkers: Predefined Leaflet markers](#mapmymarkers-predefined-leaflet-markers)
+	* [Class: Evented](#class-evented)
+	* [Module: brodacast](#module-brodacast)
+		* [Main broadcasted messages are:](#main-broadcasted-messages-are)
+	* [Module: store](#module-store)
+		* [Main items stored in store](#main-items-stored-in-store)
+	* [Module: overlays](#module-overlays)
+		* [overlays.ident.convertMetric(number,separator)](#overlaysidentconvertmetricnumberseparator)
+		* [overlays.ident.convertMetric(number)](#overlaysidentconvertmetricnumber)
+	* [Module: utils](#module-utils)
+		* [utils.loadScript(url)](#utilsloadscripturl)
+		* [utils.wind2obj(obj)](#utilswind2objobj)
+		* [utils.wave2obj(obj)](#utilswave2objobj)
+	* [Module: plugins](#module-plugins)
+	* [Module: picker](#module-picker)
+		* [Converting raw meteorological values to readable numbers](#converting-raw-meteorological-values-to-readable-numbers)
+	* [Module: interpolator](#module-interpolator)
+		* [interpolatorFun({ lat, lon })](#interpolatorfun-lat-lon)
+
+<!-- /code_chunk_output -->
+
+
 
 ## About Windy API
 Windy codes consist of classes (for example `Evented`),  modules (for example `metrics`) and external plugins, that are loaded when necessary. The plugins are either internal (created by us) and external, created by Windy users.
@@ -322,21 +329,48 @@ Array `[ U, V, size]` where U and V are direction vectors and wave size is in `m
 
 Example:
 ```js
-    utils.wave2obj( [4.36770334, -6.40998, 2.426323] )
-    // { dir: 325.9878, size: 2.4, period: 8 }
+  utils.wave2obj( [4.36770334, -6.40998, 2.426323] )
+  // { dir: 325.9878, size: 2.4, period: 8 }
 ```
 
 To convert values to user's selected metrics use `convertNumber` or `convertValue` methods of respective `W.overlays` instance. While `converNumber` just recalculates value and return a number, `convertValue` adds name of a metric and returns a string.
 
 Example:
 ```js
-    var ovr = overlays[ store.get('overlay') ]
-    // ovr now contains instance of actualy selected overlay
+  var ovr = overlays[ store.get('overlay') ]
+  // ovr now contains instance of actualy selected overlay
 
-    ovr.convertNumber( 10 )
-    // 19
+  ovr.convertNumber( 10 )
+  // 19
 
-    ovr.convertValue( 10 )
-    // "19kt"
+  ovr.convertValue( 10 )
+  // "19kt"
 ```
-Note: Used `markdown-toc` CLI to generate TOC
+
+## Module: interpolator
+Return interpolator funtion for a given active layer. Returned function can interpolate
+coordinates into the raw meterological values
+
+Example:
+```js
+  interpolator( interpolatorFun => {
+    // now I can interpolate coords or
+    // screen X,Y
+
+    const values = interpolatorFun( { lat: 50, lon: 14 })
+    // --> [ 15.090, 45, 0 ]
+
+ })
+```
+
+### interpolatorFun({ lat, lon })
+Interpolates coordinates to raw meteorological values (same used by picker) or some falsy
+values:
+```
+  null			.. out of map,
+  NaN				.. no data value
+  -1				.. not suitable renderer
+  [number,number,number]	.. success, interpolated values
+
+```
+
