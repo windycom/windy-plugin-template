@@ -32,6 +32,7 @@ If it fails, make sure that your plugin is correctly built and accessible with y
  - [Use weather picker](examples/06-weather-picker)
  - [Working with multiple files](examples/07-multiple-files-plugin)
  - [Display CSV, GPX, KML, WKT and other](examples/08-display-csv-gpx-kml-formats)
+ - [Interpolate weather values from a map](examples/09-reading-weather-values)
 
 ### Other resources
  - [How Windy Plugin work](docs/WINDY_PLUGIN.md)
