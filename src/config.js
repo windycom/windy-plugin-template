@@ -9,7 +9,7 @@ module.exports = {
 
 	// List of external libraries, taht should be loade before
 	// your plugin is even mounted to the page
-	dependencies: ['https://d3js.org/d3.v5.js']
+	dependencies: ['https://d3js.org/d3.v4.js']
 
 	// List of classnames that will be attached to your plugin upon mounting
 	// className: 'plugin-lhpane plugin-mobile-fullscreen',
