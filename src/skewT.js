@@ -1,27 +1,32 @@
 function cskewT(Pascent, Tascent, Tdascent) {
+    /*
+    Main function for drawing the skewT. Depends heavily on D3.js
+    */
 
-	// Crate the P profile for the skewT. Everything will depend on this
+    // P represents the pressure level within the diagram, it's stitched to the 
+    // top and bottom of the diagram at 150hPa and 1050hPa
 	var startpressure = 1050;
 	var endpressure = 150;
 	var P = [startpressure];
-	var dp = -1.5;
+	var dp = -10;
 	var pressure = startpressure;
 	while (pressure > endpressure) {
 	    pressure = pressure+dp;
 	    P.push(pressure);
 	};
 
-	// this sets the limits of the skewT, and therefore its shape
+	// This sets the limits of the skewT, and therefore its shape.
+	// At the moment, the skewT is positioned such that the left 
+	// corner is 50C less than the surface temperature. 
 	var minT = Tascent[0]-50.0;
 	var maxT = minT+80;
 	var minP = P[P.length-1];
 	var maxP = P[0];
-	//////////////////////////////////////
 
-
- 
+    
+    // Create a container svg to place everything into. This fits into 
+    // windy's provided leaflet-popup-pane. Add a rectangle as a background. 
 	d3.select("#skewTbox").remove() 
-    // svg to set the skewT into
     window.svg = d3.select(".leaflet-popup-pane").append("svg")
         .attr("height", h)
         .attr("width", w+barbsw)
@@ -34,11 +39,14 @@ function cskewT(Pascent, Tascent, Tdascent) {
         .attr('id', 'skewTd3');
 
 
-
+    // Draw the green isopleths (isobars, isotherms, etc) and then
+    // enter the main function to draw the skewT
 	draw_isopleths();
 	skewT_main(Pascent, Tascent, Tdascent);
 
 	function draw_isopleths() {
+		// call the isopleth functions at discrete intervals 
+		// to draw them. Function names should be self explanatory.
 		for (var T=-80; T<=40; T=T+10) {
 			draw_isotherm(T);
 		};
@@ -78,25 +86,21 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 
 	function skewT_main(Pascent, Tascent, Tdascent) {
+		/* 
+		Draw the skewT using the given profile values.  
+		*/ 
 
+		// First the arrays are interpolated to increase the vertical resolution
 		var Pascent = interpolateArray(Pascent, P.length); 
 		var Tascent = interpolateArray(Tascent, P.length); 
 		var Tdascent = interpolateArray(Tdascent, P.length); 
 
-
-        console.log('Tdascent', Tdascent)
-
-		svg.select("path#SdTPath").remove();
-		svg.select("path#SdTdPath").remove();
-		svg.select("circle#circleID").remove();
-		svg.select("path#parcel").remove();
-	    svg.select("path#arrowIDr").remove();
-	    svg.select("path#arrowIDl").remove();
-
+        // plot the skewT data
 		plot_sounding();
 
 
 		function interpolateArray(data, fitCount) {
+			// interpolation function
 		    var linearInterpolate = function (before, after, atPoint) {
 			return before + (after - before) * atPoint;
 		    };
@@ -117,6 +121,9 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 
 		function plot_sounding() {
+			/*
+			Plot the sounding. See the explanation below for some of the methods used. 
+			*/
 			var Px=[]; var Pdx=[];
 
 		   //// T
@@ -161,6 +168,19 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 	};
 
+
+	/*
+	The remainder of the functions (and the above plot_sounding() function) plot each of
+	the different isopleths. I wont	comment on each one as they work pretty much in the 
+	same way. Basically, I use the size of the bounding box to convert meteorological 
+	variables to pixel coordinates. Temperature lines are skewed by 45 degrees after this 
+	conversion,	and pressures are placed on a log scale. The adiabats are drawn based on a 
+	numerical solution to the thermodynamic equations that convern them. Then the 
+	arrays are plotted with d3.js. For some reason, I couldn't make the isopleth label
+	text work in the windy plugin, though it does work in tephigrams.org. Hopefully I can
+	fix this later, so I'll leave the code in for now. 
+	*/
+
 	function draw_isobar(Pconst) {
 		var Px=[];
 		var Pt = [Pconst, Pconst]
@@ -185,7 +205,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    .style("stroke", 'green');
 		svg.append("g")
 			.append("text")
-		    .style("font-size", "50px")
+		    .style("font-size", "17px")
 		    .style('fill', "purple")
 		    .attr("x",20)
 		    .attr("y",-5)
@@ -194,15 +214,11 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    .text('\xa0\xa0'+Pconst+' hPa');
 	};
 
-
-	///////////////////////////////////////////////////////////
 	function dry_adiabat_gradient(theta, pressure, temperature, dp) {
 	    
 	    var CONST_CP = 1.03e3
 	    var CONST_RD = 287.0
 	    var Po = 1000.0
-
-
 	    var theta = theta + 273.15
 	    var Tt = theta * ( Math.pow((Po/pressure),(-CONST_RD/CONST_CP)) )
 	    var Tt = Tt - 273.15
@@ -210,7 +226,6 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 	    return [dp, dt]
 	};
-
 
 	function draw_moist_adiabat(Tbase) {
 		var Pnew = 1050.0;
@@ -230,11 +245,9 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    var Pnew = Pnew + DPDT[0];  
 
 		};
-		// skew the isotherms
 		for (i = 0; i < Px.length; i++) { 
 			Px[i][0] = Px[i][0] + h - Px[i][1]
 		};
-			
 		var lineGenerator = d3.line();
 		var maPathString = lineGenerator(Px);
 

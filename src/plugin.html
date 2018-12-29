@@ -1,9 +1,10 @@
 <plugin>
 
-
+    <!-- load dependent scripts -->
     <script src=src/skewT.js></script>
     <script src=src/wind_barbs.js></script>
     <script src=src/Sample_data.json.js></script>
+
 
 	<script>
 
@@ -13,19 +14,30 @@
     import map from '@windy/map'
 
 	
-	/***************************************************
+	/************************************************************************
 	* SkewT.js 
 	*
-	* A windy plugin written by John C. Kealy 
-	* Based on a stripped-down version of my code from
-	* https://www.tephigrams.org. Email any queries to me 
-	* at johnckealy@gmail.com.
+	* A windy plugin written by John C. Kealy.
+    *
+	* Based on a stripped-down version of the https://www.tephigrams.org code. 
+	* Ivo has told me that wind data is not available for the windy plugins yet,
+	* so this plugin relies on some sample GFS data from Dec 2018. It should be 
+	* simple enough to drive the plugin with data from windy later, one just needs 
+	* to assign the column values of pressure, temperature, dewpoint (or RH) and 
+	* (U,V) winds at the the given picker lat lon point. 
+    *
+    * The variables that need to be populated are Pascent (pressure), Tascent 
+    * (temperature), Tdascent (dew point), U (u wind), and V (v wind). 
+    *
+    * Email any queries to me at johnckealy@gmail.com.
+    *
 	* Dec 2018
 	*
-	***************************************************/
+	*************************************************************************/
 
 
-
+    // Set global variables for window size. These will 
+    // need to optimised later. 
     window.w = 0.8*window.innerHeight;
     window.h = 0.7*window.innerHeight;
 
@@ -36,41 +48,52 @@
     window.y_offset = 90;
 
 
+    // Run the plugin based on invoking the picker
  	const activate_SkewT = latLon => {
         let { lat, lon } = picker.getParams()
 
+        // parse the data. At the moment, only sample data is being used. 
 	    var obj = JSON.parse(jsondata); 
 	    var idx = closest_latlon(obj.data.values.points, lon,  lat)
 
-        console.log('pickerlon', lon, 'gridlon', obj.data.values.points[idx].Position.Longitude, 
-        	   ' ||  pickerlat', lat, 'gridlat', obj.data.values.points[idx].Position.Latitude)
+        console.log('Picker lon', lon, 'Data lon', obj.data.values.points[idx].Position.Longitude, 
+        	   ' ||  Picker lat', lat, 'Data lat', obj.data.values.points[idx].Position.Latitude)
+
+        // This is the ascent pressure, temperature, dewt and winds for the given lat
+        // lon point stored in a variable. 
         var Pascent = obj.data.values.Pressure
         var Tascent = obj.data.values.points[idx].Temperatures
         var Tdascent = obj.data.values.points[idx].DewPoint
         var U = obj.data.values.points[idx].U
         var V = obj.data.values.points[idx].V
 
-
+        // draw the skewT and the windbarbs. These functions are stored 
+        // in dedicated files. 
         draw_skewT(Pascent, Tascent, Tdascent);
         cbarbs(Pascent, Tascent,  U, V);
 	}
 
+    // As the picker appears or moves, draw the SkewT at the new latlon point
     picker.on('pickerOpened', activate_SkewT )
     picker.on('pickerMoved', activate_SkewT )
 
+    // On drag, dont redraw the skewT but do move the window to follow the drag
 	const ondrag = () => {
  		translate_obj('skewTd3');
 	};
     map.on('drag', ondrag);
 
-
+    // close the skewT when the picker is closed
+    const close_skewT = () => {
+		d3.select("#skewTbox").remove() 
+    }
+    picker.on('pickerClosed', close_skewT )
 
     
 	function draw_skewT(Pascent, Tascent, Tdascent) {
-
+        // When invoked, draw the skewT and also update the position if necessary
         cskewT(Pascent, Tascent, Tdascent)
  		translate_obj() 
-
 	};
 
 
@@ -88,13 +111,15 @@
         var Zpx = Number(Attrtxt.match(NUMERIC_REGEXP)[3])
         var translation = "translate3d("+Xpx+"px, "+Ypx+"px,  "+Zpx+"px)";
         var S = document.getElementById('skewTbox')
-		S.setAttribute("style", "transform: "+translation)
-
+        if ( S != null) {
+		    S.setAttribute("style", "transform: "+translation)
+		};
 	};
 
 
-
 	function closest_latlon(Points, plon, plat) {
+		// Computes the location in the sample data of the closest point
+		// to that requested by the picker. 
 		var chosen = 0;
 		var miin = 99999;
 	    for (var i=0; i<Points.length; i++) {

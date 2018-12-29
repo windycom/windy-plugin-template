@@ -55,7 +55,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 	}
 
 
-
 	// Wrapping function to run the draw_windbarbs() function 
 	// for each pressure level. Set to draw one every 50hPa.	
     window.svgbarbs = svg.append("rect")
@@ -70,7 +69,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 		var widx = closest(Pascent, pp);								
 		draw_windbarbs(Pascent[widx], U[widx], V[widx]);		
 	};
-
 
 
 	function draw_windbarbs(P, U, V)  { 
@@ -99,8 +97,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 	    var degrees = 180*angle/Math.PI; 
 	    var wdir = (270+Math.round(degrees))%360;
 		var WSpeed = Math.sqrt(Math.pow(U,2) + Math.pow(V,2));									
-
-        
 
 		// Choose the appropriate barb for each pressure level
 		if (WSpeed < 7.5) {
@@ -131,7 +127,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 			var barbie = barb80;
 		} else if ((WSpeed >= 85.0) && (WSpeed < 95.0)) {
 			var barbie = barb90;
-
 		}
 		
 		// draw the barb								
@@ -141,7 +136,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 		    .attr("fill", "#cccccc")
 		    .attr("d", barbie)		
 		    .attr("transform", "translate("+(w+barbsw/2)+","+VPpx+") rotate("+wdir+",0,0) scale("+scale+")  ");
-
 	};
 
 
