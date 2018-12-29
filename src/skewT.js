@@ -1,6 +1,4 @@
-
-
-function cskewT(Pascent, Tascent, Tdascent, DateTime) {
+function cskewT(Pascent, Tascent, Tdascent) {
 
 	// Crate the P profile for the skewT. Everything will depend on this
 	var startpressure = 1050;
@@ -14,14 +12,31 @@ function cskewT(Pascent, Tascent, Tdascent, DateTime) {
 	};
 
 	// this sets the limits of the skewT, and therefore its shape
-	var minT = -40.0;
-	var maxT = 40.0;
+	var minT = Tascent[0]-50.0;
+	var maxT = minT+80;
 	var minP = P[P.length-1];
 	var maxP = P[0];
 	//////////////////////////////////////
 
+
+ 
+	d3.select("#skewTbox").remove() 
+    // svg to set the skewT into
+    window.svg = d3.select(".leaflet-popup-pane").append("svg")
+        .attr("height", h)
+        .attr("width", w+barbsw)
+        .attr('id', 'skewTbox');
+    svg.append("rect")
+        .attr("height", h)
+        .attr("width", w)
+        .attr("fill", "white")
+        .attr("opacity", 0.8)
+        .attr('id', 'skewTd3');
+
+
+
 	draw_isopleths();
-	skewT_main(Pascent, Tascent, Tdascent, DateTime);
+	skewT_main(Pascent, Tascent, Tdascent);
 
 	function draw_isopleths() {
 		for (var T=-80; T<=40; T=T+10) {
@@ -30,10 +45,12 @@ function cskewT(Pascent, Tascent, Tdascent, DateTime) {
 		for (var p=100; p<=1000; p=p+100) {
 			draw_isobar(p);
 		};
-		for (var a=-30; a<=150; a=a+10) {
+		for (var a=-80; a<=150; a=a+10) {
 			draw_dry_adiabat(a, P);
 		};
 
+		draw_moist_adiabat(-47.0);	
+		draw_moist_adiabat(-37.0);	
 		draw_moist_adiabat(-27.0);	
 		draw_moist_adiabat(-17.0);	
 		draw_moist_adiabat(-7);	
@@ -41,7 +58,9 @@ function cskewT(Pascent, Tascent, Tdascent, DateTime) {
 		draw_moist_adiabat(12.15);	
 		draw_moist_adiabat(21.8);	
 		draw_moist_adiabat(31.6);	
-		draw_moist_adiabat(40);		
+		draw_moist_adiabat(40);	
+		draw_moist_adiabat(50);	
+		draw_moist_adiabat(60);		
 
 		draw_Isohume(0.001);
 		draw_Isohume(0.01);
@@ -58,11 +77,14 @@ function cskewT(Pascent, Tascent, Tdascent, DateTime) {
 
 
 
-	function skewT_main(Pascent, Tascent, Tdascent, DateTime) {
+	function skewT_main(Pascent, Tascent, Tdascent) {
 
 		var Pascent = interpolateArray(Pascent, P.length); 
 		var Tascent = interpolateArray(Tascent, P.length); 
 		var Tdascent = interpolateArray(Tdascent, P.length); 
+
+
+        console.log('Tdascent', Tdascent)
 
 		svg.select("path#SdTPath").remove();
 		svg.select("path#SdTdPath").remove();
@@ -162,7 +184,7 @@ function cskewT(Pascent, Tascent, Tdascent, DateTime) {
 		    .style("stroke-width", 1.5)
 		    .style("stroke", 'green');
 		svg.append("g")
-			.append("text")append("text")
+			.append("text")
 		    .style("font-size", "50px")
 		    .style('fill', "purple")
 		    .attr("x",20)
