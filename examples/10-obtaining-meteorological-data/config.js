@@ -1,6 +1,6 @@
 module.exports = {
 
-	displayName: 'Window on the left',
+	displayName: 'Using pluginDataLoader',
 
 	hook: 'menu',
 
