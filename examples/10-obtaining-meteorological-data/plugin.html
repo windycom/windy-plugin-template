@@ -1,0 +1,66 @@
+<plugin>
+
+	<div class="mobile-header">This is title for mobile devices</div>
+
+	<div class="plugin-content">
+
+		<h2>Obtaining meteorogical data from Windy API</h2>
+
+		<p>This plugin demonstrates communication with backend API and retrieving varions parameters</p>
+
+		<p>1) Get your API key <a hre="https://api4.windy.com/api-key/">here</a></p>
+
+		<p>2) Use <b>dataLoader</b> module to retrieve the data.</p>
+
+		<p>3) Open dev console now to see loaded data</p>
+
+		<hr>
+
+		<p data-ref="forecast"></p>
+
+		<p data-ref="celestial"></p>
+
+		<p data-ref="airParams"></p>
+
+		<hr>
+
+		<p>Do you want to add additional data to our backend API? Let us know <a href="https://community.windy.com/category/21/windy-plugins">here</a></p>
+
+	</div>
+	<script>
+
+	import pluginDataLoader from '@windy/pluginDataLoader'
+	import map from '@windy/map'
+
+	const options  = {
+		key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx'
+		, plugin: 'windy-plugin-examples'
+	}
+
+	// Create new dataLoder instance
+	const load = pluginDataLoader( options )
+
+
+	//	this.onopen method is called when your plugin is being opened
+	this.onopen = () => {
+
+		map.setView([50,14])
+
+		// Loads point forecast for lat, lon
+		load('forecast',{
+			model: 'ecmwf'
+			, lat: 50
+			, lon: 14
+		}).then( ({data}) => {
+
+			this.refs.forecast.innerHTML = 'Forecast data were loaded'
+
+			console.log( data )
+
+		})
+
+	}
+
+
+	</script>
+</plugin>
