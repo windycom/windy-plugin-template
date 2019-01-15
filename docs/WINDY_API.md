@@ -390,28 +390,28 @@ Example:
 ```js
   import pluginDataLoader from '@windy/pluginDataLoader'
 
-	// Create new dataLoder instance
-	const load = pluginDataLoader({
+  // Create new dataLoder instance
+  const load = pluginDataLoader({
     key: 'Your-backend-API-key',
     plugin: 'windy-plugin-name-of-your-plugin'
   })
 
-		// dataLoader accepts object with all required parameters
-		const dataOptions = {
-			model: 'ecmwf',
-			lat: 50,
-			lon: 14
-		}
+  // dataLoader accepts object with all required parameters
+  const dataOptions = {
+    model: 'ecmwf',
+    lat: 50,
+    lon: 14
+  }
 
-		// Loads point forecast for lat, lon
-		load('forecast', dataOptions ).then( result => {
+  // Loads point forecast for lat, lon
+  load('forecast', dataOptions ).then( result => {
 
-      // Returned object contains http status and data
-      const { status, data } = result
+    // Returned object contains http status and data
+    const { status, data } = result
 
-			console.log( data )
+    console.log( data )
 
-		})
+  })
 ```
 
 
