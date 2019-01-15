@@ -1,35 +1,31 @@
-# Windy API (client v16.15)
+# Windy API (client v17.8)
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- toc -->
 
-<!-- code_chunk_output -->
+- [About Windy API](#about-windy-api)
+- [Module: $](#module-)
+- [Module: map](#module-map)
+  * [map.myMarkers: Predefined Leaflet markers](#mapmymarkers-predefined-leaflet-markers)
+- [Class: Evented](#class-evented)
+- [Module: brodacast](#module-brodacast)
+  * [Main broadcasted messages are:](#main-broadcasted-messages-are)
+- [Module: store](#module-store)
+  * [Main items stored in store](#main-items-stored-in-store)
+- [Module: overlays](#module-overlays)
+  * [overlays.ident.convertMetric(number,separator)](#overlaysidentconvertmetricnumberseparator)
+  * [overlays.ident.convertMetric(number)](#overlaysidentconvertmetricnumber)
+- [Module: utils](#module-utils)
+  * [utils.loadScript(url)](#utilsloadscripturl)
+  * [utils.wind2obj(obj)](#utilswind2objobj)
+  * [utils.wave2obj(obj)](#utilswave2objobj)
+- [Module: plugins](#module-plugins)
+- [Module: picker](#module-picker)
+  * [Converting raw meteorological values to readable numbers](#converting-raw-meteorological-values-to-readable-numbers)
+- [Module: interpolator](#module-interpolator)
+  * [interpolatorFun({ lat, lon })](#interpolatorfun-lat-lon-)
+- [Module: pluginDataLoader](#module-plugindataloader)
 
-* [Windy API (client v16.15)](#windy-api-client-v1615)
-	* [About Windy API](#about-windy-api)
-	* [Module: $](#module)
-	* [Module: map](#module-map)
-		* [map.myMarkers: Predefined Leaflet markers](#mapmymarkers-predefined-leaflet-markers)
-	* [Class: Evented](#class-evented)
-	* [Module: brodacast](#module-brodacast)
-		* [Main broadcasted messages are:](#main-broadcasted-messages-are)
-	* [Module: store](#module-store)
-		* [Main items stored in store](#main-items-stored-in-store)
-	* [Module: overlays](#module-overlays)
-		* [overlays.ident.convertMetric(number,separator)](#overlaysidentconvertmetricnumberseparator)
-		* [overlays.ident.convertMetric(number)](#overlaysidentconvertmetricnumber)
-	* [Module: utils](#module-utils)
-		* [utils.loadScript(url)](#utilsloadscripturl)
-		* [utils.wind2obj(obj)](#utilswind2objobj)
-		* [utils.wave2obj(obj)](#utilswave2objobj)
-	* [Module: plugins](#module-plugins)
-	* [Module: picker](#module-picker)
-		* [Converting raw meteorological values to readable numbers](#converting-raw-meteorological-values-to-readable-numbers)
-	* [Module: interpolator](#module-interpolator)
-		* [interpolatorFun({ lat, lon })](#interpolatorfun-lat-lon)
-
-<!-- /code_chunk_output -->
-
-
+<!-- tocstop -->
 
 ## About Windy API
 Windy codes consist of classes (for example `Evented`),  modules (for example `metrics`) and external plugins, that are loaded when necessary. The plugins are either internal (created by us) and external, created by Windy users.
@@ -373,4 +369,49 @@ values:
   [number,number,number]	.. success, interpolated values
 
 ```
+
+## Module: pluginDataLoader
+To communicate with our backend API get your own API key [here](https://api4.windy.com/api-key/).
+Ignore "Allowed domains" fields it this case.
+
+Module `pluginDataLoader` returns  a function, that creates instance of reusable backend data loader.
+Once you creare your loading instance, you use it like this: `load( type, options )`, where type
+describes type of data you want to load and options depend on the type you want to load.
+
+So far only `forecast` and `airData` types are supported. let us know if we should add more data types
+to API.
+
+Data loader function returns a Promise, that resolves into `{ status, data }` object.
+
+`forecast` and `airData` types require object `{ lat, lon, model }`. Following models are supported:
+`gfs, ecmwf, ecmwfWaves, gfsWaves, namConus, namHawaii, namAlaska, iconEu`.
+
+Example:
+```js
+  import pluginDataLoader from '@windy/pluginDataLoader'
+
+	// Create new dataLoder instance
+	const load = pluginDataLoader({
+    key: 'Your-backend-API-key',
+    plugin: 'windy-plugin-name-of-your-plugin'
+  })
+
+		// dataLoader accepts object with all required parameters
+		const dataOptions = {
+			model: 'ecmwf',
+			lat: 50,
+			lon: 14
+		}
+
+		// Loads point forecast for lat, lon
+		load('forecast', dataOptions ).then( result => {
+
+      // Returned object contains http status and data
+      const { status, data } = result
+
+			console.log( data )
+
+		})
+```
+
 

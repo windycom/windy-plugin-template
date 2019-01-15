@@ -1,26 +1,10 @@
-![](https://www.windy.com/img/windy-plugins/example02.gif)
-# Window on the left side
-Use left side window to present larger amount of information.
+![](https://www.windy.com/img/windy-plugins/example10.jpg)
+# Loading data from Windy API
+To communicate with our backend API get your own API key [here](https://api4.windy.com/api-key/). Ignore "Allowed domains" fields it this case.
 
-Check the plugin in mobile phone to see effect of `plugin-mobile-fullscreen` class.
+Then use `@windy/pluginDataLoader` module to retrieve the data. More info inside the `plugin.html` or in our [Windy API documentation](../../docs/WINDY_API.md)
 
-This plugin also demonstrates receiving broadcasted messages and using `store` to programatically change overlay.
-
-### config.js
-`className` should contain list of class names that will be attached to your
-plugin upon mounting.
-
-`exclusive` contains identifier of a pane, where your plugin will reside.
-Since we want to have only one pane on left side, this string will guarantee, that all other plugins on the left side will be closed.
-
-### plugin.html
-This plugin does not have any HTML content, nor CSS. Windy API modules are imported via `import map from '@windy/map'`
-
-`this.onopen` method is called when your plugin is being opened. Remember, that `this.ononpen` method can be called repeatedly (without your plugin
-being closed before), so make sure, that you will not to subscribe
-to any listener twice.
-
-`this.onclose` method is called when your plugin is being closed.	Unsubscribe from all your listeners, and remove all your stuff from a map.
+Please note, that due to the strict licence conditions, any data retrieved from our backend API, MUST run on windy.com domain only.
 
 -----------------
 

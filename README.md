@@ -33,6 +33,7 @@ If it fails, make sure that your plugin is correctly built and accessible with y
  - [Working with multiple files](examples/07-multiple-files-plugin)
  - [Display CSV, GPX, KML, WKT and other](examples/08-display-csv-gpx-kml-formats)
  - [Interpolate weather values from a map](examples/09-reading-weather-values)
+ - [Loading data from Windy API](examples/10-obtaining-meteorological-data)
 
 ### Other resources
  - [How Windy Plugin work](docs/WINDY_PLUGIN.md)
@@ -82,12 +83,14 @@ Drop a line in our [Windy Plugins section](https://community.windy.com/category/
  - Create system so anyone can publish its own forecast/climatological model on Windy
 
 ### CHANGELOG
-* 0.3.0
- - Examples moved to examples dir
-* 0.2.0
- - Fixed wrong examples
-* 0.1.1
- - Initial version of this repo
+   * 0.4.0
+      - Added `pluginDataLoader` to the Plugins API
+   * 0.3.0
+      - Examples moved to examples dir
+   * 0.2.0
+      - Fixed wrong examples
+   * 0.1.1
+      - Initial version of this repo
 
 <small>This is default readme - please do not remove this line</small>
 
