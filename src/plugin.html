@@ -12,6 +12,8 @@
     import utils from '@windy/utils'
     import store from '@windy/store'
     import map from '@windy/map'
+    import pluginDataLoader from '@windy/pluginDataLoader'
+
 
 	
 	/************************************************************************
@@ -48,6 +50,14 @@
     window.y_offset = 90;
 
 
+    const options  = {
+        key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
+        plugin: 'windy-plugin-skewt'
+    }
+
+
+
+
     // Run the plugin based on invoking the picker
  	const activate_SkewT = latLon => {
         let { lat, lon } = picker.getParams()
@@ -56,8 +66,40 @@
 	    var obj = JSON.parse(jsondata); 
 	    var idx = closest_latlon(obj.data.values.points, lon,  lat)
 
-        console.log('Picker lon', lon, 'Data lon', obj.data.values.points[idx].Position.Longitude, 
-        	   ' ||  Picker lat', lat, 'Data lat', obj.data.values.points[idx].Position.Latitude)
+        // console.log('Picker lon', lon, 'Data lon', obj.data.values.points[idx].Position.Longitude, 
+        // 	   ' ||  Picker lat', lat, 'Data lat', obj.data.values.points[idx].Position.Latitude)
+
+
+        const load = pluginDataLoader( options )
+
+
+        const dataOptions = {
+            model: 'ecmwf',
+            lat: lat,
+            lon: lon
+        }
+
+        // Loads air data for lat, lon
+        load('airData',dataOptions).then( ({data}) => {
+
+            var current_timestamp = store.get('timestamp');
+          
+            var tidx = gettimestamp(current_timestamp, data.data.hours);
+        
+            
+            get_data(data, 'dewpoint', tidx)
+
+
+
+        });
+
+
+
+
+
+
+
+
 
         // This is the ascent pressure, temperature, dewt and winds for the given lat
         // lon point stored in a variable. 
@@ -134,6 +176,42 @@
 	    };
 	    return chosen
 	}
+
+    function gettimestamp(current_timestamp, h) {
+        var i=0;
+        var minDiff = 99999999999;
+        var tidx;
+        for (i in h) {
+            var m=Math.abs(current_timestamp-h[i])
+            if (m<minDiff) { 
+                minDiff=m 
+                tidx=i
+            };
+        };
+        return tidx;
+    };
+
+
+
+    function get_data(data, field, tidx) {
+       
+        var ascent = new Array(13);
+        ascent[0] = data.data[field+'-surface'][tidx];
+        ascent[1] = data.data[field+'-950h'][tidx];
+        ascent[2] = data.data[field+'-925h'][tidx];
+        ascent[3] = data.data[field+'-900h'][tidx];
+        ascent[4] = data.data[field+'-850h'][tidx];
+        ascent[5] = data.data[field+'-800h'][tidx];
+        ascent[6] = data.data[field+'-700h'][tidx];
+        ascent[7] = data.data[field+'-600h'][tidx];
+        ascent[8] = data.data[field+'-500h'][tidx];
+        ascent[9] = data.data[field+'-400h'][tidx];
+        ascent[10] = data.data[field+'-300h'][tidx];
+        ascent[11] = data.data[field+'-200h'][tidx];
+        ascent[12] = data.data[field+'-150h'][tidx];
+
+        console.log(ascent)
+    }
 
 	</script>
 
