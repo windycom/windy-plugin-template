@@ -57,6 +57,7 @@
 
 
 
+    const load = pluginDataLoader( options )
 
     // Run the plugin based on invoking the picker
  	const activate_SkewT = latLon => {
@@ -70,49 +71,58 @@
         // 	   ' ||  Picker lat', lat, 'Data lat', obj.data.values.points[idx].Position.Latitude)
 
 
-        const load = pluginDataLoader( options )
-
-
         const dataOptions = {
             model: 'ecmwf',
             lat: lat,
             lon: lon
         }
 
-        // Loads air data for lat, lon
-        load('airData',dataOptions).then( ({data}) => {
+
+        //Load point forecast for lat, lon.
+        // I tried loading sfc pressure from 'forecast', but it grinds
+        // everything to a halt and became impractical. So 
+        // for now at least, I was forced to use 1000hPa as the 
+        // sfc, which makes me cringe :(
+		load('airData', dataOptions ).then( ({data}) => {
 
             var current_timestamp = store.get('timestamp');
-          
-            var tidx = gettimestamp(current_timestamp, data.data.hours);
+            var offset = new Date().getTimezoneOffset();
+            offset = offset*60*1000
+            var utc_timestamp = current_timestamp-offset
+
+            var tidx = gettimestamp(utc_timestamp, data.data.hours);
         
-            
-            get_data(data, 'dewpoint', tidx)
+	        var Pascent = [1000, 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+	        var Tdascent = get_data(data, 'dewpoint', tidx);
+	        var Tascent = get_data(data, 'temp', tidx);   
+	        var z;
+	        for (z=0;z<Tdascent.length;z++) {
+	              Tascent[z] = Math.round(100*(Tascent[z] - 273.15))/100;
+	              Tdascent[z] = Math.round(100*(Tdascent[z] - 273.15))/100;
+	        };
+	        var U = get_data(data, 'wind_u', tidx);
+	        var V = get_data(data, 'wind_v', tidx);
+
+		    // draw the skewT and the windbarbs. These functions are stored 
+	        // in dedicated files. 
+	        draw_skewT(Pascent, Tascent, Tdascent);
+	        cbarbs(Pascent, Tascent,  U, V, current_timestamp);
+
+		});
 
 
 
-        });
 
 
+        // // This is the ascent pressure, temperature, dewt and winds for the given lat
+        // // lon point stored in a variable. 
+        // var Pascent = obj.data.values.Pressure
+        // var Tascent = obj.data.values.points[idx].Temperatures
+        // var Tdascent = obj.data.values.points[idx].DewPoint
+        // var U = obj.data.values.points[idx].U
+        // var V = obj.data.values.points[idx].V
 
 
-
-
-
-
-
-        // This is the ascent pressure, temperature, dewt and winds for the given lat
-        // lon point stored in a variable. 
-        var Pascent = obj.data.values.Pressure
-        var Tascent = obj.data.values.points[idx].Temperatures
-        var Tdascent = obj.data.values.points[idx].DewPoint
-        var U = obj.data.values.points[idx].U
-        var V = obj.data.values.points[idx].V
-
-        // draw the skewT and the windbarbs. These functions are stored 
-        // in dedicated files. 
-        draw_skewT(Pascent, Tascent, Tdascent);
-        cbarbs(Pascent, Tascent,  U, V);
 	}
 
     // As the picker appears or moves, draw the SkewT at the new latlon point
@@ -191,6 +201,19 @@
         return tidx;
     };
 
+    function gettimestamp2(current_timestamp, h) {
+        var i=0;
+        var minDiff = 99999999999;
+        var tidx;
+        for (i in h) {
+            var m=Math.abs(current_timestamp-h[i].ts)
+            if (m<minDiff) { 
+                minDiff=m 
+                tidx=i
+            };
+        };
+        return tidx;
+    };
 
 
     function get_data(data, field, tidx) {
@@ -209,8 +232,8 @@
         ascent[10] = data.data[field+'-300h'][tidx];
         ascent[11] = data.data[field+'-200h'][tidx];
         ascent[12] = data.data[field+'-150h'][tidx];
-
-        console.log(ascent)
+       
+        return ascent
     }
 
 	</script>
