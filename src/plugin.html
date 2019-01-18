@@ -22,14 +22,6 @@
 	* A windy plugin written by John C. Kealy.
     *
 	* Based on a stripped-down version of the https://www.tephigrams.org code. 
-	* Ivo has told me that wind data is not available for the windy plugins yet,
-	* so this plugin relies on some sample GFS data from Dec 2018. It should be 
-	* simple enough to drive the plugin with data from windy later, one just needs 
-	* to assign the column values of pressure, temperature, dewpoint (or RH) and 
-	* (U,V) winds at the the given picker lat lon point. 
-    *
-    * The variables that need to be populated are Pascent (pressure), Tascent 
-    * (temperature), Tdascent (dew point), U (u wind), and V (v wind). 
     *
     * Email any queries to me at johnckealy@gmail.com.
     *
@@ -109,18 +101,6 @@
 	        cbarbs(Pascent, Tascent,  U, V, current_timestamp);
 
 		});
-
-
-
-
-
-        // // This is the ascent pressure, temperature, dewt and winds for the given lat
-        // // lon point stored in a variable. 
-        // var Pascent = obj.data.values.Pressure
-        // var Tascent = obj.data.values.points[idx].Temperatures
-        // var Tdascent = obj.data.values.points[idx].DewPoint
-        // var U = obj.data.values.points[idx].U
-        // var V = obj.data.values.points[idx].V
 
 
 	}
