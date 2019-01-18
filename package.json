@@ -1,7 +1,7 @@
 {
-  "name": "windy-plugin-skewT",
+  "name": "windy-plugin-skewt",
   "version": "0.1.0",
-  "description": "A plug to plot skewT-logP diagrams over the windy map.",
+  "description": "A plugin to plot skewT-logP diagrams in windy.com",
   "main": "dist/plugin.js",
   "scripts": {
     "start": "node ./compiler.js --build --watch --prompt --serve --transpile",
@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnckealy/windy-plugins-skewT"
+    "url": "git+https://github.com/johnckealy/windy-plugin-skewt"
   },
   "author": "John C. Kealy",
-  "license": "",
+  "license": " ",
   "dependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",

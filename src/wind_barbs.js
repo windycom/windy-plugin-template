@@ -1,4 +1,4 @@
-function cbarbs(Pascent, Tascent, U, V) {
+function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 	/* cbarbs creates the windbarbs in the skewT. It takes the Pressure profile,
 	and horizontal winds in the U (east) and V (north) directions as inputs. Included
 	is a tooltip that populates a bar showing the atitude , pressure, windspeed, 
@@ -8,9 +8,6 @@ function cbarbs(Pascent, Tascent, U, V) {
 	// set up the pressure scale and process the wind arrays
 	var cminP = 150.0;
 	var cmaxP = 1050.0;												
-	var degrees = 180*(Math.atan2(U[0], V[0]))/Math.PI; 
-	var wdir = (270+Math.round(degrees))%360;
-	var WSpeed = Math.sqrt(Math.pow(U[0],2) + Math.pow(V[0],2));		
 
 	// Draw the containing box for the tooltip stats
 	svg.append("rect")
@@ -19,6 +16,23 @@ function cbarbs(Pascent, Tascent, U, V) {
 		.attr("width", 0.55*w)
 		.attr("fill", "#424040")
 		.attr("opacity", "0.9")
+
+
+    // Add the datetime 
+
+    var date = new Date(current_timestamp);
+    var options = { weekday: 'long', month: 'short', day: 'numeric' , hour: 'numeric', timeZoneName:'short'};
+    date = date.toLocaleDateString("en-US", options);
+	svg.append("g")
+		.append("text")
+		.html(date)
+		.attr("x", w-0.5*w)
+		.attr("y", 0.035*h)			
+		.attr("font-family", "sans-serif")
+		.attr("font-family", "Helvetica")
+		.attr("font-size", 0.03*h+"px")
+		.attr("fill", "#cccccc")
+		.attr("id", "statsID");
 
     // This is atctions the tooltip for the stats at the top 
     // of the skewT window
@@ -33,11 +47,9 @@ function cbarbs(Pascent, Tascent, U, V) {
 		var logP = (y/barbsh)*(Math.log(1050)-Math.log(150)) + Math.log(150);
 		var P = Math.exp(logP);
 
-		var widx = closest(Pascent, P);			
-		var angle = Math.atan2(U[widx], V[widx]);  																
-	    var degrees = 180*angle/Math.PI; 
-	    var wdir = ((3600000 + degrees) % 360);
-		var WSpeed = Math.sqrt(Math.pow(U[widx],2) + Math.pow(V[widx],2));										
+		var widx = closest(Pascent, P);			 																
+        var wdir = get_winddir(U[widx], V[widx]);
+		var WSpeed = 1.943*Math.sqrt(Math.pow(U[widx],2) + Math.pow(V[widx],2));										
 		var z = -10.0*Math.log(P/Pascent[0]);
 
 
@@ -65,7 +77,7 @@ function cbarbs(Pascent, Tascent, U, V) {
         .attr("opacity", 0.9)
         .attr('id', 'barbsd3');
 
-	for (var pp = 100; pp <= 1000; pp=pp+50) { 
+	for (var pp = 200; pp <= 1000; pp=pp+50) { 
 		var widx = closest(Pascent, pp);								
 		draw_windbarbs(Pascent[widx], U[widx], V[widx]);		
 	};
@@ -90,13 +102,12 @@ function cbarbs(Pascent, Tascent, U, V) {
 		var barb80 = "m 0,0 200,0 0,70 -50,-70 m -35,0 50,70 m -35,0 m -50,-70 m 0,0 50,70 m -35,0 m -50,-70 m 0,0 50,70";
 		var barb90 = "m 0,0 200,0 0,70 -50,-70 m -35,0 50,70 m -35,0 m -50,-70 m 0,0 50,70 m -35,0 m -50,-70 m 0,0 50,70 m -35,0 m -50,-70 m 0,0 50,70";
 		var barb100 = "m 0,0 200,0 0,70 -50,-70 m -10,0 m 0,0 0,70 -50,-70";
+		var Nobarb = "";
 
 		// Now calculate the stats based on the pixel location of the mouse pointer
 		var VPpx = barbsh*(Math.log(P)-Math.log(cminP))/(Math.log(cmaxP)-Math.log(cminP));		
-		var angle = Math.atan2(U, V);  																
-	    var degrees = 180*angle/Math.PI; 
-	    var wdir = (270+Math.round(degrees))%360;
-		var WSpeed = Math.sqrt(Math.pow(U,2) + Math.pow(V,2));									
+        var wdir = get_winddir(U, V);
+		var WSpeed = 1.943*Math.sqrt(Math.pow(U,2) + Math.pow(V,2));									
 
 		// Choose the appropriate barb for each pressure level
 		if (WSpeed < 7.5) {
@@ -127,15 +138,19 @@ function cbarbs(Pascent, Tascent, U, V) {
 			var barbie = barb80;
 		} else if ((WSpeed >= 85.0) && (WSpeed < 95.0)) {
 			var barbie = barb90;
+		} else {
+			var barbie = Nobarb;
 		}
-		
-		// draw the barb								
- 	    svg.append("path")  						
-		    .attr("stroke", "#cccccc")
-		    .style("stroke-width", "17px")
-		    .attr("fill", "#cccccc")
-		    .attr("d", barbie)		
-		    .attr("transform", "translate("+(w+barbsw/2)+","+VPpx+") rotate("+wdir+",0,0) scale("+scale+")  ");
+
+		if (wdir >=0 && wdir <=360) {
+			// draw the barb								
+	 	    svg.append("path")  						
+			    .attr("stroke", "#cccccc")
+			    .style("stroke-width", "17px")
+			    .attr("fill", "#cccccc")
+			    .attr("d", barbie)		
+			    .attr("transform", "translate("+(w+barbsw/2)+","+VPpx+") rotate("+(wdir-90)+",0,0) scale("+scale+")  ");
+	    };
 	};
 
 
@@ -148,6 +163,20 @@ function cbarbs(Pascent, Tascent, U, V) {
 		    chosen = i;}
 		}
 	    return chosen;
+	};
+
+	function get_winddir(u, v) {
+	    var wdir;
+	    if(v > 0)      {
+	        wdir = ((180 / Math.PI) * Math.atan(u/v) + 180);
+	    }
+	    else if(u < 0 && v < 0) {
+	        wdir = ((180 / Math.PI) * Math.atan(u/v) + 0);
+	    }
+	    else if(u > 0 && v < 0) {
+	  	    wdir = ((180 / Math.PI) * Math.atan(u/v) + 360);
+	    }
+	    return wdir;
 	};
 
 };
