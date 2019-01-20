@@ -13,11 +13,7 @@ The wind through the atmosphere is also shown, represented by wind barbs in unit
 
 The skewT window will drag with the map, and you can move the picker to get a new skewT on the fly. To close the skewT, simply close the picker. 
 
+windy-plugin-skewt works temporally, so just move the time slider or press the play button to see the skewT's evolution in time. Also, you can change the model and see how the curves differ. 
 
-### Current limitations
-
-The skewT plugin is designed to visualise model data from windy, but this data has not yet been made available. Therefore as it stands, the plugin shows **sample data only**. This sample data is from a run of the Global Forecast Sytem (GFS) model from December 2018. Hopefully, the plugin will work with current model data soon, this will depend on windy allowing the plugin to access it. 
-
-
-windy-plugins-SkewT is based on code from www.tephigrams.org. Both were written by John C. Kealy. 
+windy-plugins-SkewT is based on code from www.tephigrams.org. Both were written by John C. Kealy. Email me at j.kealy@exeter.ac.uk with any comments, questions or suggestions. 
 
