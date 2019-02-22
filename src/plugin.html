@@ -15,13 +15,13 @@
     import pluginDataLoader from '@windy/pluginDataLoader'
 
 
-	
+
 	/************************************************************************
-	* SkewT.js 
+	* SkewT.js
 	*
 	* A windy plugin written by John C. Kealy.
     *
-	* Based on a stripped-down version of the https://www.tephigrams.org code. 
+	* Based on a stripped-down version of the https://www.tephigrams.org code.
     *
     * Email any queries to me at johnckealy@gmail.com.
     *
@@ -30,8 +30,8 @@
 	*************************************************************************/
 
 
-    // Set global variables for window size. These will 
-    // need to optimised later. 
+    // Set global variables for window size. These will
+    // need to optimised later.
     window.w = 0.8*window.innerHeight;
     window.h = 0.7*window.innerHeight;
 
@@ -55,19 +55,19 @@
  	const activate_SkewT = latLon => {
         let { lat, lon } = picker.getParams()
 
-        // There's a bug in the API here. If you select a different 
+        // There's a bug in the API here. If you select a different
         // model, the old model stays there until you do something else
         // console.log(store.get('product'))
- 
+
         const dataOptions = {
             model: store.get('product'),
             lat: lat,
             lon: lon
         }
-        
 
-        // load up a an array with a timeseries of the surface 
-        // pressure using the 'forecast' API call. 
+
+        // load up a an array with a timeseries of the surface
+        // pressure using the 'forecast' API call.
         load('forecast', dataOptions ).then( ({data}) => {
      	    window.Pressure = []
 			for (const key of Object.keys(data.data)) {
@@ -82,15 +82,14 @@
 		load('airData', dataOptions ).then( ({data}) => {
 
             var current_timestamp = store.get('timestamp');
-            var offset = new Date().getTimezoneOffset();
-            offset = offset*60*1000
-            var utc_timestamp = current_timestamp-offset
 
-            var tidx = gettimestamp(utc_timestamp, data.data.hours);
+            var tidx = gettimestamp(current_timestamp, data.data.hours);
 
 	        var Pascent = [Pressure[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
 	        var Tdascent = get_data(data, 'dewpoint', tidx);
-	        var Tascent = get_data(data, 'temp', tidx);   
+	        var Tascent = get_data(data, 'temp', tidx);
+
+
 	        for (var z=0;z<Tdascent.length;z++) {
 	              Tascent[z] = Math.round(100*(Tascent[z] - 273.15))/100;
 	              Tdascent[z] = Math.round(100*(Tdascent[z] - 273.15))/100;
@@ -98,8 +97,8 @@
 	        var U = get_data(data, 'wind_u', tidx);
 	        var V = get_data(data, 'wind_v', tidx);
 
-		    // draw the skewT and the windbarbs. These functions are stored 
-	        // in dedicated files. 
+		    // draw the skewT and the windbarbs. These functions are stored
+	        // in dedicated files.
 	        draw_skewT(Pascent, Tascent, Tdascent);
 	        cbarbs(Pascent, Tascent,  U, V, current_timestamp);
 
@@ -109,8 +108,8 @@
     // As the picker appears or moves, draw the SkewT at the new latlon point
     picker.on('pickerOpened', activate_SkewT )
     picker.on('pickerMoved', activate_SkewT )
-    store.on('timestamp', activate_SkewT)        
- 
+    store.on('timestamp', activate_SkewT)
+
 
     // On drag, dont redraw the skewT but do move the window to follow the drag
 	const ondrag = () => {
@@ -120,23 +119,23 @@
 
     // close the skewT when the picker is closed
     const close_skewT = () => {
-		d3.select("#skewTbox").remove() 
+		d3.select("#skewTbox").remove()
     }
     picker.on('pickerClosed', close_skewT )
 
-    
+
 	function draw_skewT(Pascent, Tascent, Tdascent) {
         // When invoked, draw the skewT and also update the position if necessary
         cskewT(Pascent, Tascent, Tdascent)
- 		translate_obj() 
+ 		translate_obj()
 	};
 
 
 	function translate_obj() {
-        /* This function allows the skewT window to move with the map instead of 
+        /* This function allows the skewT window to move with the map instead of
         being stuck at its original coordinates. It finds and parses the map offset
-        specified by the "leaflet-map-pane", replaces each (x,y) number by its additive 
-        inverse, and applies that position to the skewT popup. */   
+        specified by the "leaflet-map-pane", replaces each (x,y) number by its additive
+        inverse, and applies that position to the skewT popup. */
 
  		var GetTransform= document.getElementsByClassName("leaflet-map-pane")[0]
         var Attrtxt = GetTransform.getAttribute("style")
@@ -154,18 +153,18 @@
 
 	function closest_latlon(Points, plon, plat) {
 		// Computes the location in the sample data of the closest point
-		// to that requested by the picker. 
+		// to that requested by the picker.
 		var chosen = 0;
 		var miin = 99999;
 	    for (var i=0; i<Points.length; i++) {
 	        var Gridlon = Points[i].Position.Longitude
 	        var Gridlat = Points[i].Position.Latitude
-	        var d2 = Math.pow(Math.abs(Gridlon-plon), 2) + Math.pow(Math.abs(Gridlat-plat), 2);  
+	        var d2 = Math.pow(Math.abs(Gridlon-plon), 2) + Math.pow(Math.abs(Gridlat-plat), 2);
 	        var d = Math.sqrt(d2);
 	        if (d < miin) {
 			    chosen = i;
 			    miin = d;
-			}	
+			}
 	    };
 	    return chosen
 	}
@@ -176,8 +175,8 @@
         var tidx;
         for (i in h) {
             var m=Math.abs(current_timestamp-h[i])
-            if (m<minDiff) { 
-                minDiff=m 
+            if (m<minDiff) {
+                minDiff=m
                 tidx=i
             };
         };
@@ -186,7 +185,7 @@
 
 
     function get_data(data, field, tidx) {
-       
+
         var ascent = new Array(13);
         ascent[0] = data.data[field+'-surface'][tidx];
         ascent[1] = data.data[field+'-950h'][tidx];
@@ -201,7 +200,7 @@
         ascent[10] = data.data[field+'-300h'][tidx];
         ascent[11] = data.data[field+'-200h'][tidx];
         ascent[12] = data.data[field+'-150h'][tidx];
-       
+
         return ascent
     }
 

@@ -3,7 +3,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
     Main function for drawing the skewT. Depends heavily on D3.js
     */
 
-    // P represents the pressure level within the diagram, it's stitched to the 
+    // P represents the pressure level within the diagram, it's stitched to the
     // top and bottom of the diagram at 150hPa and 1050hPa
 	var startpressure = 1050;
 	var endpressure = 150;
@@ -16,17 +16,17 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	};
 
 	// This sets the limits of the skewT, and therefore its shape.
-	// At the moment, the skewT is positioned such that the left 
-	// corner is 50C less than the surface temperature. 
+	// At the moment, the skewT is positioned such that the left
+	// corner is 50C less than the surface temperature.
 	var minT = Tascent[0]-50.0;
 	var maxT = minT+80;
 	var minP = P[P.length-1];
 	var maxP = P[0];
 
-    
-    // Create a container svg to place everything into. This fits into 
-    // windy's provided leaflet-popup-pane. Add a rectangle as a background. 
-	d3.select("#skewTbox").remove() 
+
+    // Create a container svg to place everything into. This fits into
+    // windy's provided leaflet-popup-pane. Add a rectangle as a background.
+	d3.select("#skewTbox").remove()
     window.svg = d3.select(".leaflet-popup-pane").append("svg")
         .attr("height", h)
         .attr("width", w+barbsw)
@@ -45,7 +45,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	skewT_main(Pascent, Tascent, Tdascent);
 
 	function draw_isopleths() {
-		// call the isopleth functions at discrete intervals 
+		// call the isopleth functions at discrete intervals
 		// to draw them. Function names should be self explanatory.
 		for (var T=-80; T<=40; T=T+10) {
 			draw_isotherm(T);
@@ -57,18 +57,18 @@ function cskewT(Pascent, Tascent, Tdascent) {
 			draw_dry_adiabat(a, P);
 		};
 
-		draw_moist_adiabat(-47.0);	
-		draw_moist_adiabat(-37.0);	
-		draw_moist_adiabat(-27.0);	
-		draw_moist_adiabat(-17.0);	
-		draw_moist_adiabat(-7);	
-		draw_moist_adiabat(2.6);	
-		draw_moist_adiabat(12.15);	
-		draw_moist_adiabat(21.8);	
-		draw_moist_adiabat(31.6);	
-		draw_moist_adiabat(40);	
-		draw_moist_adiabat(50);	
-		draw_moist_adiabat(60);		
+		draw_moist_adiabat(-47.0);
+		draw_moist_adiabat(-37.0);
+		draw_moist_adiabat(-27.0);
+		draw_moist_adiabat(-17.0);
+		draw_moist_adiabat(-7);
+		draw_moist_adiabat(2.6);
+		draw_moist_adiabat(12.15);
+		draw_moist_adiabat(21.8);
+		draw_moist_adiabat(31.6);
+		draw_moist_adiabat(40);
+		draw_moist_adiabat(50);
+		draw_moist_adiabat(60);
 
 		draw_Isohume(0.001);
 		draw_Isohume(0.01);
@@ -86,14 +86,14 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 
 	function skewT_main(Pascent, Tascent, Tdascent) {
-		/* 
-		Draw the skewT using the given profile values.  
-		*/ 
+		/*
+		Draw the skewT using the given profile values.
+		*/
 
 		// First the arrays are interpolated to increase the vertical resolution
-		var Pascent = interpolateArray(Pascent, P.length); 
-		var Tascent = interpolateArray(Tascent, P.length); 
-		var Tdascent = interpolateArray(Tdascent, P.length); 
+		var Pascent = interpolateArray(Pascent, P.length);
+		var Tascent = interpolateArray(Tascent, P.length);
+		var Tdascent = interpolateArray(Tdascent, P.length);
 
         // plot the skewT data
 		plot_sounding();
@@ -122,28 +122,28 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 		function plot_sounding() {
 			/*
-			Plot the sounding. See the explanation below for some of the methods used. 
+			Plot the sounding. See the explanation below for some of the methods used.
 			*/
 			var Px=[]; var Pdx=[];
 
 		   //// T
-			for (var i = 0; i < Pascent.length; i++) {     
+			for (var i = 0; i < Pascent.length; i++) {
 			    var Tnew = Tascent[i] + Math.abs(minT);
 			    var Tpx = w*Tnew/(maxT-minT);
 			    var Ppx = h*(Math.log(Pascent[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
-			    Px.push([Tpx, Ppx]); 
+			    Px.push([Tpx, Ppx]);
 			};
-			for (i = 0; i < Px.length; i++) { 
+			for (i = 0; i < Px.length; i++) {
 				Px[i][0] = Px[i][0] + h - Px[i][1]
 			};
 		  /////  Td
-			for (i = 0; i < Pascent.length; i++) {     
+			for (i = 0; i < Pascent.length; i++) {
 			    var Tnew = Tdascent[i] + Math.abs(minT);
 			    var Tdpx = w*Tnew/(maxT-minT);
 			    var Ppx = h*(Math.log(Pascent[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
-			    Pdx.push([Tdpx, Ppx]); 
+			    Pdx.push([Tdpx, Ppx]);
 			};
-			for (i = 0; i < Px.length; i++) { 
+			for (i = 0; i < Px.length; i++) {
 				Pdx[i][0] = Pdx[i][0] + h - Pdx[i][1]
 			};
 
@@ -164,21 +164,21 @@ function cskewT(Pascent, Tascent, Tdascent) {
 			    .style("stroke-width", 4)
 			    .style("stroke-dasharray", ("8, 4"))
 			    .style("stroke", 'black');
-		}; 
+		};
 
 	};
 
 
 	/*
 	The remainder of the functions (and the above plot_sounding() function) plot each of
-	the different isopleths. I wont	comment on each one as they work pretty much in the 
-	same way. Basically, I use the size of the bounding box to convert meteorological 
-	variables to pixel coordinates. Temperature lines are skewed by 45 degrees after this 
-	conversion,	and pressures are placed on a log scale. The adiabats are drawn based on a 
-	numerical solution to the thermodynamic equations that convern them. Then the 
+	the different isopleths. I wont	comment on each one as they work pretty much in the
+	same way. Basically, I use the size of the bounding box to convert meteorological
+	variables to pixel coordinates. Temperature lines are skewed by 45 degrees after this
+	conversion,	and pressures are placed on a log scale. The adiabats are drawn based on a
+	numerical solution to the thermodynamic equations that convern them. Then the
 	arrays are plotted with d3.js. For some reason, I couldn't make the isopleth label
 	text work in the windy plugin, though it does work in tephigrams.org. Hopefully I can
-	fix this later, so I'll leave the code in for now. 
+	fix this later, so I'll leave the code in for now.
 	*/
 
 	function draw_isobar(Pconst) {
@@ -186,7 +186,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var Pt = [Pconst, Pconst]
 		var Temps = [minT, maxT];
 		// convert to pixel coordinates
-		for (var i = 0; i < Pt.length; i++) {   	    
+		for (var i = 0; i < Pt.length; i++) {
 			var T = Temps[i] + Math.abs(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(Pt[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
@@ -206,7 +206,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		svg.append("g")
 			.append("text")
 		    .style("font-size", "17px")
-		    .style('fill', "purple")
+		    .style('fill', "green")
 		    .attr("x",20)
 		    .attr("y",-5)
 		    .append("textPath")
@@ -215,14 +215,14 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	};
 
 	function dry_adiabat_gradient(theta, pressure, temperature, dp) {
-	    
+
 	    var CONST_CP = 1.03e3
 	    var CONST_RD = 287.0
 	    var Po = 1000.0
 	    var theta = theta + 273.15
 	    var Tt = theta * ( Math.pow((Po/pressure),(-CONST_RD/CONST_CP)) )
 	    var Tt = Tt - 273.15
-	    var dt = Tt - temperature    
+	    var dt = Tt - temperature
 
 	    return [dp, dt]
 	};
@@ -234,18 +234,18 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var P_arr=[];
 		var Px=[];
 
-		for (var i = 0; i < P.length; i++) {           
-		    var DPDT = wet_adiabat_gradient(-80.0, Pnew, Tnew, dp) 
-	 	    var Tnew = Tnew + DPDT[1];  
-		    
+		for (var i = 0; i < P.length; i++) {
+		    var DPDT = wet_adiabat_gradient(-80.0, Pnew, Tnew, dp)
+	 	    var Tnew = Tnew + DPDT[1];
+
 		    var T = Tnew + Math.abs(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);
-		    var Pnew = Pnew + DPDT[0];  
+		    var Pnew = Pnew + DPDT[0];
 
 		};
-		for (i = 0; i < Px.length; i++) { 
+		for (i = 0; i < Px.length; i++) {
 			Px[i][0] = Px[i][0] + h - Px[i][1]
 		};
 		var lineGenerator = d3.line();
@@ -257,19 +257,19 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    .style("stroke-width", 1)
 		    .style("stroke", 'green');
 
-	};    
+	};
 
 	function draw_isotherm(temp) {
 		var Px=[];
 		// convert to pixel coordinates
-		for (var i = 0; i < P.length; i++) {   	    
+		for (var i = 0; i < P.length; i++) {
 			var T = temp + Math.abs(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 			Px.push([Tpx, Ppx]);
 		};
 		// skew the isotherms
-		for (i = 0; i < Px.length; i++) { 
+		for (i = 0; i < Px.length; i++) {
 			Px[i][0] = Px[i][0] + h - Px[i][1]
 		};
 		var lineGenerator = d3.line();
@@ -304,20 +304,20 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	function draw_Isohume(q) {
 		var Px=[];
 		// convert to pixel coordinates
-		for (var i = 0; i < P.length; i++) {         
+		for (var i = 0; i < P.length; i++) {
 			var es = (P[i]*q)/(q+622.0)
 			var logthing = Math.pow((Math.log(es/6.11)),(-1.0))
 			var temp = Math.pow(((17.269/237.3)*(logthing - (1.0/17.269)) ),(-1.0)	)
-		    
+
 			var T = temp + Math.abs(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 
-			var TH = ((273.15+T)*Math.pow((1000.0/P[i]),-0.286)) - 273.15; 
+			var TH = ((273.15+T)*Math.pow((1000.0/P[i]),-0.286)) - 273.15;
 			Px.push([Tpx, Ppx]);
 		};
 		// skew the isotherms
-		for (i = 0; i < Px.length; i++) { 
+		for (i = 0; i < Px.length; i++) {
 			Px[i][0] = Px[i][0] + h - Px[i][1]
 		};
 		var lineGenerator = d3.line();
@@ -346,7 +346,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	function wet_adiabat_gradient(min_temperature, pressure, temperature, dp) {
 	    var CONST_CP = 1.03e3
 	    var CONST_K = 0.286
-	    var CONST_KELVIN = 273.15  
+	    var CONST_KELVIN = 273.15
 	    var CONST_L = 2.5e6
 	    var CONST_MA = 300.0
 	    var CONST_RD = 287.0
@@ -370,22 +370,22 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var Tnew_arr=[];
 		var P_arr=[];
 		var Px=[];
-		for (var i = 0; i < P.length; i++) {           
-		    var DPDT = dry_adiabat_gradient(Tbase, Pnew, Tnew, dp)  
-	 	    var Tnew = Tnew + DPDT[1];  
-		    
+		for (var i = 0; i < P.length; i++) {
+		    var DPDT = dry_adiabat_gradient(Tbase, Pnew, Tnew, dp)
+	 	    var Tnew = Tnew + DPDT[1];
+
 		    var T = Tnew + Math.abs(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);
-		    var Pnew = Pnew + DPDT[0];  
+		    var Pnew = Pnew + DPDT[0];
 
 		};
 		// skew the isotherms
-		for (i = 0; i < Px.length; i++) { 
+		for (i = 0; i < Px.length; i++) {
 			Px[i][0] = Px[i][0] + h - Px[i][1]
 		};
-			
+
 		var lineGenerator = d3.line();
 		var daPathString = lineGenerator(Px);
 
@@ -394,7 +394,6 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    .style("fill", 'none')
 		    .style("stroke-width", 1)
 		    .style("stroke", 'green');
-	}; 
+	};
 
 };
-
