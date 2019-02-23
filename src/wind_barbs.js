@@ -1,13 +1,13 @@
 function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 	/* cbarbs creates the windbarbs in the skewT. It takes the Pressure profile,
 	and horizontal winds in the U (east) and V (north) directions as inputs. Included
-	is a tooltip that populates a bar showing the atitude , pressure, windspeed, 
+	is a tooltip that populates a bar showing the atitude , pressure, windspeed,
 	and wind direction at the mouse pointer location. */
- 
+
 
 	// set up the pressure scale and process the wind arrays
 	var cminP = 150.0;
-	var cmaxP = 1050.0;												
+	var cmaxP = 1050.0;
 
 	// Draw the containing box for the tooltip stats
 	svg.append("rect")
@@ -18,7 +18,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 		.attr("opacity", "0.9")
 
 
-    // Add the datetime 
+    // Add the datetime
 
     var date = new Date(current_timestamp);
     var options = { weekday: 'long', month: 'short', day: 'numeric' , hour: 'numeric', timeZoneName:'short'};
@@ -27,29 +27,32 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 		.append("text")
 		.html(date)
 		.attr("x", w-0.5*w)
-		.attr("y", 0.035*h)			
+		.attr("y", 0.035*h)
 		.attr("font-family", "sans-serif")
 		.attr("font-family", "Helvetica")
 		.attr("font-size", 0.03*h+"px")
 		.attr("fill", "#cccccc")
 		.attr("id", "statsID");
 
-    // This is atctions the tooltip for the stats at the top 
+    // This is atctions the tooltip for the stats at the top
     // of the skewT window
-    d3.select("#skewTd3")	
-	    .on("mousemove", wind_tooltip);
-	   
+    // d3.select("#skewTd3")
+	//     .on("mousemove", wind_tooltip);
+    onmousemove = function(e){wind_tooltip(e.clientX, e.clientY)}
 
-	function wind_tooltip() {
+
+	function wind_tooltip(x,y) {
         svg.select("#statsID").remove();
-		// Creates the stats at the top of the plugin window. 
-		var y = d3.mouse(this)[1] - y_offset;		
+		// Creates the stats at the top of the plugin window.
+		//var y = d3.mouse(this)[1] - y_offset;
+        y = y - y_offset
 		var logP = (y/barbsh)*(Math.log(1050)-Math.log(150)) + Math.log(150);
+
 		var P = Math.exp(logP);
 
-		var widx = closest(Pascent, P);			 																
+		var widx = closest(Pascent, P);
         var wdir = get_winddir(U[widx], V[widx]);
-		var WSpeed = 1.943*Math.sqrt(Math.pow(U[widx],2) + Math.pow(V[widx],2));										
+		var WSpeed = 1.943*Math.sqrt(Math.pow(U[widx],2) + Math.pow(V[widx],2));
 		var z = -10.0*Math.log(P/Pascent[0]);
 
 
@@ -58,7 +61,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 			.append("text")
 			.html(Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
 			.attr("x", w-0.5*w)
-			.attr("y", 0.035*h)			
+			.attr("y", 0.035*h)
 			.attr("font-family", "sans-serif")
 			.attr("font-family", "Helvetica")
 			.attr("font-size", 0.03*h+"px")
@@ -67,8 +70,8 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 	}
 
 
-	// Wrapping function to run the draw_windbarbs() function 
-	// for each pressure level. Set to draw one every 50hPa.	
+	// Wrapping function to run the draw_windbarbs() function
+	// for each pressure level. Set to draw one every 50hPa.
     window.svgbarbs = svg.append("rect")
         .attr('x', w)
         .attr("height", barbsh)
@@ -77,15 +80,15 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
         .attr("opacity", 0.9)
         .attr('id', 'barbsd3');
 
-	for (var pp = 200; pp <= 1000; pp=pp+50) { 
-		var widx = closest(Pascent, pp);								
-		draw_windbarbs(Pascent[widx], U[widx], V[widx]);		
+	for (var pp = 200; pp <= 1000; pp=pp+50) {
+		var widx = closest(Pascent, pp);
+		draw_windbarbs(Pascent[widx], U[widx], V[widx]);
 	};
 
 
-	function draw_windbarbs(P, U, V)  { 
-        // Function to draw the wind barbs. Each barb has its own predefined vector path. 
-		// You can scale the windbarb size with "scale". Paths for each barb windspeed here. 
+	function draw_windbarbs(P, U, V)  {
+        // Function to draw the wind barbs. Each barb has its own predefined vector path.
+		// You can scale the windbarb size with "scale". Paths for each barb windspeed here.
 	    var scale = 0.1;
 	    var barb05 = "m 0,0 200,0 m -20,0 25,35";
 		var barb10 = "m 0,0 200,0 m 0,0 50,70";
@@ -105,9 +108,9 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 		var Nobarb = "";
 
 		// Now calculate the stats based on the pixel location of the mouse pointer
-		var VPpx = barbsh*(Math.log(P)-Math.log(cminP))/(Math.log(cmaxP)-Math.log(cminP));		
+		var VPpx = barbsh*(Math.log(P)-Math.log(cminP))/(Math.log(cmaxP)-Math.log(cminP));
         var wdir = get_winddir(U, V);
-		var WSpeed = 1.943*Math.sqrt(Math.pow(U,2) + Math.pow(V,2));									
+		var WSpeed = 1.943*Math.sqrt(Math.pow(U,2) + Math.pow(V,2));
 
 		// Choose the appropriate barb for each pressure level
 		if (WSpeed < 7.5) {
@@ -143,12 +146,12 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 		}
 
 		if (wdir >=0 && wdir <=360) {
-			// draw the barb								
-	 	    svg.append("path")  						
+			// draw the barb
+	 	    svg.append("path")
 			    .attr("stroke", "#cccccc")
 			    .style("stroke-width", "17px")
 			    .attr("fill", "#cccccc")
-			    .attr("d", barbie)		
+			    .attr("d", barbie)
 			    .attr("transform", "translate("+(w+barbsw/2)+","+VPpx+") rotate("+(wdir-90)+",0,0) scale("+scale+")  ");
 	    };
 	};
