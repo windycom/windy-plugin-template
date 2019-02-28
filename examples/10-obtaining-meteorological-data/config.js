@@ -3,4 +3,4 @@ module.exports = {
 	hook: 'menu',
 	className: 'plugin-lhpane plugin-mobile-fullscreen',
 	exclusive: 'lhpane',
-}
+};

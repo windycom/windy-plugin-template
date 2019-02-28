@@ -7,4 +7,4 @@ module.exports = {
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js'
   ]
 
-}
+};

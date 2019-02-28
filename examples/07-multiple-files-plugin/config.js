@@ -22,4 +22,4 @@ module.exports = {
   attachPoint: '.leaflet-popup-pane',
   attachPointMobile: '#plugins' // for mobile devices
 
-}
+};

@@ -19,4 +19,4 @@ module.exports = {
   attachPoint: '#map_container .leaflet-popup-pane',
   attachPointMobile: '#plugins' // for mobile devices
 
-}
+};
