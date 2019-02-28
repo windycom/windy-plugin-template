@@ -15,106 +15,103 @@
 	<script>
 
 	// Windy's core modules
-	import rs from '@windy/rootScope'
-	import map from '@windy/map'
-	import store from '@windy/store'
-	import pluginDataLoader from '@windy/pluginDataLoader'
-	import _ from '@windy/utils'
+	import rs from '@windy/rootScope';
+	import map from '@windy/map';
+	import pluginDataLoader from '@windy/pluginDataLoader';
+	import _ from '@windy/utils';
 
 	// Our own modules
-	import graph from './soundingGraph.mjs'
+	import graph from './soundingGraph.mjs';
 
 	const options  = {
 		key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx'
 		, plugin: 'windy-plugin-examples'
-	}
+	};
 
-	const load = pluginDataLoader(options)
+	const load = pluginDataLoader(options);
 
-	var marker = null
+	var marker = null;
 
 	// Called when opened
 	this.onopen = latLonObject => {
-    let lat, lon
+    let lat, lon;
 
     // Opening from other location than contextmenu
     if(!latLonObject) {
-      const c = map.getCenter()
-      lat = c.lat
-      lon = c.lng
+      const c = map.getCenter();
+      lat = c.lat;
+      lon = c.lng;
     } else {
-      lat = latLonObject.lat
-      lon = latLonObject.lon
+      lat = latLonObject.lat;
+      lon = latLonObject.lon;
     }
 
 		const leafletCoords = { lng: lon, lat }
-		, { x,y } = map.latLngToLayerPoint(leafletCoords)
-
-		let product = store.get('product')
+		, { x,y } = map.latLngToLayerPoint(leafletCoords);
 
 		if(!rs.isMobile ) {
 
-			this.node.style.position = 'absolute'
-			this.node.style.left = `${ x - 15 }px`
-			this.node.style.top = `${ y + 15 }px`
+			this.node.style.position = 'absolute';
+			this.node.style.left = `${ x - 15 }px`;
+			this.node.style.top = `${ y + 15 }px`;
 
 		} else {
 
-			let height = this.node.clientHeight
+			let height = this.node.clientHeight;
 
 			map.center({lat,lon}, false )
-				.panBy( [ 0, - 0.5 * height + 50 ] )
+				.panBy( [ 0, - 0.5 * height + 50 ] );
 
 		}
 
 		if( marker ) {
 
-			marker.setLatLng( leafletCoords )
+			marker.setLatLng( leafletCoords );
 
 		} else {
 
 			marker = L.marker( leafletCoords,
 					{ 	icon: map.myMarkers.pulsatingIcon,
 						zIndexOffset: -300 }
-					).addTo(map)
+					).addTo(map);
 
 		}
 
 		// Load d3 library from external source
 		if(!( 'd3' in window ) ) {
 			_.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js')
-				.then( () => initAndLoad(lat,lon) )
+				.then( () => initAndLoad(lat,lon) );
 		} else {
-			initAndLoad(lat,lon)
+			initAndLoad(lat,lon);
 		}
 
 		this.node.oncontextmenu
 		= this.node.ondblclick
-		= this.node.onclick = ev => ev.stopPropagation()
+		= this.node.onclick = ev => ev.stopPropagation();
 
-	}
+	};
 
 	const initAndLoad = (lat,lon) => {
 		const dataOptions = {
 			model: 'ecmwf'
 			, lat
 			, lon
-		}
+		};
 
-		graph.init( this.refs )
+		graph.init( this.refs );
 
 		load('airData', dataOptions).then( (airData) => {
-			graph.load(lat,lon, airData.data)
-		})
-	}
+			graph.load(lat,lon, airData.data);
+		});
+	};
 
 	// Called when closed
 	this.onclose = () => {
 		if( marker ) {
-			map.removeLayer( marker )
-			marker = null
+			map.removeLayer( marker );
+			marker = null;
 		}
-	}
+	};
 
 	</script>
 </sounding>

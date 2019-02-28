@@ -1,6 +1,6 @@
 <plugin>
 	<script>
-	import map from '@windy/map'
+	import map from '@windy/map';
 
     const MARKER = encodeURI(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -18,7 +18,7 @@
       });
 
       let markers = []
-      , lines = []
+      , lines = [];
 
       const updateIconStyle = () => {
         for (const marker of markers) {
@@ -29,7 +29,7 @@
             }
           }
         }
-      }
+      };
 
     const load = () => {
 
@@ -38,7 +38,7 @@
         .then(result => result.result)
         .then(result => {
 
-            let hue = 0
+            let hue = 0;
 
             for (const boatName of Object.keys(result)) {
 
@@ -51,9 +51,9 @@
                 weight: 2,
               }).addTo(map);
 
-              layer.on('mouseover', () => layer.setStyle({ weight: 4 }) )
+              layer.on('mouseover', () => layer.setStyle({ weight: 4 }) );
 
-              layer.on('mouseout', () => layer.setStyle({ weight: 2 }) )
+              layer.on('mouseout', () => layer.setStyle({ weight: 2 }) );
 
               const marker = L.marker(boat.track[boat.track.length - 1], {
                 icon: BoatIcon,
@@ -63,49 +63,49 @@
               marker._icon.setAttribute('data-heading', boat.heading);
               marker.bindPopup(boatName);
 
-              lines.push(layer)
+              lines.push(layer);
 
               updateIconStyle();
             }
         })
-        .catch( console.error )
+        .catch( console.error );
 
-    }
+    };
 
     const remove = () => {
-    	markers.forEach( l => map.removeLayer(l) )
-    	lines.forEach( l => map.removeLayer(l) )
-    	markers = []
-    	lines = []
-    }
+    	markers.forEach( l => map.removeLayer(l) );
+    	lines.forEach( l => map.removeLayer(l) );
+    	markers = [];
+    	lines = [];
+    };
 
 
-    let hasHooks = false
+    let hasHooks = false;
 
     this.onopen = () => {
-    	if( hasHooks ) return
+    	if( hasHooks ) return;
 
-    	load()
+    	load();
 
-	    map.on('zoom', updateIconStyle)
-    	map.on('zoomend', updateIconStyle)
-    	map.on('viewreset', updateIconStyle)
-    	hasHooks = true
+	    map.on('zoom', updateIconStyle);
+    	map.on('zoomend', updateIconStyle);
+    	map.on('viewreset', updateIconStyle);
+    	hasHooks = true;
 
-    	map.setView([ 14, -29 ], 4 )
+    	map.setView([ 14, -29 ], 4 );
 
-    }
+    };
 
     this.onclose = () => {
-    	if(!hasHooks) return
+    	if(!hasHooks) return;
 
-    	remove()
+    	remove();
 
-	    map.off('zoom', updateIconStyle)
-    	map.off('zoomend', updateIconStyle)
-    	map.off('viewreset', updateIconStyle)
-    	hasHooks = false
-    }
+	    map.off('zoom', updateIconStyle);
+    	map.off('zoomend', updateIconStyle);
+    	map.off('viewreset', updateIconStyle);
+    	hasHooks = false;
+    };
 
 	</script>
 </plugin>

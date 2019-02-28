@@ -3,20 +3,20 @@
 	<script>
 
 	// Windy API modules are imported via '@windy/nameOfModule'
-	import map from '@windy/map'
+	import map from '@windy/map';
 
 	/*
 	This part of code will be executed just once, since
 	plugin remains 'mounted' in a page even after	closing
 	*/
-	console.log('I am being mounted')
+	console.log('I am being mounted');
 
-	let popup = null
+	let popup = null;
 
 	//	this.onopen method is called when your plugin is being opened
 	this.onopen = () => {
 
-		const center = map.getCenter()
+		const center = map.getCenter();
 
 		/*
 			this.ononpen method can be called repeatedly (without your plugin
@@ -25,7 +25,7 @@
 		*/
 		if( popup ) {
 
-			popup.setLatLng(center)
+			popup.setLatLng(center);
 
 		} else {
 
@@ -34,7 +34,7 @@
             		.setContent("Hello World")
             		.openOn( map );
 		}
-	}
+	};
 
 	/*
 		this.onclose method is called when your plugin is being closed
@@ -45,10 +45,10 @@
 	*/
 	this.onclose = () => {
 		if( popup ) {
-			map.removeLayer( popup )
-			popup = null
+			map.removeLayer( popup );
+			popup = null;
 		}
-	}
+	};
 
 	</script>
 </plugin>

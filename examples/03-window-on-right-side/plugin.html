@@ -18,41 +18,41 @@
 	</div>
 	<script>
 
-	import map from '@windy/map'
+	import map from '@windy/map';
 
-	let geoJSON = null
+	let geoJSON = null;
 
 	//	Whenever your plugin is mounted, all elements with 'data-ref'
 	//	attributes are exposed in this.refs object
-	this.refs.fpl1.onclick = () => loadFpl('fpl1')
-	this.refs.fpl2.onclick = () => loadFpl('fpl2')
-	this.refs.fpl3.onclick = () => loadFpl('fpl3')
+	this.refs.fpl1.onclick = () => loadFpl('fpl1');
+	this.refs.fpl2.onclick = () => loadFpl('fpl2');
+	this.refs.fpl3.onclick = () => loadFpl('fpl3');
 
-	this.onclose = () => removeFpl()
+	this.onclose = () => removeFpl();
 
 	const loadFpl = file => {
 
-		removeFpl()
+		removeFpl();
 
 		fetch(`https://www.windy.com/img/windy-plugins/${ file }.json`)
 			.then(response => response.json())
 	        .then( result => {
 
-				geoJSON = L.geoJson( result ).addTo(map)
+				geoJSON = L.geoJson( result ).addTo(map);
 
-				const bounds = geoJSON.getBounds()
+				const bounds = geoJSON.getBounds();
 
-				map.fitBounds( bounds )
+				map.fitBounds( bounds );
 
-	        })
-	}
+	        });
+	};
 
 	const removeFpl = () => {
 		if(geoJSON) {
-			map.removeLayer(geoJSON)
-			geoJSON = null
+			map.removeLayer(geoJSON);
+			geoJSON = null;
 		}
-	}
+	};
 
 	</script>
 </plugin>

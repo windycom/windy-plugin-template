@@ -16,7 +16,8 @@
         "cordova": true,
         "riot": true,
         "opts": true,
-        "d3": true
+        "d3": true,
+        "omnivore": true
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -28,5 +29,8 @@
         "no-console":"off",
         "no-undef-init":"error",
         "no-undef":"error"
-    }
+    },
+    "plugins": [
+      "html"
+    ]
 }
