@@ -1,14 +1,11 @@
 <plugin>
+  <b>This plugin will rock</b>
 
-	<b>This plugin will rock</b>
+  <script>
+    console.log("I am mounted to the page");
 
-	<script>
+    this.onopen = () => console.log("I am opened");
 
-	console.log('I am mounted to the page')
-
-	this.onopen = () => console.log('I am opened')
-
-	this.onclose = () => console.log('I am being closed')
-
-	</script>
+    this.onclose = () => console.log("I am being closed");
+  </script>
 </plugin>

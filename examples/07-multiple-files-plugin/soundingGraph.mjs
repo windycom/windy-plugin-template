@@ -53,7 +53,9 @@ const convertAlt = value =>
   Math.round(overlays.cloudtop.metric === "ft" ? value * 3.28084 : value);
 
 const init = _refs => {
-  if (svg) return;
+  if (svg) {
+    return;
+  }
 
   svg = d3.select("#sounding-chart").append("svg");
 
@@ -398,14 +400,18 @@ function updateWindBarbs() {
 }
 
 function updateInfoLine() {
-  if (currentData.length == 0) return;
+  if (currentData.length == 0) {
+    return;
+  }
 
   const gh = yScale.invert(currentMouseY);
 
   const infoLine = svg.select(".infoLine");
   let idx = currentData.findIndex(pt => pt.gh > gh);
 
-  if (idx == -1) idx = currentData.length - 1;
+  if (idx == -1) {
+    idx = currentData.length - 1;
+  }
 
   let pt = null;
   if (idx == 0) {
@@ -466,7 +472,9 @@ function updateInfoBox() {
 function dragStarted() {
   moveInfoLine(d3.mouse(this));
 
-  if (rs.isMobile || rs.isTablet) d3.event.stopPropagation();
+  if (rs.isMobile || rs.isTablet) {
+    d3.event.stopPropagation();
+  }
 }
 
 function dragged() {
@@ -485,7 +493,9 @@ function dragged() {
     svg.select(".infoLine").style("display", "none");
   }
 
-  if (rs.isMobile || rs.isTablet) d3.event.stopPropagation();
+  if (rs.isMobile || rs.isTablet) {
+    d3.event.stopPropagation();
+  }
 }
 
 function moveInfoLine(coords) {
@@ -500,7 +510,9 @@ function moveInfoLine(coords) {
 }
 
 const setXScale = () => {
-  if (!pointData.data) return;
+  if (!pointData.data) {
+    return;
+  }
 
   let range = [Number.MAX_VALUE, Number.MIN_VALUE];
 
@@ -517,7 +529,9 @@ const setXScale = () => {
   }
 
   // Apply graph zoom
-  if (zoomIn) range[0] = 0.5 * (range[0] + range[1]);
+  if (zoomIn) {
+    range[0] = 0.5 * (range[0] + range[1]);
+  }
 
   xScale.domain(range);
 
@@ -530,7 +544,9 @@ const setXScale = () => {
 };
 
 const setYScale = () => {
-  if (!pointData.data) return;
+  if (!pointData.data) {
+    return;
+  }
 
   let range = [Number.MAX_VALUE, Number.MIN_VALUE];
   for (let hour in pointData.data) {
@@ -543,7 +559,9 @@ const setYScale = () => {
   }
 
   // Apply graph zoom
-  if (zoomIn) range[1] = 0.5 * (range[0] + range[1]);
+  if (zoomIn) {
+    range[1] = 0.5 * (range[0] + range[1]);
+  }
 
   yScale.domain(range);
 
@@ -564,13 +582,17 @@ const load = (lat, lon, airData) => {
   const surface = {};
   for (let param in airData.data) {
     let m = param.match(/(.+)-(?:(.+)h|surface)/); // param-level
-    if (!m) continue;
+    if (!m) {
+      continue;
+    }
 
     // Surface layer
     if (!m[2]) {
       airData.data[param].forEach((value, i) => {
         const hour = airData.data.hours[i];
-        if (!surface[hour]) surface[hour] = {};
+        if (!surface[hour]) {
+          surface[hour] = {};
+        }
         surface[hour][m[1]] = value;
       });
       continue;
@@ -579,8 +601,12 @@ const load = (lat, lon, airData) => {
     // Pressure layers
     airData.data[param].forEach((value, i) => {
       const hour = airData.data.hours[i];
-      if (!map[hour]) map[hour] = {};
-      if (!map[hour][m[2]]) map[hour][m[2]] = {};
+      if (!map[hour]) {
+        map[hour] = {};
+      }
+      if (!map[hour][m[2]]) {
+        map[hour][m[2]] = {};
+      }
       map[hour][m[2]][m[1]] = value;
     });
   }
@@ -598,7 +624,9 @@ const load = (lat, lon, airData) => {
 
       levelData.level = +level;
 
-      if (!res[hour]) res[hour] = [];
+      if (!res[hour]) {
+        res[hour] = [];
+      }
       res[hour].push(levelData);
     }
     res[hour].sort((a, b) => a.gh - b.gh);

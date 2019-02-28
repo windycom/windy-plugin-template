@@ -22,13 +22,16 @@
     "extends": "eslint:recommended",
     "rules": {
         "indent":"off",
-        "semi": "error",
-        "no-mixed-spaces-and-tabs":"off",
-        "no-fallthrough":"off",
+        "curly": ["error", "all"],
+        "dot-location": ["error", "property"],
         "no-cond-assign":"off",
         "no-console":"off",
+        "no-fallthrough":"off",
+        "no-mixed-spaces-and-tabs":"off",
+        "no-multi-spaces": "error",
         "no-undef-init":"error",
-        "no-undef":"error"
+        "no-undef":"error",
+        "semi": "error"
     },
     "plugins": [
       "html"

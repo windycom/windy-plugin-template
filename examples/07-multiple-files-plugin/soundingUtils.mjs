@@ -17,14 +17,20 @@ const almostEqual = (a, b) => Math.abs(a - b) < 0.000001;
 
 // Bilinear interpolation between two data arrays
 function interpolateArray(data1, data2, w) {
-  if (almostEqual(w, 0)) return _.clone(data1);
-  if (almostEqual(w, 1)) return _.clone(data2);
+  if (almostEqual(w, 0)) {
+    return _.clone(data1);
+  }
+  if (almostEqual(w, 1)) {
+    return _.clone(data2);
+  }
 
   const data = [];
   for (let lev = 0; lev < data1.length; ++lev) {
     // Some levels may be missing (corrupted data) except ground level
     let d2 = lev == 0 ? data2[0] : data2.find(d => d.level == data1[lev].level);
-    if (!d2) continue;
+    if (!d2) {
+      continue;
+    }
     data.push(interpolatePoint(data1[lev], d2, w));
   }
 
@@ -33,8 +39,12 @@ function interpolateArray(data1, data2, w) {
 
 // Bilinear interpolation between two data points
 function interpolatePoint(point1, point2, w) {
-  if (almostEqual(w, 0)) return _.clone(point1);
-  if (almostEqual(w, 1)) return _.clone(point2);
+  if (almostEqual(w, 0)) {
+    return _.clone(point1);
+  }
+  if (almostEqual(w, 1)) {
+    return _.clone(point2);
+  }
 
   const interp = {};
   const keys = Object.keys(point1);
@@ -55,16 +65,22 @@ function intersection(line1, line2) {
   }
 
   var d = (y2 - y1) * (x4 - x3) - (x2 - x1) * (y4 - y3);
-  if (!d) return null; // Lines are parallel
+  if (!d) {
+    return null;
+  } // Lines are parallel
 
   var t = ((x2 - x1) * (y3 - y1) + (y2 - y1) * (x1 - x3)) / d;
-  if (t < 0 || t > 1) return null; // Intersection is out of line1
+  if (t < 0 || t > 1) {
+    return null;
+  } // Intersection is out of line1
 
   var px = x3 + t * (x4 - x3);
   var py = y3 + t * (y4 - y3);
 
   var s = x2 - x1 ? (px - x1) / (x2 - x1) : (py - y1) / (y2 - y1);
-  if (s < 0 || s > 1) return null; // Intersetion is out of line2
+  if (s < 0 || s > 1) {
+    return null;
+  } // Intersetion is out of line2
 
   return [px, py];
 }
@@ -76,7 +92,9 @@ function dataIntersection(line, polyline, getPoint) {
       getPoint(polyline[i]),
       getPoint(polyline[i + 1]),
     ]);
-    if (pt) return pt;
+    if (pt) {
+      return pt;
+    }
   }
 
   return null;
@@ -106,7 +124,9 @@ function addWindBarb(g, x, y, dir, speed) {
     var dy = -scale;
 
     // Shift 5 kn barb
-    if (knots5 == 1) dy += d;
+    if (knots5 == 1) {
+      dy += d;
+    }
 
     // Flags
     if (knots5 >= 10) {

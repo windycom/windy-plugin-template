@@ -34,7 +34,9 @@
 
     //	this.onopen method is called when your plugin is being opened
     this.onopen = () => {
-      if (hasHooks) return;
+      if (hasHooks) {
+        return;
+      }
 
       // Change overlay programatically
       timer = setInterval(() => {

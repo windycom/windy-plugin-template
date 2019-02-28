@@ -80,7 +80,9 @@
     let hasHooks = false;
 
     this.onopen = () => {
-      if (hasHooks) return;
+      if (hasHooks) {
+        return;
+      }
 
       load();
 
@@ -93,7 +95,9 @@
     };
 
     this.onclose = () => {
-      if (!hasHooks) return;
+      if (!hasHooks) {
+        return;
+      }
 
       remove();
 
