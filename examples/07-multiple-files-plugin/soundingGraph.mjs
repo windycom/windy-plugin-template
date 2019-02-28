@@ -5,7 +5,6 @@ import $ from '@windy/$'
 import _ from '@windy/utils'
 
 import sUtils from './soundingUtils.mjs'
-import soundingData from './soundingData.mjs'
 
 let svg = null
 
@@ -112,7 +111,7 @@ const init = _refs => {
 		.attr('opacity', 0.5)
 		.attr('transform', `translate(${ chartWidth - 10 }, 0)`)
 
-	var pressureGrid = chartArea.append('g')
+	const pressureGrid = chartArea.append('g')
 		.attr('class', 'pressureGrid')
 
 	pressureLines.forEach(level => {
@@ -155,7 +154,7 @@ const init = _refs => {
 	    .attr('x', 0)
 	    .attr('y', -4)
 
-	var auxLines = chartArea.append('g')
+	const auxLines = chartArea.append('g')
 		.attr('class', 'auxLines')
 		.attr('opacity', 0.3)
 
@@ -269,7 +268,7 @@ function switchZoom(ev) {
 
 function updatePressureGrid() {
 	pressureLines.forEach(level => {
-		var pt = currentData.find(pt => pt.level == level)
+		const pt = currentData.find(pt => pt.level == level)
 		if(!pt) {
 			svg.select(`.pressureGrid .l${level}`)
 				.style('display', 'none')
@@ -285,10 +284,10 @@ function updatePressureGrid() {
 }
 
 function calcCurrentInfo() {
-	var p1 = currentData[0] // Ground point
-	var p2 = currentData[currentData.length - 1] // Highest point
+	const p1 = currentData[0] // Ground point
+	const p2 = currentData[currentData.length - 1] // Highest point
 
-	var humidityLine = [[p1.dewpoint, p1.gh],
+	const humidityLine = [[p1.dewpoint, p1.gh],
 		[p1.dewpoint - 0.002 * (p2.gh - p1.gh), p2.gh]] // 0.2°C / 100m
 
 	// Convective condensation level intersection
@@ -306,11 +305,11 @@ function calcCurrentInfo() {
 }
 
 function updateAuxLines() {
-	var p1 = currentData[0] // Ground point
-	var p2 = currentData[currentData.length - 1] // Highest point
+	const p1 = currentData[0] // Ground point
+	const p2 = currentData[currentData.length - 1] // Highest point
 
 	// Line of the same specific humidity
-	var humidityLine = [[p1.dewpoint, p1.gh],
+	const humidityLine = [[p1.dewpoint, p1.gh],
 		[p1.dewpoint - 0.002 * (p2.gh - p1.gh), p2.gh]] // 0.2°C / 100m
 
 	svg.select(`.auxLines .humidityLine`)
@@ -319,7 +318,7 @@ function updateAuxLines() {
 		.attr('x2', xScale(humidityLine[1][0]))
 		.attr('y2', yScale(humidityLine[1][1]))
 
-	var ccl = currentInfo.ccl
+	const ccl = currentInfo.ccl
 
 	if(ccl) {
 		svg.select(`.auxLines .cclDryAdiabat`)
@@ -347,12 +346,12 @@ function updateAuxLines() {
 function updateWindBarbs() {
 	svg.selectAll('.windbarb').remove()
 
-	var windProfile = svg.select('.windProfile')
+	const windProfile = svg.select('.windProfile')
 
-	var lastY = 0
+	let lastY = 0
 	for(let i = 0; i < currentData.length; ++i) {
-		var wind = _.wind2obj([ currentData[i].wind_u, currentData[i].wind_v ])
-		var y = yScale(currentData[i].gh)
+		const wind = _.wind2obj([ currentData[i].wind_u, currentData[i].wind_v ])
+		const y = yScale(currentData[i].gh)
 		if(!i || Math.abs(y - lastY) > 15) { // Min distance to reduce barbs overlapping
 			sUtils.addWindBarb(windProfile, 0, y, wind.dir, wind.wind)
 			lastY = y
@@ -363,10 +362,10 @@ function updateWindBarbs() {
 function updateInfoLine() {
 	if(currentData.length == 0) return
 
-	var gh = yScale.invert(currentMouseY)
+	const gh = yScale.invert(currentMouseY)
 
-	var infoLine = svg.select('.infoLine')
-	var idx = currentData.findIndex(pt => pt.gh > gh)
+	const infoLine = svg.select('.infoLine')
+	const idx = currentData.findIndex(pt => pt.gh > gh)
 
 	if(idx == -1) idx = currentData.length - 1
 
@@ -379,7 +378,7 @@ function updateInfoLine() {
 		pt = sUtils.interpolatePoint(p1, p2, (gh - p1.gh) / (p2.gh - p1.gh))
 	}
 
-	var wind = _.wind2obj([ pt.wind_u, pt.wind_v ])
+	const wind = _.wind2obj([ pt.wind_u, pt.wind_v ])
 
 	infoLine.select('.alt').text(
 		`${convertAlt(Math.round(pt.gh))}${overlays.cloudtop.metric}`
@@ -409,7 +408,7 @@ function dragStarted() {
 
 function dragged() {
 	const margin = 20
-	var coords = d3.mouse(this)
+	const coords = d3.mouse(this)
 
 	if(coords[0] >= -margin && coords[0] < chartWidth + margin
 		&& coords[1] >= -margin && coords[1] < chartHeight + margin) {
@@ -436,13 +435,14 @@ function moveInfoLine(coords) {
 const setXScale = () => {
 	if(!pointData.data) return
 
-	var range = [Number.MAX_VALUE, Number.MIN_VALUE]
+	let range = [Number.MAX_VALUE, Number.MIN_VALUE]
 
 	// Create range from all timestamps
+	// pt.dewpoint <= pt.temp by definition
 	for(let hour in pointData.data) {
-		let minMax = pointData.data[hour].reduce(
-			(acc, pt) => [ Math.min(acc[0], pt.temp, pt.dewpoint),
-			Math.max(acc[1], pt.temp, pt.dewpoint) ], range)
+		const minMax = pointData.data[hour].reduce(
+			(acc, pt) => [ Math.min(acc[0], pt.dewpoint),
+			Math.max(acc[1], pt.temp) ], range)
 
 		range[0] = Math.min(range[0], minMax[0])
 		range[1] = Math.max(range[1], minMax[1])
@@ -462,7 +462,7 @@ const setXScale = () => {
 const setYScale = () => {
 	if(!pointData.data) return
 
-	var range = [Number.MAX_VALUE, Number.MIN_VALUE]
+	let range = [Number.MAX_VALUE, Number.MIN_VALUE]
 	for(let hour in pointData.data) {
 		let minMax = pointData.data[hour].reduce((acc, pt) => {
 			return [ Math.min(acc[0], pt.gh), Math.max(acc[1], pt.gh) ]
@@ -483,23 +483,21 @@ const setYScale = () => {
 }
 
 // Handler for data request
-const load = (product, lat, lon ) => {
+const load = (lat, lon, airData ) => {
 
 	pointData.lat = lat
 	pointData.lon = lon
 
-	let data = soundingData
-
-	var map = {}
-	var surface = {}
-	for(let param in data.data) {
+	const map = {}
+	const surface = {}
+	for(let param in airData.data) {
 		let m = param.match(/(.+)-(?:(.+)h|surface)/) // param-level
 		if(!m) continue
 
 		// Surface layer
 		if(!m[2]) {
-			data.data[param].forEach((value, i) => {
-				let hour = data.data.hours[i]
+			airData.data[param].forEach((value, i) => {
+				const hour = airData.data.hours[i]
 				if(!surface[hour]) surface[hour] = {}
 				surface[hour][m[1]] = value
 			})
@@ -507,8 +505,8 @@ const load = (product, lat, lon ) => {
 		}
 
 		// Pressure layers
-		data.data[param].forEach((value, i) => {
-			let hour = data.data.hours[i]
+		airData.data[param].forEach((value, i) => {
+			const hour = airData.data.hours[i]
 			if(!map[hour]) map[hour] = {}
 			if(!map[hour][m[2]]) map[hour][m[2]] = {}
 			map[hour][m[2]][m[1]] = value
@@ -516,10 +514,12 @@ const load = (product, lat, lon ) => {
 	}
 
 	// Set geopotential height of the surface to model elevation
-	for(let hour in surface) surface[hour].gh = data.header.modelElevation
+	for(let hour in surface) {
+		surface[hour].gh = airData.header.modelElevation
+	}
 
 	// Transform level objects to sorted arrays, convert values
-	var res = {}
+	const res = {}
 	for(let hour in map) {
 		for(let level in map[hour]) {
 			let levelData = map[hour][level]
@@ -535,7 +535,7 @@ const load = (product, lat, lon ) => {
 	// Skip data under the ground, add the ground point
 	for(let hour in res) {
 		let hourData = res[hour]
-		let idx = hourData.findIndex(pt => pt.gh > data.header.modelElevation)
+		const idx = hourData.findIndex(pt => pt.gh > airData.header.modelElevation)
 
 		// All levels are under the ground or last level is at the ground
 		if(idx == -1) {
@@ -549,11 +549,12 @@ const load = (product, lat, lon ) => {
 	}
 
 	pointData.data = res
-	pointData.elevation = data.header.elevation
-	pointData.modelElevation = data.header.modelElevation
+	pointData.elevation = airData.header.elevation
+	pointData.modelElevation = airData.header.modelElevation
 
 	updateSettings()
 
+	store.on('timestamp', redraw)
 }
 
 // Shows/hides nodata label
@@ -583,12 +584,12 @@ const redraw = () => {
 		return
 	}
 
-	var ts = store.get('timestamp')
+	const ts = store.get('timestamp')
 
 	// Find nearest hour
-	var hours = Object.keys(pointData.data).map(Number).sort()
-	var ts1 = 0, ts2 = 0
-	var idx = hours.findIndex(x => x >= ts)
+	const hours = Object.keys(pointData.data).sort((a, b) => a - b)
+	let ts1, ts2
+	const idx = hours.findIndex(x => x >= ts)
 
 	if(idx == 0) {
 		ts1 = ts2 = hours[0]
@@ -629,4 +630,4 @@ const redraw = () => {
 		.attr('d', dewPointLine)
 }
 
-export default { redraw, load, updateSettings, init }
+export default { load, init }

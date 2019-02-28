@@ -18,10 +18,18 @@
 	import rs from '@windy/rootScope'
 	import map from '@windy/map'
 	import store from '@windy/store'
+	import pluginDataLoader from '@windy/pluginDataLoader'
 	import _ from '@windy/utils'
 
 	// Our own modules
 	import graph from './soundingGraph.mjs'
+
+	const options  = {
+		key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx'
+		, plugin: 'windy-plugin-examples'
+	}
+
+	const load = pluginDataLoader(options)
 
 	var marker = null
 
@@ -75,9 +83,9 @@
 		// Load d3 library from external source
 		if(!( 'd3' in window ) ) {
 			_.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js')
-				.then( () => initAndLoad(product,lat,lon) )
+				.then( () => initAndLoad(lat,lon) )
 		} else {
-			initAndLoad(product,lat,lon)
+			initAndLoad(lat,lon)
 		}
 
 		this.node.oncontextmenu
@@ -86,9 +94,18 @@
 
 	}
 
-	const initAndLoad = (product,lat,lon) => {
+	const initAndLoad = (lat,lon) => {
+		const dataOptions = {
+			model: 'ecmwf'
+			, lat
+			, lon
+		}
+
 		graph.init( this.refs )
-		graph.load(product,lat,lon)
+
+		load('airData', dataOptions).then( (airData) => {
+			graph.load(lat,lon, airData.data)
+		})
 	}
 
 	// Called when closed
