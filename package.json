@@ -29,5 +29,9 @@
     "prompts": "^1.1.1",
     "riot-compiler": "^3.5.1",
     "ucfirst": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.14.1",
+    "prettier": "1.16.4"
   }
 }
