@@ -1,33 +1,29 @@
-@import 'dev/variables.less';
+@import "dev/variables.less";
 
 #windy-plugin-examples {
-	font-size: 12px;
-	padding: .5em .7em;
-	line-height: 2;
-	z-index: 100;
-	position: absolute;
+  font-size: 12px;
+  padding: 0.5em 0.7em;
+  line-height: 2;
+  z-index: 100;
+  position: absolute;
 
-	width: 300px;
-	height: 300px;
-	margin-left: -10px;
+  width: 300px;
+  height: 300px;
+  margin-left: -10px;
 
-	// Closing-x is by default hidden
-	.closing-x {
-		display: block;
-	}
+  // Closing-x is by default hidden
+  .closing-x {
+    display: block;
+  }
 
-	/*
+  /*
 		On mobile devices plugin will be inserted into #plugins
 		and will be fixed on a page
 
 		.mobile() is handy less function replacing complex media query
 	*/
-	.mobile({
-		display: block;
-		left: 0;
-		top: 0;
-		right: 0;
-		width: ~"calc(100% - 20px)";
-		margin: 10px;
-	});
+  .mobile(
+    {display: block; left: 0; top: 0; right: 0; width: ~"calc(100% - 20px)" ;
+      margin: 10px;}
+  );
 }

@@ -1,4 +1,4 @@
 module.exports = {
-	displayName: 'Boat tracker',
-	hook: 'menu',
+  displayName: "Boat tracker",
+  hook: "menu",
 };

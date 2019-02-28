@@ -1,63 +1,61 @@
 <plugin>
+  <div class="mobile-header">This is title for mobile devices</div>
 
-	<div class="mobile-header">This is title for mobile devices</div>
+  <div class="plugin-content">
+    <h2>Plugin on the left side</h2>
 
-	<div class="plugin-content">
+    <p>
+      Use left side window to present larger amount of information. Check the
+      plugin in mobile phone display to see effect of 'plugin-mobile-fullscreen'
+      class
+    </p>
 
-		<h2>Plugin on the left side</h2>
+    <p>This plugin also demonstrates:</p>
 
-		<p>Use left side window to present larger amount of information. Check the plugin
-		in mobile phone display to see effect of 'plugin-mobile-fullscreen' class</p>
+    <p>
+      1) Receiving broadcasted messages. Open your console, to see console.log
+      messages
+    </p>
 
-		<p>This plugin also demonstrates:</p>
+    <p>2) Using store to programatically change overlay</p>
+  </div>
+  <script>
+    import bcast from "@windy/broadcast";
+    import store from "@windy/store";
 
-		<p>1) Receiving broadcasted messages. Open your console, to see console.log messages</p>
+    let hasHooks = false,
+      timer = null;
 
-		<p>2) Using store to programatically change overlay</p>
+    let overlays = ["rain", "wind", "temp", "clouds"],
+      i = 0;
 
-	</div>
-	<script>
+    const log = params =>
+      console.log('Received "redrawFinished" bcast', params);
 
-	import bcast from '@windy/broadcast';
-	import store from '@windy/store';
+    //	this.onopen method is called when your plugin is being opened
+    this.onopen = () => {
+      if (hasHooks) return;
 
-	let hasHooks = false
-	, timer = null;
+      // Change overlay programatically
+      timer = setInterval(() => {
+        i = i === 3 ? 0 : i + 1;
+        store.set("overlay", overlays[i]);
+      }, 2000);
 
-	let overlays = ['rain','wind','temp','clouds']
-    , i = 0;
+      // Observe the change
+      bcast.on("redrawFinished", log);
 
-    const log = params => console.log('Received "redrawFinished" bcast',params);
+      hasHooks = true;
+    };
 
-	//	this.onopen method is called when your plugin is being opened
-	this.onopen = () => {
+    this.onclose = () => {
+      if (hasHooks) {
+        clearInterval(timer);
 
-		if(hasHooks) return;
+        bcast.off("redrawFinished", log);
 
-		// Change overlay programatically
-		timer = setInterval( ()=> {
-           	i = ( i === 3 ? 0 : i + 1 );
-           	store.set('overlay', overlays[ i ] );
-       	}, 2000);
-
-       	// Observe the change
-        bcast.on('redrawFinished', log );
-
-        hasHooks = true;
-
-	};
-
-	this.onclose = () => {
-		if( hasHooks ) {
-
-			clearInterval( timer );
-
-	        bcast.off('redrawFinished', log );
-
-	        hasHooks = false;
-
-		}
-	};
-
-	</script>
+        hasHooks = false;
+      }
+    };
+  </script>
 </plugin>

@@ -1,117 +1,105 @@
 <sounding>
-	<h3>This is my plugin (not official Windy's graph)</h3>
-	<div id="sounding-chart"></div>
-	<section>
-		<span data-ref="tcon"></span>
-		<span data-ref="ccl"></span>
-		<span data-ref="lcl"></span>
-	</section>
-	<section>
-		<span data-ref="model"></span>
-		<span data-ref="alt"></span>
-		<span data-ref="modelAlt"></span>
-	</section>
-	<div class="iconfont clickable-size" data-ref="zoom">&#xe03d;</div>
-	<script>
+  <h3>This is my plugin (not official Windy's graph)</h3>
+  <div id="sounding-chart"></div>
+  <section>
+    <span data-ref="tcon"></span>
+    <span data-ref="ccl"></span>
+    <span data-ref="lcl"></span>
+  </section>
+  <section>
+    <span data-ref="model"></span>
+    <span data-ref="alt"></span>
+    <span data-ref="modelAlt"></span>
+  </section>
+  <div class="iconfont clickable-size" data-ref="zoom">&#xe03d;</div>
+  <script>
+    // Windy's core modules
+    import rs from "@windy/rootScope";
+    import map from "@windy/map";
+    import pluginDataLoader from "@windy/pluginDataLoader";
+    import _ from "@windy/utils";
 
-	// Windy's core modules
-	import rs from '@windy/rootScope';
-	import map from '@windy/map';
-	import pluginDataLoader from '@windy/pluginDataLoader';
-	import _ from '@windy/utils';
+    // Our own modules
+    import graph from "./soundingGraph.mjs";
 
-	// Our own modules
-	import graph from './soundingGraph.mjs';
+    const options = {
+      key: "RxcwkWO2XWsfEbdidcsskbyWqhToAwLx",
+      plugin: "windy-plugin-examples",
+    };
 
-	const options  = {
-		key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx'
-		, plugin: 'windy-plugin-examples'
-	};
+    const load = pluginDataLoader(options);
 
-	const load = pluginDataLoader(options);
+    var marker = null;
 
-	var marker = null;
+    // Called when opened
+    this.onopen = latLonObject => {
+      let lat, lon;
 
-	// Called when opened
-	this.onopen = latLonObject => {
-    let lat, lon;
+      // Opening from other location than contextmenu
+      if (!latLonObject) {
+        const c = map.getCenter();
+        lat = c.lat;
+        lon = c.lng;
+      } else {
+        lat = latLonObject.lat;
+        lon = latLonObject.lon;
+      }
 
-    // Opening from other location than contextmenu
-    if(!latLonObject) {
-      const c = map.getCenter();
-      lat = c.lat;
-      lon = c.lng;
-    } else {
-      lat = latLonObject.lat;
-      lon = latLonObject.lon;
-    }
+      const leafletCoords = { lng: lon, lat },
+        { x, y } = map.latLngToLayerPoint(leafletCoords);
 
-		const leafletCoords = { lng: lon, lat }
-		, { x,y } = map.latLngToLayerPoint(leafletCoords);
+      if (!rs.isMobile) {
+        this.node.style.position = "absolute";
+        this.node.style.left = `${x - 15}px`;
+        this.node.style.top = `${y + 15}px`;
+      } else {
+        let height = this.node.clientHeight;
 
-		if(!rs.isMobile ) {
+        map.center({ lat, lon }, false).panBy([0, -0.5 * height + 50]);
+      }
 
-			this.node.style.position = 'absolute';
-			this.node.style.left = `${ x - 15 }px`;
-			this.node.style.top = `${ y + 15 }px`;
+      if (marker) {
+        marker.setLatLng(leafletCoords);
+      } else {
+        marker = L.marker(leafletCoords, {
+          icon: map.myMarkers.pulsatingIcon,
+          zIndexOffset: -300,
+        }).addTo(map);
+      }
 
-		} else {
+      // Load d3 library from external source
+      if (!("d3" in window)) {
+        _.loadScript("https://unpkg.com/d3@5.7.0/dist/d3.min.js").then(() =>
+          initAndLoad(lat, lon)
+        );
+      } else {
+        initAndLoad(lat, lon);
+      }
 
-			let height = this.node.clientHeight;
+      this.node.oncontextmenu = this.node.ondblclick = this.node.onclick = ev =>
+        ev.stopPropagation();
+    };
 
-			map.center({lat,lon}, false )
-				.panBy( [ 0, - 0.5 * height + 50 ] );
+    const initAndLoad = (lat, lon) => {
+      const dataOptions = {
+        model: "ecmwf",
+        lat,
+        lon,
+      };
 
-		}
+      graph.init(this.refs);
 
-		if( marker ) {
+      load("airData", dataOptions).then(airData => {
+        graph.load(lat, lon, airData.data);
+      });
+    };
 
-			marker.setLatLng( leafletCoords );
-
-		} else {
-
-			marker = L.marker( leafletCoords,
-					{ 	icon: map.myMarkers.pulsatingIcon,
-						zIndexOffset: -300 }
-					).addTo(map);
-
-		}
-
-		// Load d3 library from external source
-		if(!( 'd3' in window ) ) {
-			_.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js')
-				.then( () => initAndLoad(lat,lon) );
-		} else {
-			initAndLoad(lat,lon);
-		}
-
-		this.node.oncontextmenu
-		= this.node.ondblclick
-		= this.node.onclick = ev => ev.stopPropagation();
-
-	};
-
-	const initAndLoad = (lat,lon) => {
-		const dataOptions = {
-			model: 'ecmwf'
-			, lat
-			, lon
-		};
-
-		graph.init( this.refs );
-
-		load('airData', dataOptions).then( (airData) => {
-			graph.load(lat,lon, airData.data);
-		});
-	};
-
-	// Called when closed
-	this.onclose = () => {
-		if( marker ) {
-			map.removeLayer( marker );
-			marker = null;
-		}
-	};
-
-	</script>
+    // Called when closed
+    this.onclose = () => {
+      if (marker) {
+        map.removeLayer(marker);
+        marker = null;
+      }
+    };
+  </script>
 </sounding>

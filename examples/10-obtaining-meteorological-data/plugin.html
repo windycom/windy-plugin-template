@@ -1,76 +1,73 @@
 <plugin>
+  <div class="mobile-header">This is title for mobile devices</div>
 
-	<div class="mobile-header">This is title for mobile devices</div>
+  <div class="plugin-content">
+    <h2>Loading data from Windy API</h2>
 
-	<div class="plugin-content">
+    <p>
+      This plugin demonstrates communication with backend API and retrieving
+      varions parameters
+    </p>
 
-		<h2>Loading data from Windy API</h2>
+    <p>
+      1) Get your API key <a hrer="https://api4.windy.com/api-key/">here</a>.
+      Ignore "Allowed domains" fields.
+    </p>
 
-		<p>This plugin demonstrates communication with backend API and retrieving varions parameters</p>
+    <p>2) Use <b>@windy/pluginDataLoader</b> module to retrieve the data.</p>
 
-		<p>1) Get your API key <a hrer="https://api4.windy.com/api-key/">here</a>. Ignore "Allowed domains" fields.</p>
+    <hr />
 
-		<p>2) Use <b>@windy/pluginDataLoader</b> module to retrieve the data.</p>
+    <p>Forecast data:</p>
+    <p data-ref="forecast" class="size-xxs"></p>
 
-		<hr>
+    <hr />
 
-		<p>Forecast data:</p>
-		<p data-ref="forecast" class="size-xxs"></p>
+    <p>Air data:</p>
+    <p data-ref="airData" class="size-xxs"></p>
 
-		<hr>
+    <hr />
 
-		<p>Air data:</p>
-		<p data-ref="airData" class="size-xxs"></p>
+    <p>
+      Do you want to add additional data to our backend API? Let us know
+      <a href="https://community.windy.com/category/21/windy-plugins">here</a>
+    </p>
+  </div>
+  <script>
+    import pluginDataLoader from "@windy/pluginDataLoader";
+    import map from "@windy/map";
 
-		<hr>
+    const options = {
+      key: "RxcwkWO2XWsfEbdidcsskbyWqhToAwLx",
+      plugin: "windy-plugin-examples",
+    };
 
-		<p>Do you want to add additional data to our backend API? Let us know <a href="https://community.windy.com/category/21/windy-plugins">here</a></p>
+    // Create new dataLoder instance
+    const load = pluginDataLoader(options);
 
-	</div>
-	<script>
+    this.onopen = () => {
+      map.setView([50, 14]);
 
-	import pluginDataLoader from '@windy/pluginDataLoader';
-	import map from '@windy/map';
+      // dataLoader accepts object with all required parameters
+      const dataOptions = {
+        model: "ecmwf",
+        lat: 50,
+        lon: 14,
+      };
 
-	const options  = {
-		key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx'
-		, plugin: 'windy-plugin-examples'
-	};
+      // Loads point forecast for lat, lon
+      load("forecast", dataOptions).then(({ data }) => {
+        this.refs.forecast.innerHTML = JSON.stringify(data);
 
-	// Create new dataLoder instance
-	const load = pluginDataLoader( options );
+        console.log(data);
+      });
 
-	this.onopen = () => {
+      // Loads air data for lat, lon
+      load("airData", dataOptions).then(({ data }) => {
+        this.refs.airData.innerHTML = JSON.stringify(data);
 
-		map.setView([50,14]);
-
-		// dataLoader accepts object with all required parameters
-		const dataOptions = {
-			model: 'ecmwf'
-			, lat: 50
-			, lon: 14
-		};
-
-		// Loads point forecast for lat, lon
-		load('forecast', dataOptions ).then( ({data}) => {
-
-			this.refs.forecast.innerHTML = JSON.stringify( data );
-
-			console.log( data );
-
-		});
-
-		// Loads air data for lat, lon
-		load('airData',dataOptions).then( ({data}) => {
-
-			this.refs.airData.innerHTML = JSON.stringify( data );
-
-			console.log( data );
-
-		});
-
-	};
-
-
-	</script>
+        console.log(data);
+      });
+    };
+  </script>
 </plugin>

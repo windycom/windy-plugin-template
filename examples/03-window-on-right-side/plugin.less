@@ -1,56 +1,51 @@
-
-@import 'dev/variables.less';
+@import "dev/variables.less";
 
 @widthOfMyPlugin: 180px;
 
 .onwindy-plugin-examples {
-	.right-border {
-		right: @widthOfMyPlugin;
-	}
-	.mobileTablet({
-		#search,
-		#detail,
-		#user,
-		#logo-wrapper,
-		#login,
-		#plugin-picker,
-		#open-in-app,
-		#bottom {
-			display: none !important;
-		}
-	});
+  .right-border {
+    right: @widthOfMyPlugin;
+  }
+  .mobileTablet(
+    {#search,
+    #detail,
+    #user,
+    #logo-wrapper,
+    #login,
+    #plugin-picker,
+    #open-in-app,
+    #bottom {display: none;}}
+  ) !important;
 }
 
 #windy-plugin-examples {
-	width: @widthOfMyPlugin;
+  width: @widthOfMyPlugin;
+  z-index: 10;
+
+  .closing-x {
+    left: initial;
+    font-size: 30px;
     z-index: 10;
+    top: 0;
+  }
 
-	.closing-x {
-		left: initial;
-		font-size: 30px;
-		z-index: 10;
-		top: 0;
-	}
+  .plugin-content {
+    padding: 15px 10px;
+    color: white;
+    font-size: 12px;
+    line-height: 1.6;
 
-	.plugin-content {
+    background-color: #343d4f;
 
-		padding: 15px 10px;
-    	color: white;
-    	font-size: 12px;
-    	line-height: 1.6;
-
-    	background-color: #343d4f;
-
-    	ul {
-    		margin: 10px 0;
-    		li {
-    			text-decoration: underline;
-    		}
-    	}
-
-    	small {
-    		display: block;
-    	}
-
+    ul {
+      margin: 10px 0;
+      li {
+        text-decoration: underline;
+      }
     }
+
+    small {
+      display: block;
+    }
+  }
 }
