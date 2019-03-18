@@ -125,7 +125,11 @@ Example:
 ## Module: store
 All major parametrs and settings are stored inside `store`. It is sophisticated key, value store that checks your input for validity and maintains integrity of all the parameters.
 
-Use methods `get` to read value from store, `set` to change value in the store and `on` to observe change of the value. Some of the items respond to method `getAllowed` to return array of allowed values.
+Use methods `get` to read value from store, `set` to change value in the store.
+
+Use the `on` method to observe the changes of a value. You should remember to call `off` to cancel the subscription when you do not need it any more, for example when a plugin gets closed. `off` takes a single argument which is the subscription id returned by `on`.
+
+Some of the items respond to method `getAllowed` to return array of allowed values.
 
 Method `set` returns `true` if provided value was valid and was actually changed.
 
@@ -142,10 +146,13 @@ Example:
   store.set('overlay','rain')
   // true ... Metric was changed to rain
 
-  store.on('overlay', ovr => {
+  var subscriptionId = store.on('overlay', ovr => {
   // Message will be emited only if value is valid and actually changed
   console.log('Wow, overlay has been chnaged to', ovr)
-})
+  })
+  
+  // Remember to cancel the subscription when it is no more needed
+  store.off(subscriptionId)
 ```
 
 ### Main items stored in store
