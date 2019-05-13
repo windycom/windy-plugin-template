@@ -301,7 +301,7 @@ picker.on('pickerClosed', () => {
 ```
 
 ### Converting raw meteorological values to readable numbers
-Raw meteorological units returned frpm weather picker are usually described in respective documentation for `ECMWF`, `GFS` or other used forecast models.
+Raw meteorological units returned frpm weather picker are usually described in respective documentation for `GFS` or other used forecast models.
 
 Most popular overlays have these values:
 
@@ -384,7 +384,7 @@ to API.
 Data loader function returns a Promise, that resolves into `{ status, data }` object.
 
 `forecast` and `airData` types require object `{ lat, lon, model }`. Following models are supported:
-`gfs, ecmwf, ecmwfWaves, gfsWaves, namConus, namHawaii, namAlaska, iconEu`.
+`gfs, gfsWaves, namConus, namHawaii, namAlaska, iconEu`.
 
 Example:
 ```js
@@ -398,7 +398,7 @@ Example:
 
   // dataLoader accepts object with all required parameters
   const dataOptions = {
-    model: 'ecmwf',
+    model: 'gfs',
     lat: 50,
     lon: 14
   }

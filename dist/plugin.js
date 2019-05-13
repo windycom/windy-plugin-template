@@ -41,7 +41,7 @@ function () {
   this.onopen = function () {
     map.setView([50, 14]);
     var dataOptions = {
-      model: 'ecmwf',
+      model: 'gfs',
       lat: 50,
       lon: 14
     };
