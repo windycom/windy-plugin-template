@@ -1,4 +1,4 @@
-function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
+function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 	/* cbarbs creates the windbarbs in the skewT. It takes the Pressure profile,
 	and horizontal winds in the U (east) and V (north) directions as inputs. Included
 	is a tooltip that populates a bar showing the atitude , pressure, windspeed,
@@ -25,7 +25,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
     date = date.toLocaleDateString("en-US", options);
 	svg.append("g")
 		.append("text")
-		.html(date)
+		.html(dataOptions.model.toUpperCase()+'  '+date)
 		.attr("x", w-0.5*w)
 		.attr("y", 0.035*h)
 		.attr("font-family", "sans-serif")
@@ -34,7 +34,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
 		.attr("fill", "#cccccc")
 		.attr("id", "statsID");
 
-    // This is atctions the tooltip for the stats at the top
+    // This is actions the tooltip for the stats at the top
     // of the skewT window
     // d3.select("#skewTd3")
 	//     .on("mousemove", wind_tooltip);
@@ -59,7 +59,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp) {
         // Fill the text in using another g layer
 		svg.append("g")
 			.append("text")
-			.html(Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
+			.html(dataOptions.model.toUpperCase()+'   '+Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
 			.attr("x", w-0.5*w)
 			.attr("y", 0.035*h)
 			.attr("font-family", "sans-serif")

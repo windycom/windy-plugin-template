@@ -1,10 +1,17 @@
 <plugin>
 
+    <div class="leaflet-top leaflet-left">
+        <button class="button-closer" id="closebutton" >&#x2715</button>
+    </div>
+    <div class="leaflet-top leaflet-left" style="font-size: 15pt" id="introtext">
+        <p>Click on a location to open a skewT...</p>
+    </div>
+
+
     <!-- load dependent scripts -->
     <script src=src/skewT.js></script>
     <script src=src/wind_barbs.js></script>
     <script src=src/Sample_data.json.js></script>
-
 
 	<script>
 
@@ -32,28 +39,36 @@
 
     // Set global variables for window size. These will
     // need to optimised later.
-    window.w = 0.8*window.innerHeight;
-    window.h = 0.7*window.innerHeight;
+    function set_dimensions() {
+        window.w = 0.8*window.innerHeight;
+        window.h = 0.7*window.innerHeight;
 
-    window.barbsw = 0.08*w;
-    window.barbsh = h;
+        window.barbsw = 0.08*w;
+        window.barbsh = h;
 
-    window.x_offset = 50;
-    window.y_offset = 90;
+        window.x_offset = 50;
+        window.y_offset = 90;
 
-
+        window.PickerOn = false;
+    }
+    set_dimensions();
+    document.onresize = set_dimensions();
+    
     const options  = {
         key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
         plugin: 'windy-plugin-skewt'
     }
 
-
-
     const load = pluginDataLoader( options )
+
 
     // Run the plugin based on invoking the picker
  	const activate_SkewT = latLon => {
         let { lat, lon } = picker.getParams()
+        window.PickerOn = true;
+        set_dimensions();
+        var introtext = document.getElementById('introtext')
+        introtext.style.visibility = "hidden";
 
         // There's a bug in the API here. If you select a different
         // model, the old model stays there until you do something else
@@ -65,18 +80,23 @@
             lon: lon
         }
 
+        if (store.get('product')=='ecmwf') {
+            dataOptions.model = 'gfs'
+            console.log("ECMWF isn't currently available; using GFS")
+        }
+
 
         // load up a an array with a timeseries of the surface
         // pressure using the 'forecast' API call.
-        load('forecast', dataOptions ).then( ({data}) => {
+        load('forecast', dataOptions).then( ({data}) => {
      	    window.Pressure = []
 			for (const key of Object.keys(data.data)) {
 				for (var i = 0;i<data.data[key].length;i++) {
-			    	//console.log(data.data[key][i].pressure);
 			    	Pressure.push(data.data[key][i].pressure/100)
 				}
 			}
         });
+
 
         //Load point forecast for lat, lon.
 		load('airData', dataOptions ).then( ({data}) => {
@@ -100,15 +120,15 @@
 		    // draw the skewT and the windbarbs. These functions are stored
 	        // in dedicated files.
 	        draw_skewT(Pascent, Tascent, Tdascent);
-	        cbarbs(Pascent, Tascent,  U, V, current_timestamp);
+	        cbarbs(Pascent, Tascent,  U, V, current_timestamp, dataOptions);
 
 		});
 	}
 
     // As the picker appears or moves, draw the SkewT at the new latlon point
-    picker.on('pickerOpened', activate_SkewT )
+    picker.on('pickerOpened', activate_SkewT)
     picker.on('pickerMoved', activate_SkewT )
-    store.on('timestamp', activate_SkewT)
+    store.on('timestamp', function () { if (PickerOn) {activate_SkewT(); }})
 
 
     // On drag, dont redraw the skewT but do move the window to follow the drag
@@ -119,7 +139,10 @@
 
     // close the skewT when the picker is closed
     const close_skewT = () => {
-		d3.select("#skewTbox").remove()
+		d3.select("#skewTbox").remove();
+        window.PickerOn = false;
+        var close_button = document.getElementById('closebutton')
+        close_button.style.visibility = "hidden";
     }
     picker.on('pickerClosed', close_skewT )
 

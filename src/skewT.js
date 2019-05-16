@@ -38,11 +38,24 @@ function cskewT(Pascent, Tascent, Tdascent) {
         .attr("opacity", 0.8)
         .attr('id', 'skewTd3');
 
-
     // Draw the green isopleths (isobars, isotherms, etc) and then
     // enter the main function to draw the skewT
 	draw_isopleths();
 	skewT_main(Pascent, Tascent, Tdascent);
+    closer_button();
+
+
+
+    function closer_button() {
+        var close_button = document.getElementById('closebutton')
+        close_button.style.visibility = "visible";
+        close_button.addEventListener("click", function() {
+            close_skewT();
+            close_button.style.visibility = "hidden";
+        });
+    }
+
+
 
 	function draw_isopleths() {
 		// call the isopleth functions at discrete intervals

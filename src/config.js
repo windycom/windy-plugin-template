@@ -5,7 +5,7 @@ module.exports = {
 
 	// Place, where opening link to your plugin will appear. So far only
 	// Allowed: 'contextmenu', 'menu'
-	hook: 'menu',
+	hook: 'contextmenu',
 
 	// List of external libraries, taht should be loade before
 	// your plugin is even mounted to the page
