@@ -249,13 +249,12 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 		for (var i = 0; i < P.length; i++) {
 		    var DPDT = wet_adiabat_gradient(-80.0, Pnew, Tnew, dp)
-	 	    var Tnew = Tnew + DPDT[1];
-
+	 	    Tnew = Tnew + DPDT[1];
 		    var T = Tnew + Math.abs(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);
-		    var Pnew = Pnew + DPDT[0];
+		    Pnew = Pnew + DPDT[0];
 
 		};
 		for (i = 0; i < Px.length; i++) {
@@ -385,13 +384,13 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var Px=[];
 		for (var i = 0; i < P.length; i++) {
 		    var DPDT = dry_adiabat_gradient(Tbase, Pnew, Tnew, dp)
-	 	    var Tnew = Tnew + DPDT[1];
+	 	    Tnew = Tnew + DPDT[1];
 
 		    var T = Tnew + Math.abs(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);
-		    var Pnew = Pnew + DPDT[0];
+		    Pnew = Pnew + DPDT[0];
 
 		};
 		// skew the isotherms
