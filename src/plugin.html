@@ -35,7 +35,7 @@
 	* Dec 2018
 	*
 	*************************************************************************/
-
+    var PickerOn = false;
 
     // Set global variables for window size. These will
     // need to optimised later.
@@ -48,11 +48,8 @@
 
         window.x_offset = 50;
         window.y_offset = 90;
-
-        window.PickerOn = false;
     }
     set_dimensions();
-    document.onresize = set_dimensions();
 
     const options  = {
         key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
@@ -65,14 +62,11 @@
     // Run the plugin based on invoking the picker
  	const activate_SkewT = latLon => {
         let { lat, lon } = picker.getParams()
-        window.PickerOn = true;
+        PickerOn = true;
+
         set_dimensions();
         var introtext = document.getElementById('introtext')
         introtext.style.visibility = "hidden";
-
-        // There's a bug in the API here. If you select a different
-        // model, the old model stays there until you do something else
-        // console.log(store.get('product'))
 
         const dataOptions = {
             model: store.get('product'),
@@ -140,7 +134,7 @@
     // close the skewT when the picker is closed
     const close_skewT = () => {
 		d3.select("#skewTbox").remove();
-        window.PickerOn = false;
+        PickerOn = false;
         var close_button = document.getElementById('closebutton')
         close_button.style.visibility = "hidden";
     }
