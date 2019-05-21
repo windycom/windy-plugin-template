@@ -1,6 +1,6 @@
 {
   "name": "windy-plugin-skewt",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A plugin to plot skewT-logP diagrams in windy.com",
   "main": "dist/plugin.js",
   "scripts": {

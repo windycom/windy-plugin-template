@@ -36,12 +36,13 @@
 	*
 	*************************************************************************/
     var PickerOn = false;
+    var Pressure;
 
     // Set global variables for window size. These will
     // need to optimised later.
     function set_dimensions() {
-        window.w = 0.8*window.innerHeight;
-        window.h = 0.7*window.innerHeight;
+        window.w = 0.65*window.innerHeight;
+        window.h = 0.6*window.innerHeight;
 
         window.barbsw = 0.08*w;
         window.barbsh = h;
@@ -74,16 +75,16 @@
             lon: lon
         }
 
-        if (store.get('product')=='ecmwf') {
-            dataOptions.model = 'gfs'
-            console.log("ECMWF isn't currently available; using GFS")
-        }
+        // if (store.get('product')=='ecmwf') {
+        //     dataOptions.model = 'gfs'
+        //     console.log("ECMWF isn't currently available; using GFS")
+        // }
 
 
         // load up a an array with a timeseries of the surface
         // pressure using the 'forecast' API call.
         load('forecast', dataOptions).then( ({data}) => {
-     	    window.Pressure = []
+     	    Pressure = []
 			for (const key of Object.keys(data.data)) {
 				for (var i = 0;i<data.data[key].length;i++) {
 			    	Pressure.push(data.data[key][i].pressure/100)

@@ -25,8 +25,8 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
     date = date.toLocaleDateString("en-US", options);
 	svg.append("g")
 		.append("text")
-		.html(dataOptions.model.toUpperCase()+'  '+date)
-		.attr("x", w-0.5*w)
+		.html(dataOptions.model.toUpperCase()+'\xa0\xa0\xa0'+date)
+		.attr("x", w-0.54*w)
 		.attr("y", 0.035*h)
 		.attr("font-family", "sans-serif")
 		.attr("font-family", "Helvetica")
@@ -59,8 +59,8 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
         // Fill the text in using another g layer
 		svg.append("g")
 			.append("text")
-			.html(dataOptions.model.toUpperCase()+'   '+Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
-			.attr("x", w-0.5*w)
+			.html(dataOptions.model.toUpperCase()+'\xa0\xa0\xa0'+Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
+			.attr("x", w-0.54*w)
 			.attr("y", 0.035*h)
 			.attr("font-family", "sans-serif")
 			.attr("font-family", "Helvetica")
