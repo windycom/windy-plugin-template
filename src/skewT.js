@@ -1,12 +1,10 @@
-function cskewT(Pascent, Tascent, Tdascent) {
+function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     /*
     Main function for drawing the skewT. Depends heavily on D3.js
     */
 
     // P represents the pressure level within the diagram, it's stitched to the
     // top and bottom of the diagram at 150hPa and 1050hPa
-	var startpressure = 1050;
-	var endpressure = 150;
 	var P = [startpressure];
 	var dp = -10;
 	var pressure = startpressure;
@@ -18,8 +16,13 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	// This sets the limits of the skewT, and therefore its shape.
 	// At the moment, the skewT is positioned such that the left
 	// corner is 50C less than the surface temperature.
-	var minT = Tascent[0]-50.0;
-	var maxT = minT+80;
+    if (zoomed) {
+        var minT = Tascent[0]-18.0;
+    	var maxT = minT+25;
+    } else {
+    	var minT = Tascent[0]-50.0;
+    	var maxT = minT+80;
+    }
 	var minP = P[P.length-1];
 	var maxP = P[0];
 
@@ -43,8 +46,6 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	draw_isopleths();
 	skewT_main(Pascent, Tascent, Tdascent);
     closer_button();
-
-
 
     function closer_button() {
         var close_button = document.getElementById('closebutton')
@@ -141,7 +142,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 
 		   //// T
 			for (var i = 0; i < Pascent.length; i++) {
-			    var Tnew = Tascent[i] + Math.abs(minT);
+			    var Tnew = Tascent[i] + -1*(minT);
 			    var Tpx = w*Tnew/(maxT-minT);
 			    var Ppx = h*(Math.log(Pascent[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 			    Px.push([Tpx, Ppx]);
@@ -151,7 +152,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 			};
 		  /////  Td
 			for (i = 0; i < Pascent.length; i++) {
-			    var Tnew = Tdascent[i] + Math.abs(minT);
+			    var Tnew = Tdascent[i] + -1*(minT);
 			    var Tdpx = w*Tnew/(maxT-minT);
 			    var Ppx = h*(Math.log(Pascent[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 			    Pdx.push([Tdpx, Ppx]);
@@ -188,10 +189,8 @@ function cskewT(Pascent, Tascent, Tdascent) {
 	same way. Basically, I use the size of the bounding box to convert meteorological
 	variables to pixel coordinates. Temperature lines are skewed by 45 degrees after this
 	conversion,	and pressures are placed on a log scale. The adiabats are drawn based on a
-	numerical solution to the thermodynamic equations that convern them. Then the
-	arrays are plotted with d3.js. For some reason, I couldn't make the isopleth label
-	text work in the windy plugin, though it does work in tephigrams.org. Hopefully I can
-	fix this later, so I'll leave the code in for now.
+	numerical solution to the thermodynamic equations that govern them. Then the
+	arrays are plotted with d3.js.
 	*/
 
 	function draw_isobar(Pconst) {
@@ -200,7 +199,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var Temps = [minT, maxT];
 		// convert to pixel coordinates
 		for (var i = 0; i < Pt.length; i++) {
-			var T = Temps[i] + Math.abs(minT);
+			var T = Temps[i] + -1*(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(Pt[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 
@@ -250,7 +249,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		for (var i = 0; i < P.length; i++) {
 		    var DPDT = wet_adiabat_gradient(-80.0, Pnew, Tnew, dp)
 	 	    Tnew = Tnew + DPDT[1];
-		    var T = Tnew + Math.abs(minT);
+		    var T = Tnew + -1*(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);
@@ -275,7 +274,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		var Px=[];
 		// convert to pixel coordinates
 		for (var i = 0; i < P.length; i++) {
-			var T = temp + Math.abs(minT);
+			var T = temp + -1*(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 			Px.push([Tpx, Ppx]);
@@ -321,7 +320,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 			var logthing = Math.pow((Math.log(es/6.11)),(-1.0))
 			var temp = Math.pow(((17.269/237.3)*(logthing - (1.0/17.269)) ),(-1.0)	)
 
-			var T = temp + Math.abs(minT);
+			var T = temp + -1*(minT);
 			var Tpx = w*T/(maxT-minT);
 			var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 
@@ -386,7 +385,7 @@ function cskewT(Pascent, Tascent, Tdascent) {
 		    var DPDT = dry_adiabat_gradient(Tbase, Pnew, Tnew, dp)
 	 	    Tnew = Tnew + DPDT[1];
 
-		    var T = Tnew + Math.abs(minT);
+		    var T = Tnew + -1*(minT);
 		    var Tpx = w*T/(maxT-minT);
 		    var Ppx = h*(Math.log(P[i])-Math.log(minP))/(Math.log(maxP)-Math.log(minP));
 		    Px.push([Tpx, Ppx]);

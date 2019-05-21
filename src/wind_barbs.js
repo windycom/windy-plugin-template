@@ -1,4 +1,4 @@
-function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
+function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, cminP) {
 	/* cbarbs creates the windbarbs in the skewT. It takes the Pressure profile,
 	and horizontal winds in the U (east) and V (north) directions as inputs. Included
 	is a tooltip that populates a bar showing the atitude , pressure, windspeed,
@@ -6,8 +6,8 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 
 
 	// set up the pressure scale and process the wind arrays
-	var cminP = 150.0;
-	var cmaxP = 1050.0;
+	// var cminP = 500.0;
+	// var cmaxP = 1050.0;
 
 	// Draw the containing box for the tooltip stats
 	svg.append("rect")
@@ -15,11 +15,10 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 		.attr("height", 0.05*h)
 		.attr("width", 0.55*w)
 		.attr("fill", "#424040")
-		.attr("opacity", "0.9")
+		.attr("opacity", "1.0")
 
 
     // Add the datetime
-
     var date = new Date(current_timestamp);
     var options = { weekday: 'long', month: 'short', day: 'numeric' , hour: 'numeric', timeZoneName:'short'};
     date = date.toLocaleDateString("en-US", options);
@@ -29,7 +28,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 		.attr("x", w-0.54*w)
 		.attr("y", 0.035*h)
 		.attr("font-family", "sans-serif")
-		.attr("font-family", "Helvetica")
+		.attr("font-family", "Arial")
 		.attr("font-size", 0.03*h+"px")
 		.attr("fill", "#cccccc")
 		.attr("id", "statsID");
@@ -46,7 +45,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 		// Creates the stats at the top of the plugin window.
 		//var y = d3.mouse(this)[1] - y_offset;
         y = y - y_offset
-		var logP = (y/barbsh)*(Math.log(1050)-Math.log(150)) + Math.log(150);
+		var logP = (y/barbsh)*(Math.log(cmaxP)-Math.log(cminP)) + Math.log(cminP);
 
 		var P = Math.exp(logP);
 
@@ -63,7 +62,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
 			.attr("x", w-0.54*w)
 			.attr("y", 0.035*h)
 			.attr("font-family", "sans-serif")
-			.attr("font-family", "Helvetica")
+			.attr("font-family", "Arial")
 			.attr("font-size", 0.03*h+"px")
 			.attr("fill", "#cccccc")
 			.attr("id", "statsID");
@@ -77,7 +76,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions) {
         .attr("height", barbsh)
         .attr("width", barbsw)
         .attr("fill", "#424040")
-        .attr("opacity", 0.9)
+        .attr("opacity", 1.0)
         .attr('id', 'barbsd3');
 
 	for (var pp = 200; pp <= 1000; pp=pp+50) {

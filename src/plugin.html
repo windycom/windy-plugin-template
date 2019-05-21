@@ -3,15 +3,20 @@
     <div class="leaflet-top leaflet-left">
         <button class="button-closer" id="closebutton" >&#x2715</button>
     </div>
+    <div class="leaflet-top leaflet-left">
+        <button class="zoomer" id="zoom_out" >&#x1f50d&#x2212</button>
+    </div>
+    <div class="leaflet-top leaflet-left">
+        <button class="zoomer" id="zoom_in" >&#x1f50d&#x2b</button>
+    </div>
     <div class="leaflet-top leaflet-left" style="font-size: 18pt" id="introtext">
-        <p>Click on a location to open a skewT...</p>
+        <p>To display a Skew-T, choose a <br> location and open the picker...</p>
     </div>
 
 
     <!-- load dependent scripts -->
     <script src=src/skewT.js></script>
     <script src=src/wind_barbs.js></script>
-    <script src=src/Sample_data.json.js></script>
 
 	<script>
 
@@ -36,7 +41,9 @@
 	*
 	*************************************************************************/
     var PickerOn = false;
-    var Pressure;
+    var Pressures;
+    var zoomed = false;
+    var startpressure = 1050;
 
     // Set global variables for window size. These will
     // need to optimised later.
@@ -65,6 +72,11 @@
         let { lat, lon } = picker.getParams()
         PickerOn = true;
 
+        if (zoomed) {
+            var endpressure = 600;
+        } else {
+            var endpressure = 150;
+        }
         set_dimensions();
         var introtext = document.getElementById('introtext')
         introtext.style.visibility = "hidden";
@@ -75,19 +87,13 @@
             lon: lon
         }
 
-        // if (store.get('product')=='ecmwf') {
-        //     dataOptions.model = 'gfs'
-        //     console.log("ECMWF isn't currently available; using GFS")
-        // }
-
-
         // load up a an array with a timeseries of the surface
         // pressure using the 'forecast' API call.
         load('forecast', dataOptions).then( ({data}) => {
-     	    Pressure = []
+     	    Pressures = []
 			for (const key of Object.keys(data.data)) {
 				for (var i = 0;i<data.data[key].length;i++) {
-			    	Pressure.push(data.data[key][i].pressure/100)
+			    	Pressures.push(data.data[key][i].pressure/100)
 				}
 			}
         });
@@ -97,10 +103,9 @@
 		load('airData', dataOptions ).then( ({data}) => {
 
             var current_timestamp = store.get('timestamp');
-
             var tidx = gettimestamp(current_timestamp, data.data.hours);
 
-	        var Pascent = [Pressure[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+	        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
 	        var Tdascent = get_data(data, 'dewpoint', tidx);
 	        var Tascent = get_data(data, 'temp', tidx);
 
@@ -114,8 +119,9 @@
 
 		    // draw the skewT and the windbarbs. These functions are stored
 	        // in dedicated files.
-	        draw_skewT(Pascent, Tascent, Tdascent);
-	        cbarbs(Pascent, Tascent,  U, V, current_timestamp, dataOptions);
+	        draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
+	        cbarbs(Pascent, Tascent,  U, V, current_timestamp, dataOptions, startpressure, endpressure);
+            draw_zoom_buttons();
 
 		});
 	}
@@ -138,15 +144,35 @@
         PickerOn = false;
         var close_button = document.getElementById('closebutton')
         close_button.style.visibility = "hidden";
+        var zoomIn = document.getElementById('zoom_in')
+        zoomIn.style.visibility = "hidden";
+        var zoomOut = document.getElementById('zoom_out')
+        zoomOut.style.visibility = "hidden";
     }
-    picker.on('pickerClosed', close_skewT )
+    picker.on('pickerClosed', close_skewT)
 
 
-	function draw_skewT(Pascent, Tascent, Tdascent) {
+	function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
         // When invoked, draw the skewT and also update the position if necessary
-        cskewT(Pascent, Tascent, Tdascent)
+        cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure)
  		translate_obj()
 	};
+
+
+
+    zoom_button();
+    function zoom_button() {
+        var zoomOut = document.getElementById('zoom_out')
+        var zoomIn = document.getElementById('zoom_in')
+        zoomIn.addEventListener("click", function() {
+                zoomed = true;
+                activate_SkewT();
+        });
+        zoomOut.addEventListener("click", function() {
+                zoomed = false;
+                activate_SkewT();
+        });
+    }
 
 
 	function translate_obj() {
@@ -168,24 +194,13 @@
 		};
 	};
 
+    function draw_zoom_buttons() {
+        var zoomOut = document.getElementById('zoom_out')
+        var zoomIn = document.getElementById('zoom_in')
+        zoomOut.style.visibility = "visible";
+        zoomIn.style.visibility = "visible";
+    }
 
-	function closest_latlon(Points, plon, plat) {
-		// Computes the location in the sample data of the closest point
-		// to that requested by the picker.
-		var chosen = 0;
-		var miin = 99999;
-	    for (var i=0; i<Points.length; i++) {
-	        var Gridlon = Points[i].Position.Longitude
-	        var Gridlat = Points[i].Position.Latitude
-	        var d2 = Math.pow(Math.abs(Gridlon-plon), 2) + Math.pow(Math.abs(Gridlat-plat), 2);
-	        var d = Math.sqrt(d2);
-	        if (d < miin) {
-			    chosen = i;
-			    miin = d;
-			}
-	    };
-	    return chosen
-	}
 
     function gettimestamp(current_timestamp, h) {
         var i=0;
