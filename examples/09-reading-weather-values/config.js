@@ -1,4 +1,4 @@
 module.exports = {
-  displayName: "Interpolator",
-  hook: "menu",
+    displayName: 'Interpolator',
+    hook: 'menu',
 };

@@ -1,63 +1,63 @@
 <plugin>
-  <div class="plugin-content">
-    Using excellent <b>Leaflet Omnivore</b>
-    we can display whichever format we want.
+    <div class="plugin-content">
+        Using excellent <b>Leaflet Omnivore</b>
+        we can display whichever format we want.
 
-    <ul data-ref="links"></ul>
-  </div>
-  <script>
-    import map from "@windy/map";
+        <ul data-ref="links"></ul>
+    </div>
+    <script>
+        import map from '@windy/map';
 
-    let layer = null;
+        let layer = null;
 
-    const formats = "csv,gpx,kml,polyline,topojson,wkt".split(",");
+        const formats = 'csv,gpx,kml,polyline,topojson,wkt'.split(',');
 
-    formats.forEach(f => {
-      const el = document.createElement("li");
-      el.className = "clickable-size";
-      el.onclick = loadFile.bind(this, f);
-      el.textContent = `Display ${f.toUpperCase()}`;
-      this.refs.links.appendChild(el);
-    });
+        formats.forEach(f => {
+            const el = document.createElement('li');
+            el.className = 'clickable-size';
+            el.onclick = loadFile.bind(this, f);
+            el.textContent = `Display ${f.toUpperCase()}`;
+            this.refs.links.appendChild(el);
+        });
 
-    this.onclose = () => removeFile();
+        this.onclose = () => removeFile();
 
-    function loadFile(f) {
-      removeFile();
+        function loadFile(f) {
+            removeFile();
 
-      const url = `https://www.windy.com/img/windy-plugins/a.${f}`;
+            const url = `https://www.windy.com/img/windy-plugins/a.${f}`;
 
-      console.log("Loading:", url);
+            console.log('Loading:', url);
 
-      layer = omnivore[f](url).addTo(map);
+            layer = omnivore[f](url).addTo(map);
 
-      switch (f) {
-        case "wkt":
-          map.setView([26, 26], 4);
-          break;
-        case "csv":
-          map.setView([50, 14], 4);
-          break;
-        case "gpx":
-          map.setView([44.9, 6.05], 11);
-          break;
-        case "kml":
-          map.setView([37, -120], 8);
-          break;
-        case "polyline":
-          map.setView([40, -121], 6);
-          break;
-        case "topojson":
-          map.setView([51, 52], 3);
-          break;
-      }
-    }
+            switch (f) {
+                case 'wkt':
+                    map.setView([26, 26], 4);
+                    break;
+                case 'csv':
+                    map.setView([50, 14], 4);
+                    break;
+                case 'gpx':
+                    map.setView([44.9, 6.05], 11);
+                    break;
+                case 'kml':
+                    map.setView([37, -120], 8);
+                    break;
+                case 'polyline':
+                    map.setView([40, -121], 6);
+                    break;
+                case 'topojson':
+                    map.setView([51, 52], 3);
+                    break;
+            }
+        }
 
-    const removeFile = () => {
-      if (layer) {
-        map.removeLayer(layer);
-        layer = null;
-      }
-    };
-  </script>
+        const removeFile = () => {
+            if (layer) {
+                map.removeLayer(layer);
+                layer = null;
+            }
+        };
+    </script>
 </plugin>

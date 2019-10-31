@@ -51,7 +51,7 @@
 
 // Shadows on all sides make font outline
 @outline: -1px -1px 0 rgba(0, 0, 0, 0.45), 1px -1px 0 rgba(0, 0, 0, 0.45),
-  -1px 1px 0 rgba(0, 0, 0, 0.45), 1px 1px 0 rgba(0, 0, 0, 0.45);
+    -1px 1px 0 rgba(0, 0, 0, 0.45), 1px 1px 0 rgba(0, 0, 0, 0.45);
 
 // Height of mobile header
 @headerH: 40px;
@@ -71,88 +71,88 @@
 @tdWidth: 30px;
 
 .iconfont2() {
-  font-family: iconfont;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+    font-family: iconfont;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 }
 
 .icon(@size:12px;@left:0;@top:0;@position:relative) {
-  .iconfont2;
-  position: @position;
-  font-size: @size;
-  left: @left;
-  top: @top;
+    .iconfont2;
+    position: @position;
+    font-size: @size;
+    left: @left;
+    top: @top;
 }
 
 .boxshadow2() {
-  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.8);
 }
 
 .noanim() {
-  -webkit-transition: none;
-  transition: none;
+    -webkit-transition: none;
+    transition: none;
 }
 
 .opacity(@time:0.3s;@delay:0s) {
-  transition: @time opacity @delay;
-  -webkit-transition: @time opacity @delay;
+    transition: @time opacity @delay;
+    -webkit-transition: @time opacity @delay;
 }
 
 .disable() {
-  .opacity();
-  opacity: 0.6;
-  pointer-events: none;
+    .opacity();
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .enable() {
-  opacity: 1;
-  pointer-events: all;
+    opacity: 1;
+    pointer-events: all;
 }
 
 // Retina screen
 .retina( @content ) {
-  @media only screen and (-webkit-min-device-pixel-ratio: 2),
-    only screen and (min--moz-device-pixel-ratio: 2),
-    only screen and (-o-min-device-pixel-ratio: 2/1),
-    only screen and (min-device-pixel-ratio: 2),
-    only screen and (min-resolution: 192dpi),
-    only screen and (min-resolution: 2dppx) {
-    @content();
-  }
+    @media only screen and (-webkit-min-device-pixel-ratio: 2),
+        only screen and (min--moz-device-pixel-ratio: 2),
+        only screen and (-o-min-device-pixel-ratio: 2/1),
+        only screen and (min-device-pixel-ratio: 2),
+        only screen and (min-resolution: 192dpi),
+        only screen and (min-resolution: 2dppx) {
+        @content();
+    }
 }
 
 // Mobile phone
 .mobile( @content ) {
-  @media only screen and (max-device-width: @mobile) {
-    @content();
-  }
+    @media only screen and (max-device-width: @mobile) {
+        @content();
+    }
 }
 
 // Tablet based on CSS in body
 .tablet( @content ) {
-  .tablet-version & {
-    @content();
-  }
+    .tablet-version & {
+        @content();
+    }
 }
 
 // Mobile and tablet together based on @media queries
 .mobileTablet( @content ) {
-  @media screen and (max-device-width: @tablet) {
-    @content();
-  }
+    @media screen and (max-device-width: @tablet) {
+        @content();
+    }
 }
 
 // Desktop only
 .desktop( @content ) {
-  @media only screen and (min-device-width: @mobile) {
-    @content();
-  }
+    @media only screen and (min-device-width: @mobile) {
+        @content();
+    }
 }
 
 // Increasing clickable area
 // DO not forget to move element left/top
 .increaseClickArea( @size: 10px ) {
-  border: @size solid transparent;
-  background-clip: padding-box;
+    border: @size solid transparent;
+    background-clip: padding-box;
 }

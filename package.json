@@ -1,38 +1,38 @@
 {
-  "name": "windy-plugin-examples",
-  "version": "0.5.0",
-  "description": "Windy plugin system enables anyone, with basic knowledge of Javascript to enhance Windy with new functionality (default desc).",
-  "main": "dist/plugin.js",
-  "scripts": {
-    "start": "node ./compiler.js --build --watch --prompt --serve --transpile",
-    "start-dev": "node ./compiler.js --build --watch --serve --transpile",
-    "prepublishOnly": "node ./test/prepublish.js",
-    "test": "node ./test/prepublish.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/windycom/windy-plugins"
-  },
-  "author": "Windyty, S.E.",
-  "license": "MIT",
-  "dependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "chokidar": "^2.0.4",
-    "colorette": "^1.0.6",
-    "commander": "^2.19.0",
-    "consola": "^1.4.4",
-    "decache": "^4.4.0",
-    "express": "^4.16.4",
-    "fs-extra": "^7.0.0",
-    "less": "^3.8.1",
-    "prompts": "^1.1.1",
-    "riot-compiler": "^3.5.1",
-    "ucfirst": "^1.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^5.14.1",
-    "eslint-plugin-html": "^5.0.3",
-    "prettier": "1.16.4"
-  }
+    "name": "windy-plugin-examples",
+    "version": "0.5.0",
+    "description": "Windy plugin system enables anyone, with basic knowledge of Javascript to enhance Windy with new functionality (default desc).",
+    "main": "dist/plugin.js",
+    "scripts": {
+        "start": "node ./compiler.js --build --watch --prompt --serve --transpile",
+        "start-dev": "node ./compiler.js --build --watch --serve --transpile",
+        "prepublishOnly": "node ./test/prepublish.js",
+        "test": "node ./test/prepublish.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/windycom/windy-plugins"
+    },
+    "author": "Windyty, S.E.",
+    "license": "MIT",
+    "dependencies": {
+        "@babel/core": "^7.1.2",
+        "@babel/preset-env": "^7.1.0",
+        "chokidar": "^2.0.4",
+        "colorette": "^1.0.6",
+        "commander": "^2.19.0",
+        "consola": "^1.4.4",
+        "decache": "^4.4.0",
+        "express": "^4.16.4",
+        "fs-extra": "^7.0.0",
+        "less": "^3.8.1",
+        "prompts": "^1.1.1",
+        "riot-compiler": "^3.5.1",
+        "ucfirst": "^1.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^6.6.0",
+        "eslint-plugin-html": "^6.0.0",
+        "prettier": "^1.18.2"
+    }
 }
