@@ -107,7 +107,7 @@ module.exports = {
 ## The life cycle of the plugin
 ### Loading of the plugin
 Whenever Windy loads your plugin, following actions will happen:
-1) You `plugin.js` is loaded into Windy, and function `W.loadPlugin` is executed.
+1) Your `plugin.js` is loaded into Windy, and function `W.loadPlugin` is executed.
 2) Link for opening of your plugin is attached to particular menu (defined as `hook` in `config.js`)
 3) Done, your plugin is now ready to use. Now user must open your plugin by clicking on a hook link.
 
@@ -138,8 +138,8 @@ Resulting html code should look like this:
  3) CSS class `.onwindy-plugin-anyName` is removed from `<body>` element of page
  4) The plugin element gets style `display: none;` after some time
 
-After closing your plugin remains mounted in a page
+After closing, your plugin remains mounted in a page.
 
-Plugins can be closed by clicking on their close button or programatically by broadcasting message `broadcast.emit('rqstClose','name-of-plugin')`
+Plugins can be closed by clicking on their close button or programatically by broadcasting message `broadcast.emit('rqstClose', 'name-of-plugin')`
 
 
