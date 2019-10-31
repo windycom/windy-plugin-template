@@ -7,10 +7,7 @@
     },
     "parserOptions": {
         "ecmaVersion": 2017,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
+        "sourceType": "module"
     },
     "globals": {
         "L": true,
@@ -19,16 +16,24 @@
         "cordova": true,
         "riot": true,
         "opts": true,
-        "d3": true
+        "d3": true,
+        "omnivore": true
     },
     "extends": "eslint:recommended",
     "rules": {
         "indent":"off",
-        "no-mixed-spaces-and-tabs":"off",
-        "no-fallthrough":"off",
+        "curly": ["error", "all"],
+        "dot-location": ["error", "property"],
         "no-cond-assign":"off",
         "no-console":"off",
+        "no-fallthrough":"off",
+        "no-mixed-spaces-and-tabs":"off",
+        "no-multi-spaces": "error",
         "no-undef-init":"error",
-        "no-undef":"error"
-    }
+        "no-undef":"error",
+        "semi": "error"
+    },
+    "plugins": [
+      "html"
+    ]
 }

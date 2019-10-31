@@ -1,54 +1,47 @@
 <plugin>
-	<!-- this Plugin does not have any HTML content -->
-	<script>
+    <!-- this Plugin does not have any HTML content -->
+    <script>
+        // Windy API modules are imported via '@windy/nameOfModule'
+        import map from '@windy/map';
 
-	// Windy API modules are imported via '@windy/nameOfModule'
-	import map from '@windy/map'
+        /*
+            This part of code will be executed just once, since
+            plugin remains 'mounted' in a page even after	closing
+        */
+        console.log('I am being mounted');
 
-	/*
-	This part of code will be executed just once, since
-	plugin remains 'mounted' in a page even after	closing
-	*/
-	console.log('I am being mounted')
+        let popup = null;
 
-	let popup = null
+        //	this.onopen method is called when your plugin is being opened
+        this.onopen = () => {
+            const center = map.getCenter();
 
-	//	this.onopen method is called when your plugin is being opened
-	this.onopen = () => {
+            /*
+                this.ononpen method can be called repeatedly (without your plugin
+                being closed before), so make sure, that you will not to subscribe
+                to any listener twice
+            */
+            if (popup) {
+                popup.setLatLng(center);
+            } else {
+                popup = L.popup()
+                    .setLatLng(center)
+                    .setContent('Hello World')
+                    .openOn(map);
+            }
+        };
 
-		const center = map.getCenter()
+        /*
+            this.onclose method is called when your plugin is being closed
 
-		/*
-			this.ononpen method can be called repeatedly (without your plugin
-			being closed before), so make sure, that you will not to subscribe
-			to any listener twice
-		*/
-		if( popup ) {
-
-			popup.setLatLng(center)
-
-		} else {
-
-			popup = L.popup()
-            		.setLatLng(center)
-            		.setContent("Hello World")
-            		.openOn( map );
-		}
-	}
-
-	/*
-		this.onclose method is called when your plugin is being closed
-
-		Unsubscribe from all your listeners, and remove all your
-		stuff from a map
-
-	*/
-	this.onclose = () => {
-		if( popup ) {
-			map.removeLayer( popup )
-			popup = null
-		}
-	}
-
-	</script>
+            Unsubscribe from all your listeners, and remove all your
+            stuff from a map
+        */
+        this.onclose = () => {
+            if (popup) {
+                map.removeLayer(popup);
+                popup = null;
+            }
+        };
+    </script>
 </plugin>

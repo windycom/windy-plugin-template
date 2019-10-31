@@ -1,35 +1,32 @@
 <plugin>
-	<script>
+    <script>
+        import picker from '@windy/picker';
+        import utils from '@windy/utils';
 
-	import picker from '@windy/picker'
-	import utils from '@windy/utils'
+        const readValues = () => {
+            let { lat, lon, values, overlay } = picker.getParams();
+            // -> 50.4, 14.3, 'wind', [ U,V, ]
 
-	const readValues = latLon => {
+            console.log('Picker is at', lat, lon);
 
-        let { lat, lon, values, overlay } = picker.getParams()
-        // -> 50.4, 14.3, 'wind', [ U,V, ]
+            if (overlay === 'wind') {
+                let windObject = utils.wind2obj(values);
+                console.log(windObject);
+            } else if (/weaves|swell/.test(overlay)) {
+                let wavesObject = utils.wave2obj(values);
+                console.log(wavesObject);
+            }
+        };
 
-		console.log('Picker is at',lat,lon)
+        // picker has been opened at latLon coords
+        picker.on('pickerOpened', readValues);
 
-        if( overlay === 'wind' ) {
-        	let windObject = utils.wind2obj( values )
-	        console.log( windObject )
-	    } else if( /weaves|swell/.test( overlay) ) {
-	    	let wavesObject = utils.wave2obj( values )
-	    	console.log( wavesObject )
-	    }
-	}
+        // picker was dragged by user to latLon coords
+        picker.on('pickerMoved', readValues);
 
-    // picker has been opened at latLon coords
-    picker.on('pickerOpened', readValues )
-
-    // picker was dragged by user to latLon coords
-    picker.on('pickerMoved', readValues )
-
-    // picker was closed
-    picker.on('pickerClosed', () => {
-    	console.log('Picker was closed')
-    })
-
-	</script>
+        // picker was closed
+        picker.on('pickerClosed', () => {
+            console.log('Picker was closed');
+        });
+    </script>
 </plugin>
