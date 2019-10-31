@@ -6,7 +6,7 @@ module.exports = {
   // Allowed: 'contextmenu', 'menu'
   hook: "menu",
 
-	// List of external libraries, that should be loaded before
+  // List of external libraries, that should be loaded before
   // your plugin is even mounted to the page
   // dependencies: ['https://unpkg.com/d3@5.7.0/dist/d3.min.js']
 
