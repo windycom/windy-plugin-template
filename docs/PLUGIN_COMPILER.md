@@ -40,4 +40,4 @@ Usage:
 
   export default { myExport1, myExport2 }
 ```
-Windy plugins compiler will throws an error if you will try to import something else, than cases above. Use rather `dependencies` property inside your `config.js` to load 3rd party libraries.
+Windy plugins compiler will throw an error if you will try to import something else than the cases above. Use rather the `dependencies` property inside your `config.js` to load 3rd party libraries.
