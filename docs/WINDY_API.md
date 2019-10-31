@@ -288,7 +288,7 @@ picker.on('pickerMoved', latLon => {
     // picker was dragged by user to latLon coords
 
     let { lat, lon, values, overlay } = picker.getParams()
-    // -> 50.4, 14.3, 'wind', [ U,V, ]
+    // -> 50.4, 14.3, [ U,V, ], 'wind'
 
     let windObject = utils.wind2obj( values )
     // { overlay: 'wind', values: [ 0.4, 0.75, 0] }
@@ -301,7 +301,7 @@ picker.on('pickerClosed', () => {
 ```
 
 ### Converting raw meteorological values to readable numbers
-Raw meteorological units returned frpm weather picker are usually described in respective documentation for `GFS` or other used forecast models.
+Raw meteorological units returned from weather picker are usually described in respective documentation for `GFS` or other used forecast models.
 
 Most popular overlays have these values:
 
@@ -318,7 +318,7 @@ Example:
 Temperature in `K`
 
 **rain, rainAccumulation**
-Rain for duration of 3 or selected accumulation period in `mm`
+Rain for duration of 3 hours or selected accumulation period in `mm`
 
 **waves, swell**
 Array `[ U, V, size]` where U and V are direction vectors and wave size is in `m`. Period in seconds is computed as `Math.sqrt( U * U + V * V )`. Use `W.utils.wave2obj` to compute respective values
