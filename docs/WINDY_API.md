@@ -48,12 +48,7 @@ Usage:
 ```
 
 ## Module: map
-Instance of Leaflet map is available as `map` module. Windy uses Leaflet version `0.7.7` that is [well documented here](http://leafletjs.com/reference-0.7.7.html) and contains plenty of [plugins that you can use](http://leafletjs.com/plugins.html).
-
-> We have tried to upgrade to Leaflet v1.0.0 and later on to v1.3.4, but
-> we have found both version significantly slower, and containing major
-> design flaws making it unusable on Windy. Also we miss some plugins,
-> that were not ported.
+Instance of Leaflet map is available as `map` module. Windy uses Leaflet version `1.4.0` that is [well documented here](http://leafletjs.com/reference-1.4.0.html) and contains plenty of [plugins that you can use](http://leafletjs.com/plugins.html).
 
 `map` has also some custom Windy methods and props attached to itself.
 
@@ -82,9 +77,9 @@ Example:
 ## Class: Evented
 Some of the Windy components are descendants of `Evented` and emit messages.
 
-Recieving and emmiting messages has usuall syntax and methods: `on, off, once, emit`. (You can use handy aliases `fire` or `trigger` to emit messages if you are used to).
+Recieving and emitting messages has a usual syntax and methods: `on, off, once, emit`. (You can use handy aliases `fire` or `trigger` to emit messages if you are used to.)
 
-Just remember, that broadcasts emitted by `map` are in fact Leaflet's brodcast, not Windy's ones.
+Just remember that broadcasts emitted by `map` are in fact Leaflet's brodcast, not Windy's ones.
 
 ## Module: brodacast
 Major Windy's emitter (instance of `Evented`), used for most important events.
@@ -106,8 +101,8 @@ After some of the units (wind, temp, ...) has been changed.
 **rqstOpen, rqstClose, closeAll**
 Requests to load and open or close plug-ins (see later)
 
-**pluginOpend, pluginClosed**
-Lazy loaded plugin was sucessully loaded and opend/closed
+**pluginOpened, pluginClosed**
+Lazy loaded plugin was sucessully loaded and opened/closed
 
 **redrawLayers**
 Forces various renderers to render layers, for example after reconfiguring  color gradient, or changing particle animation settings.
@@ -143,13 +138,13 @@ Example:
   // true ... Metric was changed to rain
 
   store.on('overlay', ovr => {
-  // Message will be emited only if value is valid and actually changed
-  console.log('Wow, overlay has been chnaged to', ovr)
-})
+    // Message will be emitted only if value is valid and actually changed
+    console.log('Wow, overlay has been chnaged to', ovr)
+  })
 ```
 
 ### Main items stored in store
-Each stored item have some default value. The values, taht can be considered as users's own settings, are **read only.** It is strictlly **prohibited to change user's settings** without his action and permition.
+Each stored item has some default value. The values that can be considered as users's own settings, are **read only.** It is strictlly **prohibited to change user's settings** without his action and permission.
 
 Some of the major items you could be interested in are:
 
@@ -187,22 +182,22 @@ Product is set of weather data, that have same resolution, boundaries, time rang
 Informs if animation of wind/waves particles is running over the map.
 
 **usedLang** - read only
-ISO language code of if language used.
+ISO language code of language used.
 
 **hourFormat** - read only
 Time format, returns `12h` or `24h`.
 
 **numDirection** - read only
-Display directions in Weather picker as number or as a string (for example NW). returns `true` or `false`..
+Display directions in Weather picker as number or as a string (for example NW). returns `true` or `false`.
 
 ## Module: overlays
-Defines main parameters required to render specific weather overlay. Each defined overlay contains all used overlays together with their `colors`, settings for `legend` and `metrics`. Remember it is prohibited change the user's metric.
+Defines main parameters required to render specific weather overlay. Each defined overlay contains all used overlays together with their `colors`, settings for `legend` and `metrics`. Remember that it is prohibited to change the user's metric.
 
-### overlays.ident.convertMetric(number,separator)
+### overlays.ident.convertValue(number, separator)
 Converts value provided in default meteorological metric into user's selected
-metric as a string. Separator is optional separator in between number and unit.
+metric as a string. Separator is an optional separator between number and unit.
 
-### overlays.ident.convertMetric(number)
+### overlays.ident.convertNumber(number)
 Converts value provided in default meteorological metric into user's selected metric as a pure number.
 
 Example:
@@ -213,13 +208,13 @@ Example:
   overlays.wind.listMetrics()
   // ['kt', 'bft', 'm/s', 'km/h', 'mph'] .. available metrics
 
-  overlays.wind.convertNumber(45,' ')
+  overlays.wind.convertValue(45, ' ')
   // '87 m/s'
 
-  overlays.wind.convertValue(45)
+  overlays.wind.convertNumber(45)
   // 87
 
-  broadcast.on('metricChanged', (overlay,newMetric) => {
+  broadcast.on('metricChanged', (overlay, newMetric) => {
     // Any changes of metric can be observed here
   })
 ```
@@ -236,7 +231,7 @@ utils.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js')
      .then( initGraph )
 ```
 
-### utils.wind2obj(obj)
+### utils.wind2obj(arr)
 Converts raw meterological values into wind Object.
 
 Example:
@@ -245,34 +240,34 @@ Example:
   // { dir: 210.4334, wind: 10.2 }
 ```
 
-### utils.wave2obj(obj)
+### utils.wave2obj(arr)
 Converts raw meterological values into wave Object.
 
 ## Module: plugins
-Windy can use plugins, that are loaded whenever necessary, making core codes small and fast. Plugin can be for example javascript library, or some user feature (like menu sliding from the right side). We recommend to access these plugins just by emitting messages `rqstOpen` and `rqstClose` on major `broadcast`. Some of the plugins require parameters for opening.
+Windy can use plugins that are loaded whenever necessary, making core codes small and fast. Plugin can be for example JavaScript library, or some user feature (like menu sliding from the right side). We recommend to access these plugins just by emitting messages `rqstOpen` and `rqstClose` on major `broadcast`. Some of the plugins require parameters for opening.
 
-Only few plugins can be safely exposed in Windy API like: `distance`, `picker` or `settings`, `detail`.
+Only few plugins can be safely exposed in Windy API like: `distance`, `picker`, `settings` or `detail`.
 
 Example:
 ```js
-  broadcast.fire('rqstOpen','detail',{ lat: 50, lon: 14 })
+  broadcast.fire('rqstOpen', 'detail', { lat: 50, lon: 14 })
   // Opens weather detail
 
-  broadcast.fire('rqstOpen','detail')
+  broadcast.fire('rqstOpen', 'detail')
   // Closes weather detail
 ```
 
 ## Module: picker
-Weather picker can be opend programatically as any other plugin by emiting request message: `broadcast.fire('rqstOpen','picker',{ lat: 50, lon: 14 })`.
+Weather picker can be opened programatically as any other plugin by emiting request message: `broadcast.fire('rqstOpen', 'picker', { lat: 50, lon: 14 })`.
 
-If the picker is opened outside visible map, it is closed afterwards, and also paning so the picker gets outside map, leads to close of the picker. Picker emits message about its own state.
+If the picker is opened outside visible map, it is closed afterwards, and also panning so the picker gets outside map leads to close of the picker. Picker emits message about its own state.
 
 Example:
 ```js
-  broadcast.fire('rqstOpen','picker',{ lat: 50, lon: 14 })
+  broadcast.fire('rqstOpen', 'picker', { lat: 50, lon: 14 })
   // Opens the picker
 
-  broadcast.fire('rqstClose','picker')
+  broadcast.fire('rqstClose', 'picker')
   // Closes the picker
 ```
 
@@ -291,7 +286,7 @@ picker.on('pickerMoved', latLon => {
     // -> 50.4, 14.3, [ U,V, ], 'wind'
 
     let windObject = utils.wind2obj( values )
-    // { overlay: 'wind', values: [ 0.4, 0.75, 0] }
+    // { dir: 210, wind: 10.2 }
 
 })
 
@@ -375,10 +370,10 @@ To communicate with our backend API get your own API key [here](https://api4.win
 Ignore "Allowed domains" fields it this case.
 
 Module `pluginDataLoader` returns  a function, that creates instance of reusable backend data loader.
-Once you creare your loading instance, you use it like this: `load( type, options )`, where type
+Once you create your loading instance, you use it like this: `load( type, options )`, where type
 describes type of data you want to load and options depend on the type you want to load.
 
-So far only `forecast` and `airData` types are supported. let us know if we should add more data types
+So far only `forecast` and `airData` types are supported. Let us know if we should add more data types
 to API.
 
 Data loader function returns a Promise, that resolves into `{ status, data }` object.
