@@ -39,7 +39,7 @@ const pressureLines = [850, 500, 200];
 let currentData = [],
   currentMouseY = chartHeight,
   currentInfo = {},
-  currentProduct = "ecmwf",
+  currentProduct = "gfs",
   zoomIn = false,
   refs = null; // will contain this.refs elements from mytag.html
 

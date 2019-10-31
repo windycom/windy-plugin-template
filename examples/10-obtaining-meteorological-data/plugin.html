@@ -50,7 +50,7 @@
 
       // dataLoader accepts object with all required parameters
       const dataOptions = {
-        model: "ecmwf",
+        model: "gfs",
         lat: 50,
         lon: 14,
       };
@@ -65,7 +65,6 @@
       // Loads air data for lat, lon
       load("airData", dataOptions).then(({ data }) => {
         this.refs.airData.innerHTML = JSON.stringify(data);
-
         console.log(data);
       });
     };

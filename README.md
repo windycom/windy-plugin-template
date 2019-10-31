@@ -83,6 +83,8 @@ Drop a line in our [Windy Plugins section](https://community.windy.com/category/
  - Create system so anyone can publish its own forecast/climatological model on Windy
 
 ### CHANGELOG
+   * 0.5.0
+      - Remove ECMWF from `pluginDataLoader`
    * 0.4.0
       - Added `pluginDataLoader` to the Plugins API
    * 0.3.0

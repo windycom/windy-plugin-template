@@ -1,6 +1,6 @@
 {
   "name": "windy-plugin-examples",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Windy plugin system enables anyone, with basic knowledge of Javascript to enhance Windy with new functionality (default desc).",
   "main": "dist/plugin.js",
   "scripts": {
