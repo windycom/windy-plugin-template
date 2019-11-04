@@ -19,8 +19,8 @@ Usage:
 
   export default { myExport1, myExport2 }
 ```
-Windy plugins compiler will throws an error if you will try to import something else, than cases above. Use rather `dependencies` property inside your `config.js` to load 3rd party libraries.
+Windy plugins compiler will throw an error if you will try to import something else than cases above. Use rather `dependencies` property inside your `config.js` to load 3rd party libraries.
 
 -----------------
 
-See [Windy Plugins API](../../docs/WINDY_PLUGIN.md) to have better idea how plugin system works or [Windy API documentation](../../docs/WINDY_API.md)
+See [Windy Plugins API](../../docs/WINDY_PLUGIN.md) to have a better idea how plugin system works or [Windy API documentation](../../docs/WINDY_API.md)
