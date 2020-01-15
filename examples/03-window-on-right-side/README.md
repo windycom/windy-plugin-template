@@ -1,6 +1,6 @@
 ![](https://www.windy.com/img/windy-plugins/example03.gif)
 # Window on the right side
-Use right side window for apps that that are fine with narrow window.
+Use right side window for apps that are fine with narrow window.
 
 This plugin also demonstrates using GeoJSON on a map.
 
