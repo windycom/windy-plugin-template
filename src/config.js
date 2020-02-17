@@ -16,7 +16,7 @@ module.exports = {
     // If you want to apply different set of classes on mobile devices
     // classNameMobile: 'this-is-other-class',
 
-    // Forcess all other window panes, with same pane to be closed
+    // Forces all other window panes with the same value to be closed
     // Allowed: 'lhpane', 'rhpane' and 'all'
     // exclusive: 'lhpane',
 
