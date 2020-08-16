@@ -1,24 +1,23 @@
 <plugin>
 
-    <div class="leaflet-top leaflet-left">
-        <button class="button-closer" id="closebutton" >&#x2715</button>
+  <div id="bottom" class="shy left-border right-border radar-wrapper">
+    <div id="navigator">
+      <div id="skewt-header">
+        <div id="ft-title">
+          <p>To display a Skew-T, choose a <br> location and open the picker...</p>
+        </div>
+        <div id="skewt-control-panel" style="display: none">
+          <span id='closebutton' class='controls'>&#x2715;</span>
+          <span id='zoom-out' class='controls'>&#x1f50d&#x2212</span>
+          <span id='zoom-in' class='controls'>&#x1f50d&#x2b</span>
+        </div>
+      </div>
     </div>
-    <div class="leaflet-top leaflet-left">
-        <button class="zoomer" id="zoom_out" >&#x1f50d&#x2212</button>
-    </div>
-    <div class="leaflet-top leaflet-left">
-        <button class="zoomer" id="zoom_in" >&#x1f50d&#x2b</button>
-    </div>
-    <div class="leaflet-top leaflet-left" style="font-size: 18pt" id="introtext">
-        <p>To display a Skew-T, choose a <br> location and open the picker...</p>
-    </div>
+  </div>
 
 
-    <!-- load dependent scripts -->
-    <script src=src/skewT.js></script>
-    <script src=src/wind_barbs.js></script>
-
-	<script>
+  <!-- load dependent scripts -->
+  <script src=src/skewT.js> </script> <script src=src/wind_barbs.js> </script> <script>
 
     import picker from '@windy/picker'
     import utils from '@windy/utils'
@@ -28,18 +27,19 @@
 
 
 
-	/************************************************************************
-	* SkewT.js
-	*
-	* A windy plugin written by John C. Kealy.
-    *
-	* Based on a stripped-down version of the https://www.tephigrams.org code.
-    *
-    * Email any queries to me at johnckealy@gmail.com.
-    *
-	* Dec 2018
-	*
-	*************************************************************************/
+    /************************************************************************
+     * SkewT.js
+     *
+     * A windy plugin written by John C. Kealy.
+     *
+     * Based on a stripped-down version of the https://www.skewt.org code.
+     *
+     * Email any queries to me at johnckealy.dev@gmail.com.
+     *
+     * Dec 2018
+     * Updated Aug 2020
+     *
+     *************************************************************************/
     var PickerOn = false;
     var Pressures;
     var zoomed = false;
@@ -48,195 +48,176 @@
     // Set global variables for window size. These will
     // need to optimised later.
     function set_dimensions() {
-        window.w = 0.65*window.innerHeight;
-        window.h = 0.6*window.innerHeight;
+      window.w = 0.65 * window.innerHeight;
+      window.h = 0.6 * window.innerHeight;
 
-        window.barbsw = 0.08*w;
-        window.barbsh = h;
+      window.barbsw = 0.08 * w;
+      window.barbsh = h;
 
-        window.x_offset = 50;
-        window.y_offset = 90;
+      window.x_offset = 50;
+      window.y_offset = 90;
     }
     set_dimensions();
 
-    const options  = {
-        key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
-        plugin: 'windy-plugin-skewt'
+    const options = {
+      key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
+      plugin: 'windy-plugin-skewt'
     }
 
-    const load = pluginDataLoader( options )
+    const load = pluginDataLoader(options)
 
 
     // Run the plugin based on invoking the picker
- 	const activate_SkewT = latLon => {
-        let { lat, lon } = picker.getParams()
-        PickerOn = true;
+    const activate_SkewT = latLon => {
+      let {
+        lat,
+        lon
+      } = picker.getParams()
+      PickerOn = true;
 
-        if (zoomed) {
-            var endpressure = 600;
-        } else {
-            var endpressure = 150;
+      if (zoomed) {
+        var endpressure = 600;
+      } else {
+        var endpressure = 150;
+      }
+      document.getElementById('skewt-control-panel').style.display = "inline-block";
+
+      set_dimensions();
+      var introtext = document.getElementById('ft-title')
+      introtext.style.display = "none";
+      zoom_button();
+
+      const dataOptions = {
+        model: store.get('product'),
+        lat: lat,
+        lon: lon
+      }
+
+      // load up a an array with a timeseries of the surface
+      // pressure using the 'forecast' API call.
+      load('forecast', dataOptions).then(({
+        data
+      }) => {
+        Pressures = []
+        for (const key of Object.keys(data.data)) {
+          for (var i = 0; i < data.data[key].length; i++) {
+            Pressures.push(data.data[key][i].pressure / 100)
+          }
         }
-        set_dimensions();
-        var introtext = document.getElementById('introtext')
-        introtext.style.visibility = "hidden";
-
-        const dataOptions = {
-            model: store.get('product'),
-            lat: lat,
-            lon: lon
-        }
-
-        // load up a an array with a timeseries of the surface
-        // pressure using the 'forecast' API call.
-        load('forecast', dataOptions).then( ({data}) => {
-     	    Pressures = []
-			for (const key of Object.keys(data.data)) {
-				for (var i = 0;i<data.data[key].length;i++) {
-			    	Pressures.push(data.data[key][i].pressure/100)
-				}
-			}
-        });
+      });
 
 
-        //Load point forecast for lat, lon.
-		load('airData', dataOptions ).then( ({data}) => {
+      //Load point forecast for lat, lon.
+      load('airData', dataOptions).then(({
+        data
+      }) => {
 
-            var current_timestamp = store.get('timestamp');
-            var tidx = gettimestamp(current_timestamp, data.data.hours);
+        var current_timestamp = store.get('timestamp');
+        var tidx = gettimestamp(current_timestamp, data.data.hours);
 
-	        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
-	        var Tdascent = get_data(data, 'dewpoint', tidx);
-	        var Tascent = get_data(data, 'temp', tidx);
+        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+        var Tdascent = get_data(data, 'dewpoint', tidx);
+        var Tascent = get_data(data, 'temp', tidx);
 
 
-	        for (var z=0;z<Tdascent.length;z++) {
-	              Tascent[z] = Math.round(100*(Tascent[z] - 273.15))/100;
-	              Tdascent[z] = Math.round(100*(Tdascent[z] - 273.15))/100;
-	        };
-	        var U = get_data(data, 'wind_u', tidx);
-	        var V = get_data(data, 'wind_v', tidx);
+        for (var z = 0; z < Tdascent.length; z++) {
+          Tascent[z] = Math.round(100 * (Tascent[z] - 273.15)) / 100;
+          Tdascent[z] = Math.round(100 * (Tdascent[z] - 273.15)) / 100;
+        };
+        var U = get_data(data, 'wind_u', tidx);
+        var V = get_data(data, 'wind_v', tidx);
 
-		    // draw the skewT and the windbarbs. These functions are stored
-	        // in dedicated files.
-	        draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
-	        cbarbs(Pascent, Tascent,  U, V, current_timestamp, dataOptions, startpressure, endpressure);
-            draw_zoom_buttons();
+        // draw the skewT and the windbarbs. These functions are stored
+        // in dedicated files.
+        draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
+        cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
+        // draw_zoom_buttons();
 
-		});
-	}
+      });
+    }
 
     // As the picker appears or moves, draw the SkewT at the new latlon point
     picker.on('pickerOpened', activate_SkewT)
-    picker.on('pickerMoved', activate_SkewT )
-    store.on('timestamp', function () { if (PickerOn) {activate_SkewT(); }})
-
-
-    // On drag, dont redraw the skewT but do move the window to follow the drag
-	const ondrag = () => {
- 		translate_obj('skewTd3');
-	};
-    map.on('drag', ondrag);
+    picker.on('pickerMoved', activate_SkewT)
+    store.on('timestamp', function () {
+      if (PickerOn) {
+        activate_SkewT();
+      }
+    })
 
     // close the skewT when the picker is closed
     const close_skewT = () => {
-		d3.select("#skewTbox").remove();
-        PickerOn = false;
-        var close_button = document.getElementById('closebutton')
-        close_button.style.visibility = "hidden";
-        var zoomIn = document.getElementById('zoom_in')
-        zoomIn.style.visibility = "hidden";
-        var zoomOut = document.getElementById('zoom_out')
-        zoomOut.style.visibility = "hidden";
+      d3.select("#skewTbox").remove();
+      PickerOn = false;
+      const controls = document.getElementById('skewt-control-panel')
+      controls.style.display = "none";
+      const controls = document.getElementById('ft-title')
+      controls.style.display = "display-block";
     }
     picker.on('pickerClosed', close_skewT)
 
 
-	function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
-        // When invoked, draw the skewT and also update the position if necessary
-        cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure)
- 		translate_obj()
-	};
+    function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
+      // When invoked, draw the skewT and also update the position if necessary
+      cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure)
+    };
 
 
 
-    zoom_button();
+
     function zoom_button() {
-        var zoomOut = document.getElementById('zoom_out')
-        var zoomIn = document.getElementById('zoom_in')
-        zoomIn.addEventListener("click", function() {
-                zoomed = true;
-                activate_SkewT();
-        });
-        zoomOut.addEventListener("click", function() {
-                zoomed = false;
-                activate_SkewT();
-        });
-    }
-
-
-	function translate_obj() {
-        /* This function allows the skewT window to move with the map instead of
-        being stuck at its original coordinates. It finds and parses the map offset
-        specified by the "leaflet-map-pane", replaces each (x,y) number by its additive
-        inverse, and applies that position to the skewT popup. */
-
- 		var GetTransform= document.getElementsByClassName("leaflet-map-pane")[0]
-        var Attrtxt = GetTransform.getAttribute("style")
- 		var NUMERIC_REGEXP = /[-]{0,1}[\d]*[\.]{0,1}[\d]+/g;
-        var Xpx = -1*Number(Attrtxt.match(NUMERIC_REGEXP)[1]) + x_offset
-        var Ypx = -1*Number(Attrtxt.match(NUMERIC_REGEXP)[2]) + y_offset
-        var Zpx = Number(Attrtxt.match(NUMERIC_REGEXP)[3])
-        var translation = "translate3d("+Xpx+"px, "+Ypx+"px,  "+Zpx+"px)";
-        var S = document.getElementById('skewTbox')
-        if ( S != null) {
-		    S.setAttribute("style", "transform: "+translation)
-		};
-	};
-
-    function draw_zoom_buttons() {
-        var zoomOut = document.getElementById('zoom_out')
-        var zoomIn = document.getElementById('zoom_in')
-        zoomOut.style.visibility = "visible";
-        zoomIn.style.visibility = "visible";
+      var zoomOut = document.getElementById('zoom-out')
+      var zoomIn = document.getElementById('zoom-in')
+      var closeButton = document.getElementById('closebutton')
+      zoomIn.addEventListener("click", function () {
+        zoomed = true;
+        activate_SkewT();
+      });
+      zoomOut.addEventListener("click", function () {
+        zoomed = false;
+        activate_SkewT();
+      });
+      closeButton.addEventListener("click", function () {
+        close_skewT();
+      });
     }
 
 
     function gettimestamp(current_timestamp, h) {
-        var i=0;
-        var minDiff = 99999999999;
-        var tidx;
-        for (i in h) {
-            var m=Math.abs(current_timestamp-h[i])
-            if (m<minDiff) {
-                minDiff=m
-                tidx=i
-            };
+      var i = 0;
+      var minDiff = 99999999999;
+      var tidx;
+      for (i in h) {
+        var m = Math.abs(current_timestamp - h[i])
+        if (m < minDiff) {
+          minDiff = m
+          tidx = i
         };
-        return tidx;
+      };
+      return tidx;
     };
 
 
     function get_data(data, field, tidx) {
 
-        var ascent = new Array(13);
-        ascent[0] = data.data[field+'-surface'][tidx];
-        ascent[1] = data.data[field+'-950h'][tidx];
-        ascent[2] = data.data[field+'-925h'][tidx];
-        ascent[3] = data.data[field+'-900h'][tidx];
-        ascent[4] = data.data[field+'-850h'][tidx];
-        ascent[5] = data.data[field+'-800h'][tidx];
-        ascent[6] = data.data[field+'-700h'][tidx];
-        ascent[7] = data.data[field+'-600h'][tidx];
-        ascent[8] = data.data[field+'-500h'][tidx];
-        ascent[9] = data.data[field+'-400h'][tidx];
-        ascent[10] = data.data[field+'-300h'][tidx];
-        ascent[11] = data.data[field+'-200h'][tidx];
-        ascent[12] = data.data[field+'-150h'][tidx];
+      var ascent = new Array(13);
+      ascent[0] = data.data[field + '-surface'][tidx];
+      ascent[1] = data.data[field + '-950h'][tidx];
+      ascent[2] = data.data[field + '-925h'][tidx];
+      ascent[3] = data.data[field + '-900h'][tidx];
+      ascent[4] = data.data[field + '-850h'][tidx];
+      ascent[5] = data.data[field + '-800h'][tidx];
+      ascent[6] = data.data[field + '-700h'][tidx];
+      ascent[7] = data.data[field + '-600h'][tidx];
+      ascent[8] = data.data[field + '-500h'][tidx];
+      ascent[9] = data.data[field + '-400h'][tidx];
+      ascent[10] = data.data[field + '-300h'][tidx];
+      ascent[11] = data.data[field + '-200h'][tidx];
+      ascent[12] = data.data[field + '-150h'][tidx];
 
-        return ascent
+      return ascent
     }
 
-	</script>
+  </script>
 
 </plugin>

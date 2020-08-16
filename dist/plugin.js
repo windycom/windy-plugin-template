@@ -8,7 +8,7 @@ W.loadPlugin(
 /* Mounting options */
 {
   "name": "windy-plugin-skewt",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "John C. Kealy",
   "repository": {
     "type": "git",
@@ -20,9 +20,9 @@ W.loadPlugin(
   "dependencies": ["https://d3js.org/d3.v4.js"]
 },
 /* HTML */
-'<div class="leaflet-top leaflet-left"> <button class="button-closer" id="closebutton">&#x2715</button> </div> <div class="leaflet-top leaflet-left"> <button class="zoomer" id="zoom_out">&#x1f50d&#x2212</button> </div> <div class="leaflet-top leaflet-left"> <button class="zoomer" id="zoom_in">&#x1f50d&#x2b</button> </div> <div class="leaflet-top leaflet-left" style="font-size: 18pt" id="introtext"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div>',
+'<div id="bottom" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> </div> </div> </div>',
 /* CSS */
-'.leaflet-top{transform:translate(35px, 75px)}.button-closer{height:30px;width:30px;text-align:center;margin:auto;color:black;border-radius:13px;background-color:red;pointer-events:auto;visibility:hidden}.zoomer{height:30px;width:45px;transform:translate(40px, 0);text-align:center;margin:auto;color:#cccccc;border-radius:13px;background-color:#424040;pointer-events:auto;visibility:hidden}#zoom_in{transform:translate(85px, 0)}',
+'.leaflet-top{transform:translate(35px, 75px)}#navigator{position:absolute;top:100px;left:50px;font-size:25px}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}',
 /* Constructor */
 function () {
   var pluginDataLoader = W.require('pluginDataLoader');
@@ -58,20 +58,10 @@ function () {
     var minP = P[P.length - 1];
     var maxP = P[0];
     d3.select("#skewTbox").remove();
-    window.svg = d3.select(".leaflet-popup-pane").append("svg").attr("height", h).attr("width", w + barbsw).attr('id', 'skewTbox');
+    window.svg = d3.select("#navigator").append("svg").attr("height", h).attr("width", w + barbsw).attr('id', 'skewTbox');
     svg.append("rect").attr("height", h).attr("width", w).attr("fill", "white").attr("opacity", 0.8).attr('id', 'skewTd3');
     draw_isopleths();
     skewT_main(Pascent, Tascent, Tdascent);
-    closer_button();
-
-    function closer_button() {
-      var close_button = document.getElementById('closebutton');
-      close_button.style.visibility = "visible";
-      close_button.addEventListener("click", function () {
-        close_skewT();
-        close_button.style.visibility = "hidden";
-      });
-    }
 
     function draw_isopleths() {
       for (var T = -80; T <= 40; T = T + 10) {
@@ -542,9 +532,11 @@ function () {
       var endpressure = 150;
     }
 
+    document.getElementById('skewt-control-panel').style.display = "inline-block";
     set_dimensions();
-    var introtext = document.getElementById('introtext');
-    introtext.style.visibility = "hidden";
+    var introtext = document.getElementById('ft-title');
+    introtext.style.display = "none";
+    zoom_button();
     var dataOptions = {
       model: store.get('product'),
       lat: lat,
@@ -554,10 +546,8 @@ function () {
       var data = _ref.data;
       Pressures = [];
 
-      var _arr = Object.keys(data.data);
-
-      for (var _i = 0; _i < _arr.length; _i++) {
-        var key = _arr[_i];
+      for (var _i = 0, _Object$keys = Object.keys(data.data); _i < _Object$keys.length; _i++) {
+        var key = _Object$keys[_i];
 
         for (var i = 0; i < data.data[key].length; i++) {
           Pressures.push(data.data[key][i].pressure / 100);
@@ -582,7 +572,6 @@ function () {
       var V = get_data(data, 'wind_v', tidx);
       draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
       cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
-      draw_zoom_buttons();
     });
   };
 
@@ -594,36 +583,25 @@ function () {
     }
   });
 
-  var ondrag = function ondrag() {
-    translate_obj('skewTd3');
-  };
-
-  map.on('drag', ondrag);
-
   var close_skewT = function close_skewT() {
     d3.select("#skewTbox").remove();
     PickerOn = false;
-    var close_button = document.getElementById('closebutton');
-    close_button.style.visibility = "hidden";
-    var zoomIn = document.getElementById('zoom_in');
-    zoomIn.style.visibility = "hidden";
-    var zoomOut = document.getElementById('zoom_out');
-    zoomOut.style.visibility = "hidden";
+    var controls = document.getElementById('skewt-control-panel');
+    controls.style.display = "none";
   };
 
   picker.on('pickerClosed', close_skewT);
 
   function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
-    translate_obj();
   }
 
   ;
-  zoom_button();
 
   function zoom_button() {
-    var zoomOut = document.getElementById('zoom_out');
-    var zoomIn = document.getElementById('zoom_in');
+    var zoomOut = document.getElementById('zoom-out');
+    var zoomIn = document.getElementById('zoom-in');
+    var closeButton = document.getElementById('closebutton');
     zoomIn.addEventListener("click", function () {
       zoomed = true;
       activate_SkewT();
@@ -632,32 +610,9 @@ function () {
       zoomed = false;
       activate_SkewT();
     });
-  }
-
-  function translate_obj() {
-    var GetTransform = document.getElementsByClassName("leaflet-map-pane")[0];
-    var Attrtxt = GetTransform.getAttribute("style");
-    var NUMERIC_REGEXP = /[-]{0,1}[\d]*[\.]{0,1}[\d]+/g;
-    var Xpx = -1 * Number(Attrtxt.match(NUMERIC_REGEXP)[1]) + x_offset;
-    var Ypx = -1 * Number(Attrtxt.match(NUMERIC_REGEXP)[2]) + y_offset;
-    var Zpx = Number(Attrtxt.match(NUMERIC_REGEXP)[3]);
-    var translation = "translate3d(" + Xpx + "px, " + Ypx + "px,  " + Zpx + "px)";
-    var S = document.getElementById('skewTbox');
-
-    if (S != null) {
-      S.setAttribute("style", "transform: " + translation);
-    }
-
-    ;
-  }
-
-  ;
-
-  function draw_zoom_buttons() {
-    var zoomOut = document.getElementById('zoom_out');
-    var zoomIn = document.getElementById('zoom_in');
-    zoomOut.style.visibility = "visible";
-    zoomIn.style.visibility = "visible";
+    closeButton.addEventListener("click", function () {
+      close_skewT();
+    });
   }
 
   function gettimestamp(current_timestamp, h) {
