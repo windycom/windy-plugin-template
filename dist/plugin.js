@@ -20,7 +20,7 @@ W.loadPlugin(
   "dependencies": ["https://d3js.org/d3.v4.js"]
 },
 /* HTML */
-'<div id="bottom" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> </div> </div> </div>',
+'<div id="bottom" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"> </div> </div> </div> </div>',
 /* CSS */
 '.leaflet-top{transform:translate(35px, 75px)}#navigator{position:absolute;top:100px;left:50px;font-size:25px}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}',
 /* Constructor */
@@ -58,7 +58,7 @@ function () {
     var minP = P[P.length - 1];
     var maxP = P[0];
     d3.select("#skewTbox").remove();
-    window.svg = d3.select("#navigator").append("svg").attr("height", h).attr("width", w + barbsw).attr('id', 'skewTbox');
+    window.svg = d3.select("#skewt-container").append("svg").attr("height", h).attr("width", w + barbsw).attr('id', 'skewTbox');
     svg.append("rect").attr("height", h).attr("width", w).attr("fill", "white").attr("opacity", 0.8).attr('id', 'skewTd3');
     draw_isopleths();
     skewT_main(Pascent, Tascent, Tdascent);
@@ -365,6 +365,7 @@ function () {
 
   function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, cminP) {
     dataOptions.model = store.get('product').toUpperCase();
+    var CONTROLS_OFFSET = document.getElementById('skewt-control-panel').offsetHeight;
     svg.append("rect").attr("x", w - 0.65 * w).attr("height", 0.05 * h).attr("width", 0.65 * w).attr("fill", "#424040").attr("opacity", "1.0");
     var date = new Date(current_timestamp);
     var options = {
@@ -383,7 +384,7 @@ function () {
 
     function wind_tooltip(x, y) {
       svg.select("#statsID").remove();
-      y = y - y_offset;
+      y = y - y_offset - CONTROLS_OFFSET;
       var logP = y / barbsh * (Math.log(cmaxP) - Math.log(cminP)) + Math.log(cminP);
       var P = Math.exp(logP);
       var widx = closest(Pascent, P);

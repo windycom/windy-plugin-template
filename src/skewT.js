@@ -30,7 +30,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
   // Create a container svg to place everything into. This fits into
   // windy's provided leaflet-popup-pane. Add a rectangle as a background.
   d3.select("#skewTbox").remove()
-  window.svg = d3.select("#navigator").append("svg")
+  window.svg = d3.select("#skewt-container").append("svg")
     .attr("height", h)
     .attr("width", w + barbsw)
     .attr('id', 'skewTbox');

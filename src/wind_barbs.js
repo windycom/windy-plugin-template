@@ -5,6 +5,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
 	and wind direction at the mouse pointer location. */
 
 	dataOptions.model = store.get('product').toUpperCase();
+	const CONTROLS_OFFSET = document.getElementById('skewt-control-panel').offsetHeight
 
 	// set up the pressure scale and process the wind arrays
 	// var cminP = 500.0;
@@ -45,7 +46,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
         svg.select("#statsID").remove();
 		// Creates the stats at the top of the plugin window.
 		//var y = d3.mouse(this)[1] - y_offset;
-        y = y - y_offset
+        y = y - y_offset - CONTROLS_OFFSET;
 		var logP = (y/barbsh)*(Math.log(cmaxP)-Math.log(cminP)) + Math.log(cminP);
 
 		var P = Math.exp(logP);
