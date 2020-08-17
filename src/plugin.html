@@ -115,7 +115,13 @@
         var current_timestamp = store.get('timestamp');
         var tidx = gettimestamp(current_timestamp, data.data.hours);
 
-        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+        try {
+          var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+        } catch(err) {
+          console.log("There was a problem with the data loader, retrying...")
+          setTimeout(function(){ activate_SkewT(); }, 1000);
+        }
+
         var Tdascent = get_data(data, 'dewpoint', tidx);
         var Tascent = get_data(data, 'temp', tidx);
 
@@ -131,8 +137,6 @@
         // in dedicated files.
         draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
         cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
-        // draw_zoom_buttons();
-
       });
     }
 
@@ -151,8 +155,8 @@
       PickerOn = false;
       const controls = document.getElementById('skewt-control-panel')
       controls.style.display = "none";
-      const controls = document.getElementById('ft-title')
-      controls.style.display = "display-block";
+      const ftTitle = document.getElementById('ft-title')
+      ftTitle.style.display = "display-block";
     }
     picker.on('pickerClosed', close_skewT)
 

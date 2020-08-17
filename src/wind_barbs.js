@@ -4,6 +4,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
 	is a tooltip that populates a bar showing the atitude , pressure, windspeed,
 	and wind direction at the mouse pointer location. */
 
+	dataOptions.model = store.get('product').toUpperCase();
 
 	// set up the pressure scale and process the wind arrays
 	// var cminP = 500.0;
@@ -11,9 +12,9 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
 
 	// Draw the containing box for the tooltip stats
 	svg.append("rect")
-		.attr("x", w-0.55*w)
+		.attr("x", w-0.65*w)
 		.attr("height", 0.05*h)
-		.attr("width", 0.55*w)
+		.attr("width", 0.65*w)
 		.attr("fill", "#424040")
 		.attr("opacity", "1.0")
 
@@ -25,7 +26,7 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
 	svg.append("g")
 		.append("text")
 		.html(dataOptions.model.toUpperCase()+'\xa0\xa0\xa0'+date)
-		.attr("x", w-0.54*w)
+		.attr("x", w-0.64*w)
 		.attr("y", 0.035*h)
 		.attr("font-family", "sans-serif")
 		.attr("font-family", "Arial")
@@ -52,14 +53,18 @@ function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, c
 		var widx = closest(Pascent, P);
         var wdir = get_winddir(U[widx], V[widx]);
 		var WSpeed = 1.943*Math.sqrt(Math.pow(U[widx],2) + Math.pow(V[widx],2));
+		if (P >= 1050) {
+			P = Pascent[0];
+		} else if (P <= 170) {
+			P = 170;
+		}
 		var z = -10.0*Math.log(P/Pascent[0]);
-
-
+		
         // Fill the text in using another g layer
 		svg.append("g")
 			.append("text")
-			.html(dataOptions.model.toUpperCase()+'\xa0\xa0\xa0'+Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0\xa0    "+Math.round(wdir)+" &#176 \xa0\xa0 "+Tascent[widx]+"&#176C")
-			.attr("x", w-0.54*w)
+			.html(dataOptions.model+'\xa0\xa0\xa0'+Math.round(z)+" km \xa0\xa0  "+Math.round(P)+" hPa \xa0\xa0  "+Math.round(WSpeed)+" kt \xa0/\xa0"+Math.round(wdir)+"&#176\xa0\xa0\xa0\xa0 "+Tascent[widx]+"&#176C")
+			.attr("x", w-0.64*w)
 			.attr("y", 0.035*h)
 			.attr("font-family", "sans-serif")
 			.attr("font-family", "Arial")

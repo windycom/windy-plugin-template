@@ -364,7 +364,8 @@ function () {
   ;
 
   function cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, cmaxP, cminP) {
-    svg.append("rect").attr("x", w - 0.55 * w).attr("height", 0.05 * h).attr("width", 0.55 * w).attr("fill", "#424040").attr("opacity", "1.0");
+    dataOptions.model = store.get('product').toUpperCase();
+    svg.append("rect").attr("x", w - 0.65 * w).attr("height", 0.05 * h).attr("width", 0.65 * w).attr("fill", "#424040").attr("opacity", "1.0");
     var date = new Date(current_timestamp);
     var options = {
       weekday: 'long',
@@ -374,7 +375,7 @@ function () {
       timeZoneName: 'short'
     };
     date = date.toLocaleDateString("en-US", options);
-    svg.append("g").append("text").html(dataOptions.model.toUpperCase() + '\xa0\xa0\xa0' + date).attr("x", w - 0.54 * w).attr("y", 0.035 * h).attr("font-family", "sans-serif").attr("font-family", "Arial").attr("font-size", 0.03 * h + "px").attr("fill", "#cccccc").attr("id", "statsID");
+    svg.append("g").append("text").html(dataOptions.model.toUpperCase() + '\xa0\xa0\xa0' + date).attr("x", w - 0.64 * w).attr("y", 0.035 * h).attr("font-family", "sans-serif").attr("font-family", "Arial").attr("font-size", 0.03 * h + "px").attr("fill", "#cccccc").attr("id", "statsID");
 
     onmousemove = function onmousemove(e) {
       wind_tooltip(e.clientX, e.clientY);
@@ -388,8 +389,15 @@ function () {
       var widx = closest(Pascent, P);
       var wdir = get_winddir(U[widx], V[widx]);
       var WSpeed = 1.943 * Math.sqrt(Math.pow(U[widx], 2) + Math.pow(V[widx], 2));
+
+      if (P >= 1050) {
+        P = Pascent[0];
+      } else if (P <= 170) {
+        P = 170;
+      }
+
       var z = -10.0 * Math.log(P / Pascent[0]);
-      svg.append("g").append("text").html(dataOptions.model.toUpperCase() + '\xa0\xa0\xa0' + Math.round(z) + " km \xa0\xa0  " + Math.round(P) + " hPa \xa0\xa0  " + Math.round(WSpeed) + " kt \xa0\xa0    " + Math.round(wdir) + " &#176 \xa0\xa0 " + Tascent[widx] + "&#176C").attr("x", w - 0.54 * w).attr("y", 0.035 * h).attr("font-family", "sans-serif").attr("font-family", "Arial").attr("font-size", 0.03 * h + "px").attr("fill", "#cccccc").attr("id", "statsID");
+      svg.append("g").append("text").html(dataOptions.model + '\xa0\xa0\xa0' + Math.round(z) + " km \xa0\xa0  " + Math.round(P) + " hPa \xa0\xa0  " + Math.round(WSpeed) + " kt \xa0/\xa0" + Math.round(wdir) + "&#176\xa0\xa0\xa0\xa0 " + Tascent[widx] + "&#176C").attr("x", w - 0.64 * w).attr("y", 0.035 * h).attr("font-family", "sans-serif").attr("font-family", "Arial").attr("font-size", 0.03 * h + "px").attr("fill", "#cccccc").attr("id", "statsID");
     }
 
     window.svgbarbs = svg.append("rect").attr('x', w).attr("height", barbsh).attr("width", barbsw).attr("fill", "#424040").attr("opacity", 1.0).attr('id', 'barbsd3');
@@ -558,7 +566,16 @@ function () {
       var data = _ref2.data;
       var current_timestamp = store.get('timestamp');
       var tidx = gettimestamp(current_timestamp, data.data.hours);
-      var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+
+      try {
+        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+      } catch (err) {
+        console.log("There was a problem with the data loader, retrying...");
+        setTimeout(function () {
+          activate_SkewT();
+        }, 1000);
+      }
+
       var Tdascent = get_data(data, 'dewpoint', tidx);
       var Tascent = get_data(data, 'temp', tidx);
 
@@ -588,6 +605,8 @@ function () {
     PickerOn = false;
     var controls = document.getElementById('skewt-control-panel');
     controls.style.display = "none";
+    var ftTitle = document.getElementById('ft-title');
+    ftTitle.style.display = "display-block";
   };
 
   picker.on('pickerClosed', close_skewT);
