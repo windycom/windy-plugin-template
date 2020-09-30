@@ -175,11 +175,9 @@ async function build() {
     //
     if (imports) {
         let match,
-            importsRegEx = /import\s+(\S+)\s+from\s+['"](@windy\/)?([^'"']+)['"]/g;
-
+            importsRegEx = /import\s+(\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/g;
         while ((match = importsRegEx.exec(imports)) !== null) {
-            let [, lex, isCore, module] = match;
-
+            let [, lex, isCore, isPlugin, module] = match;
             // detect syntax "import graph from './soundingGraph.mjs'"
             // and loads external module
             if (!isCore) {
@@ -190,8 +188,7 @@ async function build() {
                     name
                 );
             }
-
-            js = `\tconst ${lex} = W.require('${module}');\n${js}`;
+            js = `\tconst ${lex} = W.require('${(isPlugin ? '@plugins/' : '') + module}');\n${js}`;
         }
     }
 
