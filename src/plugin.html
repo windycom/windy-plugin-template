@@ -22,17 +22,14 @@
   <!-- load dependent scripts -->
   <script src=src/skewT.js> </script> <script src=src/wind_barbs.js> </script> <script>
 
-    import picker from '@windy/picker'
-    import utils from '@windy/utils'
-    import store from '@windy/store'
-    import map from '@windy/map'
-    import bcast from '@windy/broadcast';
-    import pluginDataLoader from '@windy/pluginDataLoader'
-
-
-    document.addEventListener("keydown", () => {
-      console.log("dsfg")
-    }
+    import picker from '@windy/picker';
+    import utils from '@windy/utils';
+    import store from '@windy/store';
+    import map from '@windy/map';
+    // import bcast from '@windy/broadcast';
+   
+    const pluginDataLoader = W.require('@plugins/plugin-data-loader');
+  
 
     // bcast.on("pluginOpened",e=>{if (e=="detail") this.open() });
     
@@ -212,21 +209,13 @@
 
 
     function get_data(data, field, tidx) {
-
-      var ascent = new Array(13);
-      ascent[0] = data.data[field + '-surface'][tidx];
-      ascent[1] = data.data[field + '-950h'][tidx];
-      ascent[2] = data.data[field + '-925h'][tidx];
-      ascent[3] = data.data[field + '-900h'][tidx];
-      ascent[4] = data.data[field + '-850h'][tidx];
-      ascent[5] = data.data[field + '-800h'][tidx];
-      ascent[6] = data.data[field + '-700h'][tidx];
-      ascent[7] = data.data[field + '-600h'][tidx];
-      ascent[8] = data.data[field + '-500h'][tidx];
-      ascent[9] = data.data[field + '-400h'][tidx];
-      ascent[10] = data.data[field + '-300h'][tidx];
-      ascent[11] = data.data[field + '-200h'][tidx];
-      ascent[12] = data.data[field + '-150h'][tidx];
+      const pLevels = ['-surface', '-950h', '-925h', '-900h', '-850h',
+                       '-800h', '-700h', '-600h', '-500h', '-400h', 
+                       '-300h', '-200h', '-150h'];
+      let ascent = [];
+      pLevels.forEach((pLevel) => {
+        ascent.push(data.data[field + pLevel][tidx]);
+      })
 
       return ascent
     }
