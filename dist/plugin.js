@@ -8,7 +8,7 @@ W.loadPlugin(
 /* Mounting options */
 {
   "name": "windy-plugin-skewt",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "John C. Kealy",
   "repository": {
     "type": "git",
@@ -25,7 +25,11 @@ W.loadPlugin(
 '.leaflet-top{transform:translate(35px, 75px)}#navigator{position:absolute;top:100px;left:50px;font-size:25px}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}',
 /* Constructor */
 function () {
+  var _this = this;
+
   var pluginDataLoader = W.require('pluginDataLoader');
+
+  var bcast = W.require('broadcast');
 
   var map = W.require('map');
 
@@ -507,6 +511,9 @@ function () {
   }
 
   ;
+  bcast.on("pluginOpened", function (e) {
+    if (e == "detail") _this.open();
+  });
   var PickerOn = false;
   var Pressures;
   var zoomed = false;

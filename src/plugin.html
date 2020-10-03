@@ -26,10 +26,16 @@
     import utils from '@windy/utils'
     import store from '@windy/store'
     import map from '@windy/map'
+    import bcast from '@windy/broadcast';
     import pluginDataLoader from '@windy/pluginDataLoader'
 
 
+    document.addEventListener("keydown", () => {
+      console.log("dsfg")
+    }
 
+    // bcast.on("pluginOpened",e=>{if (e=="detail") this.open() });
+    
     /************************************************************************
      * SkewT.js
      *
