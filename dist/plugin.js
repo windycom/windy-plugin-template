@@ -8,7 +8,7 @@ W.loadPlugin(
 /* Mounting options */
 {
   "name": "windy-plugin-skewt",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "John C. Kealy",
   "repository": {
     "type": "git",
@@ -25,8 +25,6 @@ W.loadPlugin(
 '.leaflet-top{transform:translate(35px, 75px)}#navigator{position:absolute;top:100px;left:50px;font-size:25px}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}',
 /* Constructor */
 function () {
-  var pluginDataLoader = W.require('pluginDataLoader');
-
   var map = W.require('map');
 
   var store = W.require('store');
@@ -507,6 +505,9 @@ function () {
   }
 
   ;
+
+  var pluginDataLoader = W.require('@plugins/plugin-data-loader');
+
   var PickerOn = false;
   var Pressures;
   var zoomed = false;
@@ -658,20 +659,11 @@ function () {
   ;
 
   function get_data(data, field, tidx) {
-    var ascent = new Array(13);
-    ascent[0] = data.data[field + '-surface'][tidx];
-    ascent[1] = data.data[field + '-950h'][tidx];
-    ascent[2] = data.data[field + '-925h'][tidx];
-    ascent[3] = data.data[field + '-900h'][tidx];
-    ascent[4] = data.data[field + '-850h'][tidx];
-    ascent[5] = data.data[field + '-800h'][tidx];
-    ascent[6] = data.data[field + '-700h'][tidx];
-    ascent[7] = data.data[field + '-600h'][tidx];
-    ascent[8] = data.data[field + '-500h'][tidx];
-    ascent[9] = data.data[field + '-400h'][tidx];
-    ascent[10] = data.data[field + '-300h'][tidx];
-    ascent[11] = data.data[field + '-200h'][tidx];
-    ascent[12] = data.data[field + '-150h'][tidx];
+    var pLevels = ['-surface', '-950h', '-925h', '-900h', '-850h', '-800h', '-700h', '-600h', '-500h', '-400h', '-300h', '-200h', '-150h'];
+    var ascent = [];
+    pLevels.forEach(function (pLevel) {
+      ascent.push(data.data[field + pLevel][tidx]);
+    });
     return ascent;
   }
 });
