@@ -20,11 +20,13 @@ W.loadPlugin(
   "dependencies": ["https://d3js.org/d3.v4.js"]
 },
 /* HTML */
-'<div id="bottom" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"> </div> </div> </div> </div>',
+'<div id="skewt-wraper" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"> </div> </div> </div> </div>',
 /* CSS */
-'.leaflet-top{transform:translate(35px, 75px)}#navigator{position:absolute;top:100px;left:50px;font-size:25px}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}',
+'.leaflet-top{transform:translate(35px, 75px)}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}#navigator{position:absolute;top:100px;left:50px;font-size:25px}#closebutton,#zoom-out,#zoom-in{cursor:default}',
 /* Constructor */
 function () {
+  var broadcast = W.require('broadcast');
+
   var map = W.require('map');
 
   var store = W.require('store');
@@ -666,4 +668,15 @@ function () {
     });
     return ascent;
   }
+
+  W.map.on("click", function (e) {
+    console.log('sdfsdf', e.latlng);
+    broadcast.fire('rqstOpen', 'picker', {
+      lat: e.latlng.lat,
+      lon: e.latlng.lng
+    });
+    picker.on('pickerOpened', function () {
+      document.getElementById('windy-plugin-skewt').style.display = 'block';
+    });
+  });
 });

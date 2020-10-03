@@ -1,6 +1,6 @@
 <plugin>
 
-  <div id="bottom" class="shy left-border right-border radar-wrapper">
+  <div id="skewt-wraper" class="shy left-border right-border radar-wrapper">
     <div id="navigator">
       <div id="skewt-header">
         <div id="ft-title">
@@ -26,12 +26,8 @@
     import utils from '@windy/utils';
     import store from '@windy/store';
     import map from '@windy/map';
-    // import bcast from '@windy/broadcast';
+    import broadcast from '@windy/broadcast';
    
-    const pluginDataLoader = W.require('@plugins/plugin-data-loader');
-  
-
-    // bcast.on("pluginOpened",e=>{if (e=="detail") this.open() });
     
     /************************************************************************
      * SkewT.js
@@ -46,6 +42,7 @@
      * Updated Aug 2020
      *
      *************************************************************************/
+    const pluginDataLoader = W.require('@plugins/plugin-data-loader');
     var PickerOn = false;
     var Pressures;
     var zoomed = false;
@@ -219,6 +216,14 @@
 
       return ascent
     }
+
+    W.map.on("click", e => {
+      console.log('sdfsdf', e.latlng)
+      broadcast.fire('rqstOpen', 'picker', { lat: e.latlng.lat, lon: e.latlng.lng })
+      picker.on('pickerOpened', () => {
+        document.getElementById('windy-plugin-skewt').style.display = 'block';
+      });
+    }) 
 
   </script>
 
