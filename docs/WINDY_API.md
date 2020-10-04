@@ -365,11 +365,11 @@ values:
 
 ```
 
-## Module: pluginDataLoader
+## Module: plugin-data-loader
 To communicate with our backend API get your own API key [here](https://api4.windy.com/api-key/).
 Ignore "Allowed domains" fields it this case.
 
-Module `pluginDataLoader` returns  a function, that creates instance of reusable backend data loader.
+Module `plugin-data-loader` returns  a function, that creates instance of reusable backend data loader.
 Once you create your loading instance, you use it like this: `load( type, options )`, where type
 describes type of data you want to load and options depend on the type you want to load.
 
@@ -383,7 +383,7 @@ Data loader function returns a Promise, that resolves into `{ status, data }` ob
 
 Example:
 ```js
-  import pluginDataLoader from '@windy/pluginDataLoader'
+  import pluginDataLoader from '@windy/plugins/plugin-data-loader'
 
   // Create new dataLoder instance
   const load = pluginDataLoader({
