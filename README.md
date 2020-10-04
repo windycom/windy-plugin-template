@@ -14,4 +14,6 @@ Install the plugin by selecting "Install Windy plugin" from the settings menu on
 
 The default data displayed is from the ECMWF model. Select another model as usual in the bottom right hand corner of the screen to switch between models. 
 
+At the surface, there is a purple circle. Sliding it will show a projected parcel ascent, which is useful for stability analysis. A lifted index (LI) value will also appear when the projected parcel shows increased instability (negative LI values indicate increasing instability). 
+
 Written by John C. Kealy. Send a message to me on the windy community forum (community.windy.com) under the username `johnckealy` with any questions/comments.
