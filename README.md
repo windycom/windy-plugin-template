@@ -51,10 +51,11 @@ Our custom [Windy Plugin Compiler](docs/PLUGIN_COMPILER.md) does all the job for
     + description, describes what your plugin does
     + author and repository reflects your name and where the plugin hosted is
  2) Remove this `README.md` and put there few words about your plugin (and maybe some screenshot if you want). The text from README file will be used in our planned plugins gallery.
- 3) Publish your plugin as npm package by `npm publish`
+ 3) Publish your plugin as npm package by `npm publish`.  (If you are not familiar with npm, create and account and login:  https://docs.npmjs.com/creating-a-new-npm-user-account.)  
  4) Test your published npm package on [Windy's Plugin page](https://www.windy.com/plugins)
- 5) Let [us know in our community](https://community.windy.com/category/21/windy-plugins) about your new achievement
- 6) Commit your work and pull your repository back to GitHub. Rename your repository to reflect name of your plugin.
+ 5) Let [us know in our community](https://community.windy.com/category/21/windy-plugins) about your new achievement.
+ 6) Once you are satisfied with your plugin,  you can request permission for it to be approved.  Your plugin will then be listed in the "windy.com/plugins" gallery,  and you will be able to use the url query string.
+ 7) Commit your work and pull your repository back to GitHub. Rename your repository to reflect name of your plugin.
 
 ### Conditions
 It is strictly prohibited to use plugin to:
@@ -84,9 +85,9 @@ Drop a line in our [Windy Plugins section](https://community.windy.com/category/
 
 ### CHANGELOG
    * 0.5.0
-      - Remove ECMWF from `pluginDataLoader`
+      - Remove ECMWF from `plugin-data-loader` - ECMWF fortunately added again!
    * 0.4.0
-      - Added `pluginDataLoader` to the Plugins API
+      - Added `plugin-data-loader` to the Plugins API
    * 0.3.0
       - Examples moved to examples dir
    * 0.2.0
