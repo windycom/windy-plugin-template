@@ -6,7 +6,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
   // P represents the pressure level within the diagram, it's stitched to the
   // top and bottom of the diagram at 150hPa and 1050hPa
   var P = [startpressure];
-  var dp = -10;
+  var dp = -5;
   var pressure = startpressure;
   while (pressure > endpressure) {
     pressure = pressure + dp;
@@ -45,7 +45,6 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
   // enter the main function to draw the skewT
   draw_isopleths();
   skewT_main(Pascent, Tascent, Tdascent);
-  // closer_button();
 
 
   function draw_isopleths() {
@@ -101,6 +100,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
 
     // plot the skewT data
     plot_sounding();
+    parcelAsc(Pascent, Tascent, Tascent[0], Pascent[0], Tdascent[0], maxP, minP, maxT, minT, svg, dp, P);
 
 
     function interpolateArray(data, fitCount) {
@@ -211,7 +211,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
       .style("font-size", "17px")
       .style('fill', "green")
       .attr("x", 20)
-      .attr("y", -5)
+      .attr("transform", "translate(0,-3)")
       .append("textPath")
       .attr("xlink:href", "#" + strID)
       .text('\xa0\xa0' + Pconst + ' hPa');
@@ -296,7 +296,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     svg.append("text")
       .style("font-size", "17px")
       .style('fill', "green")
-      .attr("y", -5)
+      .attr("transform", "translate(0,-3)")
       .append("textPath")
       .attr("xlink:href", "#" + strID)
       .text('\xa0\xa0\xa0\xa0\xa0\xa0' + temp + ' C');
@@ -338,7 +338,7 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     svg.append("text")
       .style("font-size", "11px")
       .style('fill', "green")
-      .attr("y", -5)
+      .attr("transform", "translate(0,-3)")
       .append("textPath")
       .attr("xlink:href", "#" + strID)
       .text('\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + q + ' g/kg');

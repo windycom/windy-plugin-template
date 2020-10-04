@@ -20,7 +20,11 @@
 
 
   <!-- load dependent scripts -->
-  <script src=src/skewT.js> </script> <script src=src/wind_barbs.js> </script> <script>
+  <script src=src/skewT.js> </script> 
+  <script src=src/wind_barbs.js> </script> 
+  <script src=src/parcel.js> </script> 
+  
+  <script>
 
     import picker from '@windy/picker';
     import utils from '@windy/utils';
@@ -51,8 +55,16 @@
     // Set global variables for window size. These will
     // need to optimised later.
     function set_dimensions() {
-      window.w = 0.65 * window.innerHeight;
-      window.h = 0.6 * window.innerHeight;
+
+      const forecastTable = document.getElementsByClassName('table-wrapper')[0];
+      let wHeight = window.innerHeight;
+      if (forecastTable) {
+        wHeight -= forecastTable.clientHeight;
+      }
+
+
+      window.w = 0.75 * wHeight;
+      window.h = 0.7 * wHeight;
 
       window.barbsw = 0.08 * w;
       window.barbsh = h;
@@ -60,7 +72,6 @@
       window.x_offset = 50;
       window.y_offset = 90;
     }
-    set_dimensions();
 
     const options = {
       key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
@@ -72,6 +83,9 @@
 
     // Run the plugin based on invoking the picker
     const activate_SkewT = latLon => {
+
+      set_dimensions();
+
       let {
         lat,
         lon
@@ -218,7 +232,6 @@
     }
 
     W.map.on("click", e => {
-      console.log('sdfsdf', e.latlng)
       broadcast.fire('rqstOpen', 'picker', { lat: e.latlng.lat, lon: e.latlng.lng })
       picker.on('pickerOpened', () => {
         document.getElementById('windy-plugin-skewt').style.display = 'block';

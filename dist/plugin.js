@@ -37,7 +37,7 @@ function () {
 
   function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     var P = [startpressure];
-    var dp = -10;
+    var dp = -5;
     var pressure = startpressure;
 
     while (pressure > endpressure) {
@@ -111,6 +111,7 @@ function () {
       var Tascent = interpolateArray(Tascent, P.length);
       var Tdascent = interpolateArray(Tdascent, P.length);
       plot_sounding();
+      parcelAsc(Pascent, Tascent, Tascent[0], Pascent[0], Tdascent[0], maxP, minP, maxT, minT, svg, dp, P);
 
       function interpolateArray(data, fitCount) {
         var linearInterpolate = function linearInterpolate(before, after, atPoint) {
@@ -197,7 +198,7 @@ function () {
       var isoPathString = lineGenerator(Px);
       var strID = Pt + 'textid';
       svg.append("path").attr('id', strID).attr('d', isoPathString).style("fill", 'none').style("stroke-width", 1.5).style("stroke", 'green');
-      svg.append("g").append("text").style("font-size", "17px").style('fill', "green").attr("x", 20).attr("y", -5).append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0' + Pconst + ' hPa');
+      svg.append("g").append("text").style("font-size", "17px").style('fill', "green").attr("x", 20).attr("transform", "translate(0,-3)").append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0' + Pconst + ' hPa');
     }
 
     ;
@@ -273,7 +274,7 @@ function () {
       }
 
       ;
-      svg.append("text").style("font-size", "17px").style('fill', "green").attr("y", -5).append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0\xa0\xa0\xa0\xa0' + temp + ' C');
+      svg.append("text").style("font-size", "17px").style('fill', "green").attr("transform", "translate(0,-3)").append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0\xa0\xa0\xa0\xa0' + temp + ' C');
     }
 
     ;
@@ -303,7 +304,7 @@ function () {
       var pathStringQ = lineGenerator(Px);
       var strID = temp + 'textid';
       svg.append("path").attr('id', strID).attr('d', pathStringQ).style("fill", 'none').style("stroke-width", 1).style("stroke-dasharray", "15, 8").style("stroke", 'green');
-      svg.append("text").style("font-size", "11px").style('fill', "green").attr("y", -5).append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + q + ' g/kg');
+      svg.append("text").style("font-size", "11px").style('fill', "green").attr("transform", "translate(0,-3)").append("textPath").attr("xlink:href", "#" + strID).text('\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + q + ' g/kg');
     }
 
     ;
@@ -508,6 +509,188 @@ function () {
 
   ;
 
+  var parcelAsc = function parcelAsc(pressurehPa, temperatureC, surfaceTempC, surfacePresshPA, surfaceTdC, maxP, minP, maxT, minT, svg, Dp, P) {
+    var Cp = 1.03e3;
+    var Rd = 287.0;
+
+    var lambert = function lambert(xx, nb) {
+      var init = 1;
+      var em = -Math.exp(-1.0);
+      var em9 = -Math.exp(-9.0);
+      var c13 = 1.0 / 3.0;
+      var em2 = 2.0 / em;
+      var s2 = Math.sqrt(2.0);
+      var crude;
+
+      if (xx <= em9) {
+        var zl = Math.log(-xx);
+        var t = -1.0 - zl;
+        var ts = Math.sqrt(t);
+        crude = zl - 2.0 * ts / (s2 + (c13 - t / (2.7 + ts * 127.0471381349219)) * ts);
+      } else {
+        var _zl = Math.log(-xx);
+
+        var eta = 2.0 - em2 * xx;
+        crude = Math.log(xx / Math.log(-xx / ((1.0 - 0.5043921323068457 * (_zl + 1.0)) * (Math.sqrt(eta) + eta / 3.0) + 1.0)));
+      }
+
+      return crude;
+    };
+
+    var findLCL = function findLCL(TC, TdC, pHP) {
+      var T = TC + 273.15;
+      var p = pHP * 100.0;
+      var es = 6.1078 * Math.exp(17.269 * TC / (237.3 + TC));
+      var ee = 6.1078 * Math.exp(17.269 * TdC / (237.3 + TdC));
+      var RH = ee / es;
+      var qv = 0.622 * ee / (pHP - ee);
+      var Ttrip = 273.16;
+      var E0v = 2.3740e6;
+      var rgasa = 287.04;
+      var rgasv = 461.0;
+      var cva = 719.0;
+      var cvv = 1418.0;
+      var cvl = 4119.0;
+      var cpa = cva + rgasa;
+      var cpv = cvv + rgasv;
+      var cpm = (1 - qv) * cpa + qv * cpv;
+      var Rm = (1 - qv) * rgasa + qv * rgasv;
+      var a = cpm / Rm + (cvl - cpv) / rgasv;
+      var b = -(E0v - Ttrip * (cvv - cvl)) / (rgasv * T);
+      var c = b / a;
+      var L = lambert(Math.pow(RH, 1.0 / a) * c * Math.exp(c), -1);
+      var Tlcl = T * c * Math.pow(L, -1.0) - 1.0;
+      var LCL = p * Math.pow(Tlcl / T, cpm / Rm);
+      var LCLHP = LCL / 100.0;
+      return LCLHP;
+    };
+
+    var wetAdiabatGradient = function wetAdiabatGradient(pressure, temp) {
+      var L = 2.5e6;
+      var RV = 461.0;
+      temp += 273.15;
+      var lsbc = L / RV * (1.0 / 273.15 - 1.0 / temp);
+      var rw = 6.11 * Math.exp(lsbc) * (0.622 / pressure);
+      var lrwbt = L * rw / (Rd * temp);
+      var nume = Rd * temp / (Cp * pressure) * (1.0 + lrwbt);
+      var deno = 1.0 + lrwbt * (0.622 * L / (Cp * temp));
+      var gradi = nume / deno;
+      return Dp * gradi;
+    };
+
+    var closest = function closest(list, x) {
+      var miin;
+      var chosen = 0;
+
+      for (var i in list) {
+        miin = Math.abs(list[chosen] - x);
+
+        if (Math.abs(list[i] - x) < miin) {
+          chosen = i;
+        }
+
+        ;
+      }
+
+      ;
+      return parseInt(chosen, 10);
+    };
+
+    var parcelAscent = function parcelAscent(temp) {
+      var LCL = findLCL(temp, surfaceTdC, surfacePresshPA);
+      var Px = [];
+      var Tt;
+      var dry = true;
+      var isLiSet = false;
+      P.forEach(function (p) {
+        var closestPidx = closest(pressurehPa, p);
+
+        if (p > LCL && p <= surfacePresshPA) {
+          Tt = (temp + 273.15) * Math.pow(surfacePresshPA / p, -Rd / Cp) - 273.15;
+          var Tpx = window.w * (Tt - minT) / (maxT - minT);
+          var Ppx = window.h * (Math.log(p) - Math.log(minP)) / (Math.log(maxP) - Math.log(minP));
+
+          if (temperatureC[closestPidx] > Tt) {
+            Px.push([NaN, NaN]);
+          } else {
+            Px.push([Tpx, Ppx]);
+          }
+        } else if (p <= LCL) {
+          if (dry) {
+            temp = Tt;
+            dry = false;
+          }
+
+          var dt = wetAdiabatGradient(p, temp);
+          temp += dt;
+
+          var _Tpx = window.w * (temp - minT) / (maxT - minT);
+
+          var _Ppx = window.h * (Math.log(p) - Math.log(minP)) / (Math.log(maxP) - Math.log(minP));
+
+          if (temperatureC[closestPidx] > temp) {
+            Px.push([NaN, NaN]);
+          } else {
+            Px.push([_Tpx, _Ppx]);
+          }
+        }
+
+        if (p < 500 && !isLiSet) {
+          var LI = temperatureC[closestPidx] - temp;
+          LI = Math.round(LI * 10) / 10;
+          isLiSet = true;
+          d3.select('#LIlevelid').remove();
+
+          if (LI < 0) {
+            svg.append("g").append("text").style("font-size", "17px").style('fill', "red").attr("x", window.w - 80).attr("transform", "translate(0,-4)").attr('id', 'LIlevelid').append("textPath").attr("xlink:href", "#500,500textid").text("LI: " + LI).style("font-weight", "bold");
+          }
+        }
+      });
+      Px.forEach(function (px) {
+        px[0] = px[0] + window.h - px[1];
+      });
+      var lineGenerator = d3.line();
+      var daPathString = lineGenerator(Px);
+      d3.selectAll("path#parcelcurve").remove();
+      svg.append("path").attr("d", daPathString).attr("id", "parcelcurve").style("fill", 'none').style("stroke-width", 4.0).style("stroke", 'red');
+    };
+
+    parcelAscent(surfaceTempC);
+
+    var drawSlider = function drawSlider() {
+      var tt = surfaceTempC - minT;
+      var markerTpx = window.w * tt / (maxT - minT);
+      var markerPpx = window.h * (Math.log(surfacePresshPA) - Math.log(minP)) / (Math.log(maxP) - Math.log(minP));
+      var markerTx = markerTpx + window.h - markerPpx;
+      var valueLine = svg.append("line").attr("x1", 0).attr("x2", markerTx).attr("y1", window.h).attr("y2", window.h).attr("id", "filledLineID").style("stroke", 'red').style("stroke-linecap", "round").style("stroke-width", 5);
+      var emptyLine = svg.append("line").attr("x1", window.w).attr("x2", window.w).attr("y1", window.h).attr("y2", window.h).attr("id", "emptyLineID").style("stroke", 'black').style("stroke-width", 5);
+      var valueRect = svg.append("circle").attr("cx", markerTx).attr("cy", markerPpx).attr("id", "circleID").attr("r", 7).style("fill", 'purple').call(d3.drag().on("drag", dragEnded));
+    };
+
+    var dragEnded = function dragEnded(surfaceTemp) {
+      var Tbase = surfaceTemp;
+      var selectedValue = d3.event.x;
+      if (selectedValue < 0) selectedValue = 0;else if (selectedValue > window.w) selectedValue = window.w;
+      var markerPpx = window.h * (Math.log(surfacePresshPA) - Math.log(minP)) / (Math.log(maxP) - Math.log(minP));
+      var markerTx = selectedValue + window.h - markerPpx;
+      markerTx = markerTx - (window.h - markerPpx);
+      var valueRect = d3.selectAll("circle#circleID");
+      var valueLine = d3.selectAll("line#filledLineID");
+      var emptyLine = d3.selectAll("path#emptyLineID");
+      valueRect.attr("cx", markerTx);
+      valueRect.attr("cy", markerPpx);
+      valueLine.attr("x2", markerTx);
+      emptyLine.attr("x1", markerTx);
+      d3.event.sourceEvent.stopPropagation();
+      var NormValue = (selectedValue - (window.h - markerPpx)) / window.w;
+      Tbase = minT + NormValue * (maxT - minT);
+      parcelAscent(Tbase);
+      valueRect.raise();
+    };
+
+    drawSlider();
+  };
+
   var pluginDataLoader = W.require('@plugins/plugin-data-loader');
 
   var PickerOn = false;
@@ -516,15 +699,21 @@ function () {
   var startpressure = 1050;
 
   function set_dimensions() {
-    window.w = 0.65 * window.innerHeight;
-    window.h = 0.6 * window.innerHeight;
+    var forecastTable = document.getElementsByClassName('table-wrapper')[0];
+    var wHeight = window.innerHeight;
+
+    if (forecastTable) {
+      wHeight -= forecastTable.clientHeight;
+    }
+
+    window.w = 0.75 * wHeight;
+    window.h = 0.7 * wHeight;
     window.barbsw = 0.08 * w;
     window.barbsh = h;
     window.x_offset = 50;
     window.y_offset = 90;
   }
 
-  set_dimensions();
   var options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
     plugin: 'windy-plugin-skewt'
@@ -532,6 +721,8 @@ function () {
   var load = pluginDataLoader(options);
 
   var activate_SkewT = function activate_SkewT(latLon) {
+    set_dimensions();
+
     var _picker$getParams = picker.getParams(),
         lat = _picker$getParams.lat,
         lon = _picker$getParams.lon;
@@ -670,7 +861,6 @@ function () {
   }
 
   W.map.on("click", function (e) {
-    console.log('sdfsdf', e.latlng);
     broadcast.fire('rqstOpen', 'picker', {
       lat: e.latlng.lat,
       lon: e.latlng.lng

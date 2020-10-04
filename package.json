@@ -1,11 +1,11 @@
 {
   "name": "windy-plugin-skewt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A plugin to plot skewT-logP diagrams in windy.com",
   "main": "dist/plugin.js",
   "scripts": {
-    "start": "node ./compiler.js --build --watch --prompt --serve --transpile",
-    "start-dev": "node ./compiler.js --build --watch --serve --transpile",
+    "start-dev": "node ./compiler.js --build --watch --prompt --serve --transpile",
+    "start": "node ./compiler.js --build --watch --serve --transpile",
     "prepublishOnly": "node ./test/prepublish.js",
     "test": "node ./test/prepublish.js"
   },
