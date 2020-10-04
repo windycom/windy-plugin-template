@@ -13,6 +13,6 @@ module.exports = {
     // The place in page, where your plugin element
     // will be mounted to the page. By default all the plugins
     // are attached to #plugins element
-    attachPoint: '#map_container .leaflet-popup-pane',
+    attachPoint: '#map-container .leaflet-popup-pane',
     attachPointMobile: '#plugins', // for mobile devices
 };

@@ -14,6 +14,7 @@
 
         //	this.onopen method is called when your plugin is being opened
         this.onopen = () => {
+            console.log('I am being opened');
             const center = map.getCenter();
 
             /*
@@ -38,6 +39,7 @@
             stuff from a map
         */
         this.onclose = () => {
+            console.log('I am being closed');
             if (popup) {
                 map.removeLayer(popup);
                 popup = null;

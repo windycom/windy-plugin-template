@@ -15,6 +15,8 @@
 
         // You do NOT NEED jQuery!!!
 
+        console.log("mount");
+
         console.log(this.node);
         // -> el containing this plugin
 
@@ -24,6 +26,8 @@
         //	Whenever your plugin is opened from context menu
         //	it recieves { lat, lon } object with required coordinates
         this.onopen = latLonObject => {
+            console.log("plugin opened");
+
             let lat, lon;
 
             // Opening from other location than contextmenu
@@ -64,9 +68,7 @@
                 }).addTo(map);
             }
 
-            this.refs.coords.textContent = `${lat.toFixed(3)}, ${lon.toFixed(
-                3
-            )}`;
+            this.refs.coords.textContent = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
             // Catch all unhandled clicks not to fall into Leaflet map
             this.node.oncontextmenu = this.node.ondblclick = this.node.onclick = ev =>
@@ -74,6 +76,9 @@
         };
 
         this.onclose = () => {
+
+            console.log("plugin closed");
+
             if (marker) {
                 map.removeLayer(marker);
                 marker = null;
@@ -98,6 +103,7 @@
 
             svg.append('text')
                 .text('This circle was drawn with d3')
+                .attr('fill', 'white')
                 .attr('x', 0)
                 .attr('y', '95%');
         };
