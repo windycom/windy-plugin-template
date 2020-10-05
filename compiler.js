@@ -63,7 +63,7 @@ let config,
 
     c.info(`Compiler will compile ${yellow(`./${srcDir}/plugin.html`)}`);
 
-    reloadConfig();
+    await reloadConfig();
 
     try {
         // Basic assertions
@@ -90,8 +90,10 @@ let config,
         }
 
         if (prog.watch) {
-            c.start(`Staring watch on ${gray(srcDir)} and ${gray('package.json')}...`);
-            chokidar.watch([srcDir, 'package.json']).on('change', onChange);
+            c.start(`Staring watch on ${ gray( srcDir )} and ${gray('package.json')}.  Build 1 sec after change....`)
+                chokidar.watch([srcDir],
+                    { awaitWriteFinish: { stabilityThreshold:1000, pollInterval:100 }}
+                ).on('change', onChange )
         }
     } catch (e) {
         c.error(`Error\u0007`, e);
@@ -112,12 +114,11 @@ function startServer() {
         app.use(express.static('dist'));
 
         https.createServer(httpsOptions, app).listen(port, () => {
-            c.success(`Your plugin is published at ${gray(
-                `https://localhost:${port}/plugin.js`
-            )}.
-
-    Use ${yellow('https://www.windy.com/dev')} to test it\n`);
-
+            c.success(
+`Your plugin is published at
+    ${gray( "https://localhost:"+port+"/plugin.js" )}.
+    Use ${yellow('https://www.windy.com/dev')} to test it.\n`
+            );
             resolve();
         });
     });
@@ -244,10 +245,11 @@ async function compileLess() {
 //
 // Reload config
 //
-function reloadConfig() {
+async function reloadConfig() {
     const dir = join(__dirname, srcDir, 'config.js');
     decache(dir);
     config = require(dir);
+    return;
 }
 
 //
@@ -256,7 +258,7 @@ function reloadConfig() {
 const onChange = async fullPath => {
     c.info(`watch: File changed ${gray(fullPath)}`);
 
-    reloadConfig();
+    await reloadConfig();
 
     await build();
 };
