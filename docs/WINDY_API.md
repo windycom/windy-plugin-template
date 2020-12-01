@@ -16,14 +16,14 @@
   * [overlays.ident.convertMetric(number)](#overlaysidentconvertmetricnumber)
 - [Module: utils](#module-utils)
   * [utils.loadScript(url)](#utilsloadscripturl)
-  * [utils.wind2obj(obj)](#utilswind2objobj)
-  * [utils.wave2obj(obj)](#utilswave2objobj)
+  * [utils.wind2obj(arr)](#utilswind2objarr)
+  * [utils.wave2obj(arr)](#utilswave2objarr)
 - [Module: plugins](#module-plugins)
 - [Module: picker](#module-picker)
   * [Converting raw meteorological values to readable numbers](#converting-raw-meteorological-values-to-readable-numbers)
 - [Module: interpolator](#module-interpolator)
   * [interpolatorFun({ lat, lon })](#interpolatorfun-lat-lon-)
-- [Module: pluginDataLoader](#module-plugindataloader)
+- [Module: pluginDataLoader](#module-plugin-data-loader)
 
 <!-- tocstop -->
 

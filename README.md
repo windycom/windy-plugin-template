@@ -38,7 +38,7 @@ If it fails, make sure that your plugin is correctly built and accessible with y
 ### Other resources
  - [How Windy Plugin work](docs/WINDY_PLUGIN.md)
  - [Windy API documentation](docs/WINDY_API.md)
- - [Leaflet 0.7.7 documentation](https://leafletjs.com/reference-0.7.7.html)
+ - [Leaflet 1.4.0 documentation](https://leafletjs.com/reference-1.4.0.html)
  - [List of Leaflet Plugins](https://leafletjs.com/plugins.html)
  - [Windy Plugins technical forum](https://community.windy.com/category/21/windy-plugins)
 

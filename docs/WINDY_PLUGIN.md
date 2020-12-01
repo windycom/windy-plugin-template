@@ -35,7 +35,7 @@ plugin.less 	// <-- optional
 otherFiles.mjs 	// <-- optional
 ```
 
-**plugin.html**
+#### plugin.html
 Similar to vue, svelte or riot tag, contains html, and also js code of your plugin.
 
 ```html
@@ -55,7 +55,7 @@ Similar to vue, svelte or riot tag, contains html, and also js code of your plug
 </plugin>
 ```
 
-**plugin.less**
+#### plugin.less
 Your plugin will be wrapped inside `#windy-plugin-anyName` DIV. Whenever `.onwindy-plugin-anyName` class is applied to `<body>` of the page, you have chance to modify other styles on page.
 
 ```css
@@ -68,7 +68,7 @@ Your plugin will be wrapped inside `#windy-plugin-anyName` DIV. Whenever `.onwin
 }
 ```
 
-**config.js**
+#### config.js
 Basic configuration of your plugin has node.js module syntax. Remember, that `name` of your plugin, `description` and `author` is defined in your `package.json`.
 
 ```js
