@@ -1,10 +1,6 @@
 ![](https://www.windy.com/img/windy-plugins/example01.gif)
 # Hello world
-Windy uses Leaflet version `0.7.7` that is [well documented here](http://leafletjs.com/reference-0.7.7.html) and contains plenty of [plugins that you can use](http://leafletjs.com/plugins.html).
-
- > We have tried Leaflet version 1.0.0 and 1.3.4 in the past, but we have
- > found new versions slower, and containing major design flaw. Therefore we
- > stay with Leaflet 0.7.7. Also we miss some plugins, that were not ported.
+Windy uses Leaflet version `1.4.0` that is [well documented here](https://leafletjs.com/reference-1.4.0.html) and contains plenty of [plugins that you can use](http://leafletjs.com/plugins.html).
 
 ### config.js
 This is main configuration file for your plugin.
