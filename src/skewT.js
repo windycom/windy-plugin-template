@@ -3,6 +3,21 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
   Main function for drawing the skewT. Depends heavily on D3.js
   */
 
+
+  // This sets the limits of the skewT, and therefore its shape.
+  // At the moment, the skewT is positioned such that the left
+  // corner is 50C less than the surface temperature.
+  if (zoomed) {
+    var minT = Math.max(...Tascent) - 18.0;
+    var maxT = minT + 25;
+    startpressure = Pascent[0] + 70;
+    endpressure = Pascent[0] - 400
+  } else {
+    var minT = Math.max(...Tascent) - 50.0;
+    var maxT = minT + 80;
+  }
+
+
   // P represents the pressure level within the diagram, it's stitched to the
   // top and bottom of the diagram at 150hPa and 1050hPa
   var P = [startpressure];
@@ -13,18 +28,10 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     P.push(pressure);
   };
 
-  // This sets the limits of the skewT, and therefore its shape.
-  // At the moment, the skewT is positioned such that the left
-  // corner is 50C less than the surface temperature.
-  if (zoomed) {
-    var minT = Tascent[0] - 18.0;
-    var maxT = minT + 25;
-  } else {
-    var minT = Tascent[0] - 50.0;
-    var maxT = minT + 80;
-  }
   var minP = P[P.length - 1];
   var maxP = P[0];
+
+
 
 
   // Create a container svg to place everything into. This fits into

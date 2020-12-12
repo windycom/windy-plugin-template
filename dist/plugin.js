@@ -1,5 +1,25 @@
 "use strict";
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 /**
  * This is main plugin loading function
  * Feel free to write your own compiler
@@ -8,7 +28,7 @@ W.loadPlugin(
 /* Mounting options */
 {
   "name": "windy-plugin-skewt",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "author": "John C. Kealy",
   "repository": {
     "type": "git",
@@ -20,22 +40,28 @@ W.loadPlugin(
   "dependencies": ["https://d3js.org/d3.v4.js"]
 },
 /* HTML */
-'<div id="skewt-wraper" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"> </div> </div> </div> </div>',
+'<div id="skewt-wraper" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"></div> </div> </div> </div>',
 /* CSS */
 '.leaflet-top{transform:translate(35px, 75px)}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}#navigator{position:absolute;top:100px;left:50px;font-size:25px}#closebutton,#zoom-out,#zoom-in{cursor:default}',
 /* Constructor */
 function () {
   var broadcast = W.require('broadcast');
 
-  var map = W.require('map');
-
   var store = W.require('store');
-
-  var utils = W.require('utils');
 
   var picker = W.require('picker');
 
   function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
+    if (zoomed) {
+      var minT = Math.max.apply(Math, _toConsumableArray(Tascent)) - 18.0;
+      var maxT = minT + 25;
+      startpressure = Pascent[0] + 70;
+      endpressure = Pascent[0] - 400;
+    } else {
+      var minT = Math.max.apply(Math, _toConsumableArray(Tascent)) - 50.0;
+      var maxT = minT + 80;
+    }
+
     var P = [startpressure];
     var dp = -5;
     var pressure = startpressure;
@@ -46,15 +72,6 @@ function () {
     }
 
     ;
-
-    if (zoomed) {
-      var minT = Tascent[0] - 18.0;
-      var maxT = minT + 25;
-    } else {
-      var minT = Tascent[0] - 50.0;
-      var maxT = minT + 80;
-    }
-
     var minP = P[P.length - 1];
     var maxP = P[0];
     d3.select("#skewTbox").remove();
@@ -691,12 +708,18 @@ function () {
     drawSlider();
   };
 
-  var pluginDataLoader = W.require('@plugins/plugin-data-loader');
+  function getSurfacePressure(elevation, SLP) {
+    var surfacePressure = SLP * Math.exp(-elevation / 10000);
+    return surfacePressure;
+  }
 
-  var PickerOn = false;
-  var Pressures;
-  var zoomed = false;
-  var startpressure = 1050;
+  function winds2UV(wdir, wspd) {
+    wdir = 270 - wdir;
+    var rad = 4.0 * Math.atan(1) / 180.;
+    var v = wspd * Math.sin(rad * wdir);
+    var u = wspd * Math.cos(rad * wdir);
+    return [u, v];
+  }
 
   function set_dimensions() {
     var forecastTable = document.getElementsByClassName('table-wrapper')[0];
@@ -714,6 +737,11 @@ function () {
     window.y_offset = 90;
   }
 
+  var pluginDataLoader = W.require('@plugins/plugin-data-loader');
+
+  var PickerOn = false;
+  var zoomed = false;
+  var startpressure = 1050;
   var options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
     plugin: 'windy-plugin-skewt'
@@ -745,25 +773,46 @@ function () {
       lat: lat,
       lon: lon
     };
+    var surfacePressureSpotForecast = [];
+    var surfaceTempSpotForecast = [];
+    var surfaceDewPointSpotForecast = [];
+    var surfaceUWindSpotForecast = [];
+    var surfaceVWindSpotForecast = [];
     load('forecast', dataOptions).then(function (_ref) {
       var data = _ref.data;
-      Pressures = [];
+      Object.keys(data.data).forEach(function (datetimeKey) {
+        data.data[datetimeKey].forEach(function (field) {
+          surfacePressureSpotForecast.push(field.pressure / 100);
+          surfaceTempSpotForecast.push(field.temp);
+          surfaceDewPointSpotForecast.push(field.dewPoint);
 
-      for (var _i = 0, _Object$keys = Object.keys(data.data); _i < _Object$keys.length; _i++) {
-        var key = _Object$keys[_i];
+          var _winds2UV = winds2UV(field.windDir, field.wind),
+              _winds2UV2 = _slicedToArray(_winds2UV, 2),
+              u = _winds2UV2[0],
+              v = _winds2UV2[1];
 
-        for (var i = 0; i < data.data[key].length; i++) {
-          Pressures.push(data.data[key][i].pressure / 100);
-        }
-      }
+          surfaceUWindSpotForecast.push(u);
+          surfaceVWindSpotForecast.push(v);
+        });
+      });
     });
     load('airData', dataOptions).then(function (_ref2) {
       var data = _ref2.data;
+
+      if (isNaN(surfaceTempSpotForecast[0])) {
+        console.log('There was a problem loading the spot forecast, retrying...');
+        setTimeout(function () {
+          activate_SkewT();
+        }, 500);
+      }
+
       var current_timestamp = store.get('timestamp');
       var tidx = gettimestamp(current_timestamp, data.data.hours);
 
       try {
-        var Pascent = [Pressures[tidx], 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+        var surfacePressure = getSurfacePressure(data.header.elevation, surfacePressureSpotForecast[tidx]);
+        var surfaceTemp = surfaceTempSpotForecast[tidx];
+        var surfaceDewPoint = surfaceDewPointSpotForecast[tidx];
       } catch (err) {
         console.log("There was a problem with the data loader, retrying...");
         setTimeout(function () {
@@ -771,17 +820,25 @@ function () {
         }, 1000);
       }
 
-      var Tdascent = get_data(data, 'dewpoint', tidx);
-      var Tascent = get_data(data, 'temp', tidx);
-
-      for (var z = 0; z < Tdascent.length; z++) {
-        Tascent[z] = Math.round(100 * (Tascent[z] - 273.15)) / 100;
-        Tdascent[z] = Math.round(100 * (Tdascent[z] - 273.15)) / 100;
-      }
-
-      ;
-      var U = get_data(data, 'wind_u', tidx);
-      var V = get_data(data, 'wind_v', tidx);
+      var refPressures = [950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
+      var Pascent = refPressures.filter(function (refPressure) {
+        return refPressure < surfacePressure;
+      });
+      var Tdascent = get_data(data, Pascent, 'dewpoint', tidx);
+      var Tascent = get_data(data, Pascent, 'temp', tidx);
+      var U = get_data(data, Pascent, 'wind_u', tidx);
+      var V = get_data(data, Pascent, 'wind_v', tidx);
+      Pascent.unshift(surfacePressure);
+      Tascent.unshift(surfaceTemp);
+      Tdascent.unshift(surfaceDewPoint);
+      U.unshift(surfaceUWindSpotForecast[tidx]);
+      V.unshift(surfaceVWindSpotForecast[tidx]);
+      Tascent = Tascent.map(function (t) {
+        return Math.round(10 * (t - 273.15)) / 10;
+      });
+      Tdascent = Tdascent.map(function (t) {
+        return Math.round(10 * (t - 273.15)) / 10;
+      });
       draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
       cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
     });
@@ -851,11 +908,9 @@ function () {
 
   ;
 
-  function get_data(data, field, tidx) {
-    var pLevels = ['-surface', '-950h', '-925h', '-900h', '-850h', '-800h', '-700h', '-600h', '-500h', '-400h', '-300h', '-200h', '-150h'];
-    var ascent = [];
-    pLevels.forEach(function (pLevel) {
-      ascent.push(data.data[field + pLevel][tidx]);
+  function get_data(data, Pascent, field, tidx) {
+    var ascent = Pascent.map(function (pLevel) {
+      return data.data["".concat(field, "-").concat(pLevel, "h")][tidx];
     });
     return ascent;
   }
