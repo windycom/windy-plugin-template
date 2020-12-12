@@ -53,8 +53,8 @@ function () {
 
   function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     if (zoomed) {
-      var minT = Math.max.apply(Math, _toConsumableArray(Tascent)) - 18.0;
-      var maxT = minT + 25;
+      var minT = Math.max.apply(Math, _toConsumableArray(Tascent)) - 20.0;
+      var maxT = minT + 30;
       startpressure = Pascent[0] + 70;
       endpressure = Pascent[0] - 400;
     } else {
@@ -742,6 +742,8 @@ function () {
   var PickerOn = false;
   var zoomed = false;
   var startpressure = 1050;
+  var RetryAttemptsSpot = 0;
+  var RetryAttemptsAir = 0;
   var options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
     plugin: 'windy-plugin-skewt'
@@ -800,10 +802,13 @@ function () {
       var data = _ref2.data;
 
       if (isNaN(surfaceTempSpotForecast[0])) {
-        console.log('There was a problem loading the spot forecast, retrying...');
-        setTimeout(function () {
-          activate_SkewT();
-        }, 500);
+        if (RetryAttemptsSpot < 3) {
+          console.log('There was a problem loading the spot forecast, retrying...');
+          setTimeout(function () {
+            activate_SkewT();
+          }, 500);
+          RetryAttemptsSpot += 1;
+        }
       }
 
       var current_timestamp = store.get('timestamp');
@@ -814,10 +819,13 @@ function () {
         var surfaceTemp = surfaceTempSpotForecast[tidx];
         var surfaceDewPoint = surfaceDewPointSpotForecast[tidx];
       } catch (err) {
-        console.log("There was a problem with the data loader, retrying...");
-        setTimeout(function () {
-          activate_SkewT();
-        }, 1000);
+        if (RetryAttemptsAir < 3) {
+          console.log("There was a problem with the data loader, retrying...");
+          setTimeout(function () {
+            activate_SkewT();
+          }, 1000);
+          RetryAttemptsAir += 1;
+        }
       }
 
       var refPressures = [950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
@@ -838,6 +846,9 @@ function () {
       });
       Tdascent = Tdascent.map(function (t) {
         return Math.round(10 * (t - 273.15)) / 10;
+      });
+      fetchSondeAllSondes().then(function (allSondes) {
+        console.log(allSondes.json());
       });
       draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
       cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
@@ -868,6 +879,10 @@ function () {
   }
 
   ;
+
+  function fetchSondeAllSondes() {
+    return fetch("https://api.skewt.org/api/available/");
+  }
 
   function zoom_button() {
     var zoomOut = document.getElementById('zoom-out');

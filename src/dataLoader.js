@@ -23,6 +23,8 @@ const pluginDataLoader = W.require('@plugins/plugin-data-loader');
 var PickerOn = false;
 var zoomed = false;
 var startpressure = 1050;
+var RetryAttemptsSpot = 0;
+var RetryAttemptsAir = 0;
 
 
 const options = {
@@ -84,9 +86,14 @@ const activate_SkewT = latLon => {
     //Load point forecast for lat, lon.
     load('airData', dataOptions).then(({ data }) => {
 
+
+
         if (isNaN(surfaceTempSpotForecast[0])) {
-            console.log('There was a problem loading the spot forecast, retrying...')
-            setTimeout(function(){ activate_SkewT(); }, 500);
+            if (RetryAttemptsSpot < 3) {
+                console.log('There was a problem loading the spot forecast, retrying...')
+                setTimeout(function(){ activate_SkewT(); }, 500);
+                RetryAttemptsSpot += 1
+            }
         }
 
         var current_timestamp = store.get('timestamp');
@@ -100,8 +107,11 @@ const activate_SkewT = latLon => {
             var surfaceDewPoint = surfaceDewPointSpotForecast[tidx];
         } 
         catch(err) {
-            console.log("There was a problem with the data loader, retrying...")
-            setTimeout(function(){ activate_SkewT(); }, 1000);
+            if (RetryAttemptsAir < 3) {
+                console.log("There was a problem with the data loader, retrying...")
+                setTimeout(function(){ activate_SkewT(); }, 1000);
+                RetryAttemptsAir += 1
+            }
         }
 
         const refPressures = [950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150];
@@ -118,6 +128,11 @@ const activate_SkewT = latLon => {
 
         Tascent = Tascent.map(t => Math.round(10 * (t - 273.15)) / 10);
         Tdascent = Tdascent.map(t => Math.round(10 * (t - 273.15)) / 10);
+
+        fetchSondeAllSondes().then((allSondes) => allSondes.json())
+            .then(repose =>  console.log(repose));
+        });
+        
 
         // draw the skewT and the windbarbs.
         draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
@@ -152,6 +167,10 @@ function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
 };
 
 
+ 
+  function fetchSondeAllSondes() {
+    return fetch(`https://api.skewt.org/api/available/`);
+  }
 
 
 function zoom_button() {

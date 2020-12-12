@@ -8,8 +8,8 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
   // At the moment, the skewT is positioned such that the left
   // corner is 50C less than the surface temperature.
   if (zoomed) {
-    var minT = Math.max(...Tascent) - 18.0;
-    var maxT = minT + 25;
+    var minT = Math.max(...Tascent) - 20.0;
+    var maxT = minT + 30;
     startpressure = Pascent[0] + 70;
     endpressure = Pascent[0] - 400
   } else {
