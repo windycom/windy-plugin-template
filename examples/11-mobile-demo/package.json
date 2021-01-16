@@ -1,0 +1,34 @@
+{
+  "name": "windy-plugin-dragdemo",
+  "version": "0.0.4",
+  "description": "drag demo",
+  "main": "dist/plugin.js",
+  "scripts": {
+    "start": "node ./compiler.js --build --watch --prompt --serve --transpile",
+    "start-dev": "node ./compiler.js --build --watch --serve --transpile",
+    "prepublishOnly": "node ./test/prepublish.js",
+    "test": "node ./test/prepublish.js",
+    "mod":  "node ./compiler.js --prepmodule"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rittels/windy-plugins/tree/master/_plugins"
+  },
+  "author": "rittels",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "chokidar": "^2.0.4",
+    "colorette": "^1.0.6",
+    "commander": "^2.19.0",
+    "consola": "^1.4.5",
+    "decache": "^4.5.0",
+    "express": "^4.16.4",
+    "fs-extra": "^7.0.1",
+    "less": "^3.8.1",
+    "prompts": "^1.2.1",
+    "riot-compiler": "^3.5.2",
+    "ucfirst": "^1.0.0"
+  }
+}

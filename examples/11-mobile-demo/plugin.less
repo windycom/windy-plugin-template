@@ -1,0 +1,110 @@
+@import 'dev/variables.less';
+
+@widthOfMyPlugin: 200px;
+
+.onwindy-plugin-dragdemo {
+	.left-border {
+        left: @widthOfMyPlugin;
+    }
+	#search {
+		display: none;
+	}
+}
+
+#windy-plugin-dragdemo {
+    position:absolute;
+	width: @widthOfMyPlugin;
+    height:100%;
+
+    .mobile-handle{
+        display:none;
+        position:relative;
+        border:0px;
+        height:20px;
+        width:40px;
+        top:-10px;
+        left: ~"calc(50% - 20px)";
+        text-align: center;
+        z-index:1000;
+        .mobile-handle-visible{
+            position:absolute;
+            width:100%;
+            top:7px;
+            height:6px;
+            border-radius:3px;
+            background-color:black;
+            border: 1px solid white;
+        }
+    }
+
+    .plugin-content {
+        border-radius:5px;
+        margin: 1px;
+        color: white;
+        background-color:rgba(0,0,0,0.7);
+        overflow-y:hidden;
+    }
+}
+
+#device-mobile{
+
+    #open-in-app{
+        display:none;
+    }
+
+    #windy-plugin-dragdemo{
+        .mobile-handle{
+            display:block;
+        }
+    }
+
+    .onwindy-plugin-dragdemo{
+        #bottom{
+            left:0px;// this keeps the  calendar bar open
+        }
+
+        #windy-plugin-day-night{
+            .mobile-handle{
+                display:block;
+            }
+        }
+
+        .plugin-mobile-fullscreen-no-header{
+            top:220px;
+            bottom:98px;
+            height:auto;
+            width:100%;
+            transition: bottom 0.3s;
+
+            .closing-x{
+                top: -5px;
+                right:-5px;
+            }
+        }
+        &.mobile-calendar-expanded{
+            .plugin-mobile-fullscreen-no-header{
+                bottom:138px;
+            }
+        }
+    }
+}
+
+#device-tablet{
+
+    .onwindy-plugin-dragdemo{
+        //place the left margin of the bottom calendar in a sensible position
+        #bottom{
+            margin-left:@widthOfMyPlugin;
+        }
+    }
+    //put logo in a better position on tablet,  otherwise over the left pane title.
+    #logo{
+        left:100%;
+        margin-left:150px;
+    }
+
+    #open-in-app{
+        display:none;
+    }
+}
+

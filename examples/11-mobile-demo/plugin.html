@@ -1,0 +1,143 @@
+<plugin>
+
+    <!-- The default mobile class provided by windy is: "plugin-mobile-fullscreen".  This allows you to create a header,
+    unfortunately somewhere with one of the upgrades, the close button (<) disappeared.
+    I brought it back it with the 1st div of mobile-header.
+    Alternatively you can leave out the plugin-mobile-fullscreen completely and create your own class for mobile,
+    registered in the config file.
+    However, you must then make the closing-x display="block" and shift it to the left: so right:0;
+    -->
+
+    <!-- Mobile header is no longer needed,  since using built in class for mobile: plugin-mobile-fullscreen-no-header
+    <div class="mobile-header">
+        <div class="mh-closing-x iconfont clickable" data-do="rqstClose,windy-plugin-dragdemo">}</div>
+        Drag demo
+    </div>
+    -->
+
+     <div class="mobile-handle">
+        <div class="mobile-handle-visible"></div>
+    </div>
+
+    <div id="dragdemo-container" class="plugin-content" style="border:1px solid blue">
+        <div id="dragdemo-x"
+            style="position:absolute; height:100%; border:0px; top:0px; width:1px;  background-color:white;"></div>
+        <div id="dragdemo-y"
+            style="position:absolute;  width:100%; border:0px; left:0px; height:1px;  background-color:white;"></div>
+        <div id="dragdemo-box"
+            style="position:absolute; border:1px solid white; left:30px; top:30px;  height:20px; width:20px; border-radius:10px;">
+        </div>
+    </div>
+
+    <script>
+
+        import $ from '@windy/$';
+        import map from '@windy/map';
+        import picker from '@windy/picker';
+        import rs from '@windy/rootScope';
+        import bcast from '@windy/broadcast';
+        import Drag from '@windy/Drag';
+        import ib from './infobox.mjs';
+
+        const thisPlugin=this;
+
+        //lastOpened set to true when plugin opens,  use to determine whether picker (or other actions) should be active.
+        //Will be set false by W.plugins.plugins,  when another windy-plugin plugin opens
+        this.lastOpened = true;
+
+        //box lower left screen with buttons etc,   moves with the calendar.
+        this.refs.infobox = ib(
+            //html to fill the info box:
+            "<div id='open-dragdemo' style='display:inline-block; padding:3px; background-color:rgba(0,0,0,0.5); border:1px solid black; border-radius:4px; margin:0px;'>Show Dragdemo</div>"
+            , 'open-dragdemo' //id of the button which will open the left hand pane
+            , this  //reference to this plugin
+            , true  //true = hide this box when plugin opens
+        );
+
+        //Here you can remove all the DOM and leaflet elements and unsubscribe for listeners,  when another external plugin is opened.
+        //The W.plugins.plugins looks for this fx in each of the loaded plugins.
+        this.onOtherPluginOpened = plugin => {
+            console.log(`This ${plugin} has opened`);
+        }
+
+        //drag a div with the mouse or touch, it does not trigger events from the container thanks to stopPropagation,  see below
+        const dragDiv = Object.assign(
+            {
+                el: $("#dragdemo-box"),
+
+                ondrag: function (x, y) {
+                    //x and y are values relative to offsetLeft and offsetTop of el (in this case #dragdemo-container)
+                    //so on drag start: x = this.el.offsetLeft.
+                    x = x < 0 ? 0 : x > $("#dragdemo-container").offsetWidth - 22 ? $("#dragdemo-container").offsetWidth - 22 : x;
+                    y = y < 0 ? 0 : y > $("#dragdemo-container").offsetHeight - 22 ? $("#dragdemo-container").offsetHeight - 22 : y;
+                    this.el.style.left = x + "px";
+                    this.el.style.top = y + "px";
+                },
+
+                ondragstart: function (xy) {
+                    //xy[0] and xy[1] refers to main window coords.   Available in rest of obj as this.startXY[0] and this.startXY[1].
+                    //not needed here
+                },
+
+                ondragend: function (e) {
+                    console.log("Do something with event:", e);
+                }
+            },
+            Drag
+        );
+        dragDiv._init();
+
+        //stop propagation for the box to prevent triggering the crosshairs
+        $("#dragdemo-box").addEventListener("touchstart", e => e.stopPropagation());
+        $("#dragdemo-box").addEventListener("mousedown", e => e.stopPropagation());
+
+        //mousedown, touching and dragging the container,  triggers the crosshairs.
+        const dragContainer = Object.assign(
+            {
+                el: $("#dragdemo-container"),
+
+                ondrag: function (x, y) {
+                    $("#dragdemo-x").style.left = (x + this.startLeft - this.el.style.left.slice(0, -2) - 1.5) + "px";     //-1 for border an -0.5 for line
+                    $("#dragdemo-y").style.top = (y + this.startTop - this.el.style.top.slice(0, -2) - 1.5) + "px";
+                },
+
+                ondragstart: function (xy) {
+                    let clientRect = this.el.getBoundingClientRect();
+                    this.startLeft = xy[0] - clientRect.left - this.el.offsetLeft;
+                    this.startTop = xy[1] - clientRect.top - this.el.offsetTop;
+                    this.ondrag(this.el.offsetLeft, this.el.offsetTop);
+                },
+
+                ondragend: function (e) {
+                    console.log("Do something with event:", e);
+                }
+            },
+            Drag
+        );
+        dragContainer._init();
+
+         //////--drag the top of the window in mobile
+
+        const dragHandle = Object.assign(
+            {
+                el: $(".mobile-handle",thisPlugin.element),
+
+                ondrag: function (x, y) {
+                    thisPlugin.element.style.top=(this.startTop+y+10)+"px";
+                },
+
+                ondragstart: function (xy) {
+                    this.startTop=thisPlugin.element.offsetTop;
+                },
+
+               // ondragend: function (e) {
+
+               // }
+            },
+
+            Drag
+        );
+        dragHandle._init();
+
+    </script>
+</plugin>
