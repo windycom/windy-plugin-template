@@ -2,9 +2,8 @@
 import picker from '@windy/picker';
 // import utils from '@windy/utils';
 import store from '@windy/store';
-// import map from '@windy/map';
+import map from '@windy/map';
 import broadcast from '@windy/broadcast';
-
 
 /************************************************************************
  * SkewT.js
@@ -25,7 +24,7 @@ var zoomed = false;
 var startpressure = 1050;
 var RetryAttemptsSpot = 0;
 var RetryAttemptsAir = 0;
-
+const SkewTApiPath = 'https://api.skewt.org';
 
 const options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
@@ -61,6 +60,28 @@ const activate_SkewT = latLon => {
         lon: lon
     }
 
+    const myIcon = L.divIcon({
+        className: 'css-icon',
+        iconSize: [15, 15]
+    });
+
+
+
+    fetch(`${SkewTApiPath}/api/available/`)
+        .then(response => response.json())
+        .then((allSondes) => {
+            allSondes.forEach((sonde) => {
+                let M = L.marker({ 'lat': sonde.lat, 'lon': sonde.lon }, { icon: myIcon, Id: sonde.wmo_id }).addTo(map);
+                M.addEventListener('click', function () {
+                    // let newLatLng = new L.LatLng(sonde.lat, sonde.lon);
+                    // pulsing_marker.setLatLng(newLatLng);
+                    onMarkerClick(sonde.wmo_id);
+                })
+            })
+        });
+
+
+
 
     var surfacePressureSpotForecast = [];
     var surfaceTempSpotForecast = [];
@@ -82,7 +103,7 @@ const activate_SkewT = latLon => {
             })
         });
     });
-    
+
     //Load point forecast for lat, lon.
     load('airData', dataOptions).then(({ data }) => {
 
@@ -91,7 +112,7 @@ const activate_SkewT = latLon => {
         if (isNaN(surfaceTempSpotForecast[0])) {
             if (RetryAttemptsSpot < 3) {
                 console.log('There was a problem loading the spot forecast, retrying...')
-                setTimeout(function(){ activate_SkewT(); }, 500);
+                setTimeout(function () { activate_SkewT(); }, 500);
                 RetryAttemptsSpot += 1
             }
         }
@@ -101,15 +122,15 @@ const activate_SkewT = latLon => {
 
         try {
             var surfacePressure = getSurfacePressure(
-              data.header.elevation, surfacePressureSpotForecast[tidx]
+                data.header.elevation, surfacePressureSpotForecast[tidx]
             )
             var surfaceTemp = surfaceTempSpotForecast[tidx];
             var surfaceDewPoint = surfaceDewPointSpotForecast[tidx];
-        } 
-        catch(err) {
+        }
+        catch (err) {
             if (RetryAttemptsAir < 3) {
                 console.log("There was a problem with the data loader, retrying...")
-                setTimeout(function(){ activate_SkewT(); }, 1000);
+                setTimeout(function () { activate_SkewT(); }, 1000);
                 RetryAttemptsAir += 1
             }
         }
@@ -129,9 +150,6 @@ const activate_SkewT = latLon => {
         Tascent = Tascent.map(t => Math.round(10 * (t - 273.15)) / 10);
         Tdascent = Tdascent.map(t => Math.round(10 * (t - 273.15)) / 10);
 
-        fetchSondeAllSondes().then((allSondes) => allSondes.json())
-            .then(repose =>  console.log(repose));
-        
 
 
         // draw the skewT and the windbarbs.
@@ -166,11 +184,23 @@ function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure)
 };
 
+const onMarkerClick = (wmo_id) => {
+    d3.selectAll('path').interrupt();
+    const sonde = fetchSonde(wmo_id);
+    // currentWmoId = sonde.wmo_id;
+}
 
- 
-  function fetchSondeAllSondes() {
-    return fetch(`https://api.skewt.org/api/available/`);
-  }
+function fetchSonde(wmo_id) {
+    fetch(`${SkewTApiPath}/api/sondes/?wmo_id=${wmo_id}`)
+        .then(response => response.json())
+        .then((sonde) => {
+            const Tascent = sonde.temperatureK.map((datapoint => datapoint -= 273.15));
+            const Tdascent = sonde.dewpointK.map((datapoint => datapoint -= 273.15));
+            cskewT(sonde.pressurehPA, Tascent, Tdascent, 1050, 150)
+        })
+
+}
+
 
 
 function zoom_button() {

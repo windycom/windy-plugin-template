@@ -42,10 +42,12 @@ W.loadPlugin(
 /* HTML */
 '<div id="skewt-wraper" class="shy left-border right-border radar-wrapper"> <div id="navigator"> <div id="skewt-header"> <div id="ft-title"> <p>To display a Skew-T, choose a <br> location and open the picker...</p> </div> <div id="skewt-control-panel" style="display: none"> <span id="closebutton" class="controls">&#x2715;</span> <span id="zoom-out" class="controls">&#x1f50d&#x2212</span> <span id="zoom-in" class="controls">&#x1f50d&#x2b</span> </div> <div id="skewt-container"></div> </div> </div> </div>',
 /* CSS */
-'.leaflet-top{transform:translate(35px, 75px)}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}#navigator{position:absolute;top:100px;left:50px;font-size:25px}#closebutton,#zoom-out,#zoom-in{cursor:default}',
+'.leaflet-top{transform:translate(35px, 75px)}.controls{background-color:rgba(0,0,0,0.5);border-radius:12px;font-size:15px;padding:5px}#navigator{position:absolute;top:100px;left:50px;font-size:25px}#closebutton,#zoom-out,#zoom-in{cursor:default}.css-icon{background:#0300be;border-radius:50%}',
 /* Constructor */
 function () {
   var broadcast = W.require('broadcast');
+
+  var map = W.require('map');
 
   var store = W.require('store');
 
@@ -744,6 +746,7 @@ function () {
   var startpressure = 1050;
   var RetryAttemptsSpot = 0;
   var RetryAttemptsAir = 0;
+  var SkewTApiPath = 'https://api.skewt.org';
   var options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
     plugin: 'windy-plugin-skewt'
@@ -775,6 +778,26 @@ function () {
       lat: lat,
       lon: lon
     };
+    var myIcon = L.divIcon({
+      className: 'css-icon',
+      iconSize: [15, 15]
+    });
+    fetch("".concat(SkewTApiPath, "/api/available/")).then(function (response) {
+      return response.json();
+    }).then(function (allSondes) {
+      allSondes.forEach(function (sonde) {
+        var M = L.marker({
+          'lat': sonde.lat,
+          'lon': sonde.lon
+        }, {
+          icon: myIcon,
+          Id: sonde.wmo_id
+        }).addTo(map);
+        M.addEventListener('click', function () {
+          onMarkerClick(sonde.wmo_id);
+        });
+      });
+    });
     var surfacePressureSpotForecast = [];
     var surfaceTempSpotForecast = [];
     var surfaceDewPointSpotForecast = [];
@@ -847,11 +870,6 @@ function () {
       Tdascent = Tdascent.map(function (t) {
         return Math.round(10 * (t - 273.15)) / 10;
       });
-      fetchSondeAllSondes().then(function (allSondes) {
-        return allSondes.json();
-      }).then(function (repose) {
-        return console.log(repose);
-      });
       draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
       cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
     });
@@ -882,8 +900,23 @@ function () {
 
   ;
 
-  function fetchSondeAllSondes() {
-    return fetch("https://api.skewt.org/api/available/");
+  var onMarkerClick = function onMarkerClick(wmo_id) {
+    d3.selectAll('path').interrupt();
+    var sonde = fetchSonde(wmo_id);
+  };
+
+  function fetchSonde(wmo_id) {
+    fetch("".concat(SkewTApiPath, "/api/sondes/?wmo_id=").concat(wmo_id)).then(function (response) {
+      return response.json();
+    }).then(function (sonde) {
+      var Tascent = sonde.temperatureK.map(function (datapoint) {
+        return datapoint -= 273.15;
+      });
+      var Tdascent = sonde.dewpointK.map(function (datapoint) {
+        return datapoint -= 273.15;
+      });
+      cskewT(sonde.pressurehPA, Tascent, Tdascent, 1050, 150);
+    });
   }
 
   function zoom_button() {
