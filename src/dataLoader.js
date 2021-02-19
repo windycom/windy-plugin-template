@@ -131,8 +131,8 @@ const activate_SkewT = latLon => {
 
         fetchSondeAllSondes().then((allSondes) => allSondes.json())
             .then(repose =>  console.log(repose));
-        });
         
+
 
         // draw the skewT and the windbarbs.
         draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);

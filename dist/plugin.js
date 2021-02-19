@@ -28,7 +28,7 @@ W.loadPlugin(
 /* Mounting options */
 {
   "name": "windy-plugin-skewt",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": "John C. Kealy",
   "repository": {
     "type": "git",
@@ -848,7 +848,9 @@ function () {
         return Math.round(10 * (t - 273.15)) / 10;
       });
       fetchSondeAllSondes().then(function (allSondes) {
-        console.log(allSondes.json());
+        return allSondes.json();
+      }).then(function (repose) {
+        return console.log(repose);
       });
       draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
       cbarbs(Pascent, Tascent, U, V, current_timestamp, dataOptions, startpressure, endpressure);
