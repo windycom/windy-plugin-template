@@ -4,7 +4,10 @@
     <div id="navigator">
       <div id="skewt-header">
         <div id="ft-title">
-          <p>To display a Skew-T, choose a <br> location and open the picker...</p>
+          <p id="initial-message">To display a Skew-T, click anywhere on the map.<br><br>
+            Model ascents will appear wherever the picker is opened. Clicking the map
+            also reveals the closest Radiosonde station.
+          </p>
         </div>
         <div id="skewt-control-panel" style="display: none">
           <span id='closebutton' class='controls'>&#x2715;</span>
@@ -12,16 +15,18 @@
           <span id='zoom-in' class='controls'>&#x1f50d&#x2b</span>
         </div>
         <div id="skewt-container"></div>
+        <div id="sonde-btns">
+          <div>
+            <input type="checkbox" id="show-sondes-checkbox" checked />
+            <label for="show-sondes-checkbox"> Show Sondes</label>
+          </div>
+          <button id="close-tooltips"> CLEAR SONDES</button>
+        </div>
       </div>
     </div>
   </div>
 
 
   <!-- load dependent scripts -->
-  <script src=src/skewT.js> </script> 
-  <script src=src/wind_barbs.js> </script> 
-  <script src=src/parcel.js> </script> 
-  <script src=src/utils.js> </script> 
-  <script src=src/dataLoader.js></script>
-
-</plugin>
+  <script src=src/skewT.js> </script> <script src=src/wind_barbs.js> </script> <script src=src/parcel.js> </script>
+    <script src=src/utils.js> </script> <script src=src/dataLoader.js> </script> </plugin>

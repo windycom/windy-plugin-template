@@ -105,6 +105,13 @@ function cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     var Tascent = interpolateArray(Tascent, P.length);
     var Tdascent = interpolateArray(Tdascent, P.length);
 
+    Tascent.forEach((t, index) => {
+      if (t < -300) Tascent[index] = null;
+    })
+    Tdascent.forEach((td, index) => {
+      if (td < -300) Tdascent[index] = null;
+    })
+
     // plot the skewT data
     plot_sounding();
     parcelAsc(Pascent, Tascent, Tascent[0], Pascent[0], Tdascent[0], maxP, minP, maxT, minT, svg, dp, P);

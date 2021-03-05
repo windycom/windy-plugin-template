@@ -5,6 +5,7 @@ import store from '@windy/store';
 import map from '@windy/map';
 import broadcast from '@windy/broadcast';
 
+console.log('pligin tiggered')
 /************************************************************************
  * SkewT.js
  *
@@ -24,7 +25,8 @@ var zoomed = false;
 var startpressure = 1050;
 var RetryAttemptsSpot = 0;
 var RetryAttemptsAir = 0;
-const SkewTApiPath = 'https://api.skewt.org';
+const SkewTApiPath = 'https://apiv2.skewt.org';
+var sondeMarker;
 
 const options = {
     key: 'psfAt10AZ7JJCoM3kz0U1ytDhTiLNJN3',
@@ -37,7 +39,16 @@ const load = pluginDataLoader(options)
 // Run the plugin based on invoking the picker
 const activate_SkewT = latLon => {
 
+    console.log('activate_SkewT tiggered')
+
     set_dimensions();
+
+    var btn = document.getElementById('close-tooltips')
+        .addEventListener('click', () => {
+            map.eachLayer(function (layer) {
+                if (layer.options.pane === "tooltipPane") layer.removeFrom(map);
+            });
+        })
 
     let { lat, lon } = picker.getParams()
     PickerOn = true;
@@ -66,19 +77,37 @@ const activate_SkewT = latLon => {
     });
 
 
+    const showSondesCB = document.getElementById('show-sondes-checkbox')
+    if (showSondesCB) {
 
-    fetch(`${SkewTApiPath}/api/available/`)
-        .then(response => response.json())
-        .then((allSondes) => {
-            allSondes.forEach((sonde) => {
+        if (sondeMarker) map.removeLayer(sondeMarker)
+        sondeMarker = L.marker([lat, lon], { icon: map.myMarkers.pulsatingIcon }).addTo(map);
+        fetch(`${SkewTApiPath}/api/nearest/?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then((sonde) => {
+                const sondeValidtime = new Date(sonde.sonde_validtime)
+                let sondeHour = sondeValidtime.getHours().toString()
+                if (sondeHour.length === 1) {
+                    sondeHour = '0' + sondeHour
+                }
+
                 let M = L.marker({ 'lat': sonde.lat, 'lon': sonde.lon }, { icon: myIcon, Id: sonde.wmo_id }).addTo(map);
+                M.bindTooltip(`${sonde.station_name} (${sondeHour}Z)`, {
+                    permanent: true,
+                    direction: 'right',
+                    interactive: true,
+                    offset: [15, 0],
+                    className: 'tooltip'
+                })
                 M.addEventListener('click', function () {
                     // let newLatLng = new L.LatLng(sonde.lat, sonde.lon);
                     // pulsing_marker.setLatLng(newLatLng);
-                    onMarkerClick(sonde.wmo_id);
+                    if (sondeMarker) map.removeLayer(sondeMarker)
+                    sondeMarker = L.marker([sonde.lat, sonde.lon], { icon: map.myMarkers.pulsatingIcon }).addTo(map);
+                    onMarkerClick(sonde.wmo_id, startpressure, endpressure);
                 })
-            })
-        });
+            });
+    }
 
 
 
@@ -98,6 +127,8 @@ const activate_SkewT = latLon => {
                 surfaceTempSpotForecast.push(field.temp)
                 surfaceDewPointSpotForecast.push(field.dewPoint)
                 let [u, v] = winds2UV(field.windDir, field.wind)
+                u *= 1.94384;
+                v *= 1.94384;
                 surfaceUWindSpotForecast.push(u)
                 surfaceVWindSpotForecast.push(v)
             })
@@ -107,8 +138,6 @@ const activate_SkewT = latLon => {
     //Load point forecast for lat, lon.
     load('airData', dataOptions).then(({ data }) => {
 
-
-
         if (isNaN(surfaceTempSpotForecast[0])) {
             if (RetryAttemptsSpot < 3) {
                 console.log('There was a problem loading the spot forecast, retrying...')
@@ -116,6 +145,7 @@ const activate_SkewT = latLon => {
                 RetryAttemptsSpot += 1
             }
         }
+
 
         var current_timestamp = store.get('timestamp');
         var tidx = gettimestamp(current_timestamp, data.data.hours);
@@ -139,8 +169,10 @@ const activate_SkewT = latLon => {
         var Pascent = refPressures.filter((refPressure) => refPressure < surfacePressure);
         var Tdascent = get_data(data, Pascent, 'dewpoint', tidx);
         var Tascent = get_data(data, Pascent, 'temp', tidx);
-        var U = get_data(data, Pascent, 'wind_u', tidx);
-        var V = get_data(data, Pascent, 'wind_v', tidx);
+        var Ums = get_data(data, Pascent, 'wind_u', tidx);
+        var Vms = get_data(data, Pascent, 'wind_v', tidx);
+        const U = Ums.map((datapoint => datapoint *= 1.94384));
+        const V = Vms.map((datapoint => datapoint *= 1.94384));
         Pascent.unshift(surfacePressure);
         Tascent.unshift(surfaceTemp);
         Tdascent.unshift(surfaceDewPoint);
@@ -184,21 +216,27 @@ function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
     cskewT(Pascent, Tascent, Tdascent, startpressure, endpressure)
 };
 
-const onMarkerClick = (wmo_id) => {
+const onMarkerClick = (wmo_id, startpressure, endpressure) => {
     d3.selectAll('path').interrupt();
-    const sonde = fetchSonde(wmo_id);
+    const sonde = fetchSonde(wmo_id, startpressure, endpressure);
     // currentWmoId = sonde.wmo_id;
 }
 
-function fetchSonde(wmo_id) {
+function fetchSonde(wmo_id, startpressure, endpressure) {
     fetch(`${SkewTApiPath}/api/sondes/?wmo_id=${wmo_id}`)
         .then(response => response.json())
         .then((sonde) => {
+            const Pascent = sonde.pressurehPA;
             const Tascent = sonde.temperatureK.map((datapoint => datapoint -= 273.15));
             const Tdascent = sonde.dewpointK.map((datapoint => datapoint -= 273.15));
-            cskewT(sonde.pressurehPA, Tascent, Tdascent, 1050, 150)
-        })
+            const U = sonde.u_windMS.map((datapoint => datapoint *= 1.94384));
+            const V = sonde.v_windMS.map((datapoint => datapoint *= 1.94384));
+            const sonde_timestamp = sonde.sonde_validtime;
+            const dataOptions = { model: 'sonde' }
 
+            draw_skewT(sonde.pressurehPA, Tascent, Tdascent, startpressure, endpressure)
+            cbarbs(Pascent, Tascent, U, V, sonde_timestamp, dataOptions, startpressure, endpressure);
+        })
 }
 
 
@@ -248,4 +286,5 @@ W.map.on("click", e => {
     picker.on('pickerOpened', () => {
         document.getElementById('windy-plugin-skewt').style.display = 'block';
     });
-}) 
+})
+
