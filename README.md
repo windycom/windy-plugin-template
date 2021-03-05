@@ -20,4 +20,4 @@ Written by John C. Kealy. Send a message to me on the windy community forum (com
 
 ### Radiosonde data (added March 2021)
 
-Radiosonde data is now available on `windy-plugin-skewt`. Each time a user clicks the map, the closest sonde station will also appear, along with the time of the sonde in UTC.
+Radiosonde data is now available on `windy-plugin-skewt`. Each time a user clicks the map, the closest sonde station will also appear, along with the time of the sonde in UTC. You can turn off this behaviour using the buttons below the SkewT. Click the Label of the Sonde to open the observational data SkewT. The most recent SkewT will always be displayed – always make note of the timestamp – it will not necessarily match whatever time frame windy is set to.

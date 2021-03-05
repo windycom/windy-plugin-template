@@ -5,7 +5,6 @@ import store from '@windy/store';
 import map from '@windy/map';
 import broadcast from '@windy/broadcast';
 
-console.log('pligin tiggered')
 /************************************************************************
  * SkewT.js
  *
@@ -38,8 +37,6 @@ const load = pluginDataLoader(options)
 
 // Run the plugin based on invoking the picker
 const activate_SkewT = latLon => {
-
-    console.log('activate_SkewT tiggered')
 
     set_dimensions();
 
@@ -76,12 +73,12 @@ const activate_SkewT = latLon => {
         iconSize: [15, 15]
     });
 
+    const showSondesCB = document.getElementById('show-sondes-checkbox').checked
 
-    const showSondesCB = document.getElementById('show-sondes-checkbox')
+    if (sondeMarker) map.removeLayer(sondeMarker)
+    sondeMarker = L.marker([lat, lon], { icon: map.myMarkers.pulsatingIcon }).addTo(map);
+
     if (showSondesCB) {
-
-        if (sondeMarker) map.removeLayer(sondeMarker)
-        sondeMarker = L.marker([lat, lon], { icon: map.myMarkers.pulsatingIcon }).addTo(map);
         fetch(`${SkewTApiPath}/api/nearest/?lat=${lat}&lon=${lon}`)
             .then(response => response.json())
             .then((sonde) => {
@@ -100,16 +97,12 @@ const activate_SkewT = latLon => {
                     className: 'tooltip'
                 })
                 M.addEventListener('click', function () {
-                    // let newLatLng = new L.LatLng(sonde.lat, sonde.lon);
-                    // pulsing_marker.setLatLng(newLatLng);
                     if (sondeMarker) map.removeLayer(sondeMarker)
                     sondeMarker = L.marker([sonde.lat, sonde.lon], { icon: map.myMarkers.pulsatingIcon }).addTo(map);
                     onMarkerClick(sonde.wmo_id, startpressure, endpressure);
-                })
+                });
             });
     }
-
-
 
 
     var surfacePressureSpotForecast = [];
@@ -146,7 +139,6 @@ const activate_SkewT = latLon => {
             }
         }
 
-
         var current_timestamp = store.get('timestamp');
         var tidx = gettimestamp(current_timestamp, data.data.hours);
 
@@ -181,8 +173,6 @@ const activate_SkewT = latLon => {
 
         Tascent = Tascent.map(t => Math.round(10 * (t - 273.15)) / 10);
         Tdascent = Tdascent.map(t => Math.round(10 * (t - 273.15)) / 10);
-
-
 
         // draw the skewT and the windbarbs.
         draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure);
@@ -219,7 +209,6 @@ function draw_skewT(Pascent, Tascent, Tdascent, startpressure, endpressure) {
 const onMarkerClick = (wmo_id, startpressure, endpressure) => {
     d3.selectAll('path').interrupt();
     const sonde = fetchSonde(wmo_id, startpressure, endpressure);
-    // currentWmoId = sonde.wmo_id;
 }
 
 function fetchSonde(wmo_id, startpressure, endpressure) {
