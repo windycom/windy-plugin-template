@@ -1,8 +1,10 @@
 @import 'dev/variables.less';
 
-@widthOfMyPlugin: 200px;
+@widthOfMyPlugin: 300px;
 
-.onwindy-plugin-dragdemo {
+@pluginName: examples;
+
+.onwindy-plugin-@{pluginName} {
 	.left-border {
         left: @widthOfMyPlugin;
     }
@@ -11,87 +13,101 @@
 	}
 }
 
-#windy-plugin-dragdemo {
-    position:absolute;
+#windy-plugin-@{pluginName} {
 	width: @widthOfMyPlugin;
-    height:100%;
+    height:100%;  //required to show the plugin in desktop
+    border-radius:8px;
 
-    .mobile-handle{
-        display:none;
-        position:relative;
-        border:0px;
-        height:20px;
-        width:40px;
-        top:-10px;
-        left: ~"calc(50% - 20px)";
-        text-align: center;
-        z-index:1000;
-        .mobile-handle-visible{
-            position:absolute;
-            width:100%;
-            top:7px;
-            height:6px;
-            border-radius:3px;
-            background-color:black;
-            border: 1px solid white;
-        }
+    .section-title{
+        text-align:center;
     }
 
-    .plugin-content {
+    #dragdemo-container{
+        box-sizing:border-box;
+        position:relative;
         border-radius:5px;
-        margin: 1px;
-        color: white;
-        background-color:rgba(0,0,0,0.7);
-        overflow-y:hidden;
+        border:1px solid blue;
+        background-color:white;
+        height:300px;
+        margin:5px;
+        .line{
+            position:absolute;
+            border:0px;
+            background-color:black;
+        }
+        #dragdemo-x{
+            .line;
+            left:30px;
+            height:100%;
+            width:0.5px;
+        }
+        #dragdemo-y{
+            .line;
+            top:30px;
+            height:0.5px;
+            width:100%
+        }
+        #dragdemo-box{
+            position:absolute;
+            height:20px;
+            width:20px;
+            border-radius:10px;
+            border:1px solid black;
+            top:40px;
+            left:40px;
+        }
+    }
+    .plugin-content{
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
     }
 }
 
 #device-mobile{
-
     #open-in-app{
         display:none;
     }
-
-    #windy-plugin-dragdemo{
-        .mobile-handle{
-            display:block;
-        }
-    }
-
-    .onwindy-plugin-dragdemo{
+    .onwindy-plugin-@{pluginName}{
         #bottom{
-            left:0px;// this keeps the  calendar bar open
-        }
-
-        #windy-plugin-day-night{
-            .mobile-handle{
-                display:block;
-            }
-        }
-
-        .plugin-mobile-fullscreen-no-header{
-            top:220px;
-            bottom:98px;
-            height:auto;
-            width:100%;
-            transition: bottom 0.3s;
-
-            .closing-x{
-                top: -5px;
-                right:-5px;
-            }
-        }
-        &.mobile-calendar-expanded{
-            .plugin-mobile-fullscreen-no-header{
-                bottom:138px;
-            }
+            left:0px;// this keeps the  calendar bar visible
+            z-index:20;
         }
     }
+    #windy-plugin-@{pluginName} {
+        .section-title{
+            display:none;
+        }
+        bottom:60px; //set bottom so that calendar remains visible.
+        height:auto; //cancel set height so that bottom can be used;
+        width:100%;
+        transition: bottom 0.3s;
+        z-index:10;
+        .calendar-backdrop{
+            bottom:0px;
+            height:40px;
+            width:100%;
+            position:absolute;
+            overflow:hidden;
+        }
+        .plugin-content{
+            padding-bottom:40px;
+        }
+
+        #dragdemo-container{
+            //background-color:transparent;
+        }
+    }
+    .mobile-calendar-expanded{
+        #windy-plugin-@{pluginName} {
+            bottom:100px;
+        }
+    }
+
+
 }
 
 #device-tablet{
-
-    .onwindy-plugin-dragdemo{
+    .onwindy-plugin-@{pluginName}{
         //place the left margin of the bottom calendar in a sensible position
         #bottom{
             margin-left:@widthOfMyPlugin;
@@ -102,9 +118,7 @@
         left:100%;
         margin-left:150px;
     }
-
     #open-in-app{
         display:none;
     }
 }
-

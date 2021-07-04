@@ -1,9 +1,15 @@
-## Drag example
+## Drag and Mobile example
 
-Demo of useful features for using Windy plugins on a mobile device,  but most importantly:
+- This plugin is a boilerplate for building plugins on mobile.
+- Demonstration on how do use the bottomSlider mechanism to close the plugin pane on mobile.
+- I have also modified the bottomSlider so that the plugin pane can be dragged down partially,  to display part of the map and the picker.
+- The Drag class is also demonstrated:
+    - You can drag the circle in the box above, or
+    - If you drag the open white area the cross hairs will move.
+- The z-index of the plugin is set to 10 so that it appears on top of the picker.
+- The z-index of the bottom element is set to 20,  so that the calendar is on top of the plugin.
+- A backdrop (linear-gradient background image)  is created for the calendar timecode.
+- When you scroll down the "mobile-header" class becomes visible.
 
- 1. How to use the left pane on mobile,  and also how to make a partial left pane,  with the picker and calendar still exposed.  The pane resizes as the calendar expands.
- 2. Added a handle to the top of the mobile pane to resize it.
- 3. How to add touch drag gestures on mobile.
 
 
