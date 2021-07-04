@@ -28,6 +28,11 @@ const transform = (file, source, id, namespace) => {
             // Windy's core module
 
             d.source = d.source.replace(/@windy\/(\S+)/, '$1');
+
+            if (/plugins\//.test(d.source)) {
+                d.source = "@" + d.source;
+            }
+
         } else if (/\.\/\S+\.mjs/.test(d.source)) {
             // Plugin's module
 
@@ -37,7 +42,7 @@ const transform = (file, source, id, namespace) => {
                 /\.\/(\S+)\.mjs/,
                 '$1'
             )}`;
-        } else {
+        } else if ( !/@plugins\//.test(d.source) ) {          // "@plugins/xyz" is allowed
             throw new Error(
                 'Unable to import module. Windy plugin compiler is primitive and' +
                     ' supports only "@windy/name", or "./filename.mjs" modules'
@@ -46,6 +51,8 @@ const transform = (file, source, id, namespace) => {
 
         nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
     });
+
+    console.log("EX",exportDeclarations);
 
     exportDeclarations.forEach(d => {
         if (!d.source) {
@@ -74,7 +81,7 @@ const transform = (file, source, id, namespace) => {
     var transformed = `/*! */
 // This page was transpiled automatically from ${file}
 W.define('${id}', [${deps}],
-    function(${names}) {
+    function(__exports,  ${names}) {
 `;
 
     var ranges = importDeclarations
@@ -100,7 +107,12 @@ W.define('${id}', [${deps}],
 
     transformed += source.slice(c);
 
-    transformed = transformed.replace('__exports.default =', '\treturn ');
+
+    //import like this:  import name from "./xyz.mjs" if using: export default whatever;
+    //or import {name1, name2:yourname} from "./xyz.mjs" if using: export {name1, name2};
+    //cannot use default and named exports
+
+    //transformed = transformed.replace('__exports.default =', '\treturn ');    //this line removed
 
     transformed += '\n});\n';
 
