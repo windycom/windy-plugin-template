@@ -52,8 +52,6 @@ const transform = (file, source, id, namespace) => {
         nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
     });
 
-    console.log("EX",exportDeclarations);
-
     exportDeclarations.forEach(d => {
         if (!d.source) {
             return;
