@@ -72,21 +72,21 @@
     <div class="calendar-backdrop"></div>
 
     <script>
-        import $ from "@windy/$";
-        import rs from "@windy/rootScope";
-        import Drag from "@windy/Drag";
+        import $ from '@windy/$';
+        import rs from '@windy/rootScope';
+        import Drag from '@windy/Drag';
 
         // LastOpened set to true when plugin opens,  use to determine whether picker (or other actions) should be active.
         // will be set false by W.plugins.plugins,  when another windy-plugin- plugin opens
         this.lastOpened = true;
 
         // Add backdrop for calendar in mobile,  use the same color as content
-        let bgVals = getComputedStyle($(".plugin-content", this.el))
-            .backgroundColor.replace("rgb", "rgba")
+        let bgVals = getComputedStyle($('.plugin-content', this.el))
+            .backgroundColor.replace('rgb', 'rgba')
             .match(/[\d\.]+/g);
         if (bgVals.length == 3) bgVals.push(1);
         $(
-            ".calendar-backdrop",
+            '.calendar-backdrop',
             this.el,
         ).style.backgroundImage = `linear-gradient(rgba(${bgVals.slice(
             0,
@@ -107,16 +107,16 @@
                 let bs = this.bottomSlider;
 
                 // remove the bindedStart of bottomSlide
-                bs.el.removeEventListener("mousedown", bs.bindedStart);
+                bs.el.removeEventListener('mousedown', bs.bindedStart);
                 if (bs.supportTouch) {
-                    bs.el.removeEventListener("touchstart", bs.bindedStart);
+                    bs.el.removeEventListener('touchstart', bs.bindedStart);
                 }
 
                 // attach the default startDrag of Drag class.
                 bs.bindedStart = Drag.startDrag.bind(bs);
-                bs.el.addEventListener("mousedown", bs.bindedStart);
+                bs.el.addEventListener('mousedown', bs.bindedStart);
                 if (bs.supportTouch) {
-                    bs.el.addEventListener("touchstart", bs.bindedStart);
+                    bs.el.addEventListener('touchstart', bs.bindedStart);
                 }
 
                 bs.origTopOfPlugin = this.el.offsetTop;
@@ -127,17 +127,17 @@
 
                 bs.ondrag = (x, y) => {
                     let deltaY = y - bs.el.offsetTop;
-                    this.el.style.top = bs.startTop + deltaY + "px";
+                    this.el.style.top = bs.startTop + deltaY + 'px';
                 };
 
                 bs.ondragend = () => {
                     // if near the top,  set to the top to original value.
                     if (Math.abs(this.el.offsetTop < 20))
-                        this.el.style.top = bs.origTopOfPlugin + "px";
+                        this.el.style.top = bs.origTopOfPlugin + 'px';
                     // if height very small,  close the plugin.
                     if (this.el.offsetHeight < 70) {
                         this.close();
-                        setTimeout(() => (this.el.style.top = bs.origTopOfPlugin + "px"), 500);
+                        setTimeout(() => (this.el.style.top = bs.origTopOfPlugin + 'px'), 500);
                     }
                 };
             }, 0);
@@ -153,7 +153,7 @@
         // drag a div with the mouse or touch, it does not trigger events from the container thanks to stopPropagation,  see below
         const dragDiv = Object.assign(
             {
-                el: $("#dragdemo-box"),
+                el: $('#dragdemo-box'),
 
                 ondrag: function(x, y) {
                     // x and y are based on offsetLeft and offsetTop of el (in this case #dragdemo-container)
@@ -161,17 +161,17 @@
                     x =
                         x < 0
                             ? 0
-                            : x > $("#dragdemo-container").offsetWidth - 22
-                            ? $("#dragdemo-container").offsetWidth - 22
+                            : x > $('#dragdemo-container').offsetWidth - 22
+                            ? $('#dragdemo-container').offsetWidth - 22
                             : x;
                     y =
                         y < 0
                             ? 0
-                            : y > $("#dragdemo-container").offsetHeight - 22
-                            ? $("#dragdemo-container").offsetHeight - 22
+                            : y > $('#dragdemo-container').offsetHeight - 22
+                            ? $('#dragdemo-container').offsetHeight - 22
                             : y;
-                    this.el.style.left = x + "px";
-                    this.el.style.top = y + "px";
+                    this.el.style.left = x + 'px';
+                    this.el.style.top = y + 'px';
                 },
 
                 ondragstart: function(xy) {
@@ -180,7 +180,7 @@
                 },
 
                 ondragend: function(e) {
-                    console.log("Do something with event:", e);
+                    console.log('Do something with event:', e);
                 },
             },
             Drag,
@@ -188,19 +188,19 @@
         dragDiv._init();
 
         // stop propagation for the box to prevent triggering the crosshairs
-        $("#dragdemo-box").addEventListener("touchstart", e => e.stopPropagation());
-        $("#dragdemo-box").addEventListener("mousedown", e => e.stopPropagation());
+        $('#dragdemo-box').addEventListener('touchstart', e => e.stopPropagation());
+        $('#dragdemo-box').addEventListener('mousedown', e => e.stopPropagation());
 
         // mousedown, touching and dragging the container,  triggers the crosshairs.
         const dragContainer = Object.assign(
             {
-                el: $("#dragdemo-container"),
+                el: $('#dragdemo-container'),
 
                 ondrag: function(x, y) {
-                    $("#dragdemo-x").style.left =
-                        x + this.startLeft - this.el.style.left.slice(0, -2) - 1.5 + "px"; // -1 for border an -0.5 for line
-                    $("#dragdemo-y").style.top =
-                        y + this.startTop - this.el.style.top.slice(0, -2) - 1.5 + "px";
+                    $('#dragdemo-x').style.left =
+                        x + this.startLeft - this.el.style.left.slice(0, -2) - 1.5 + 'px'; // -1 for border an -0.5 for line
+                    $('#dragdemo-y').style.top =
+                        y + this.startTop - this.el.style.top.slice(0, -2) - 1.5 + 'px';
                 },
 
                 ondragstart: function(xy) {
@@ -211,7 +211,7 @@
                 },
 
                 ondragend: function(e) {
-                    console.log("Do something with event:", e);
+                    console.log('Do something with event:', e);
                 },
             },
             Drag,

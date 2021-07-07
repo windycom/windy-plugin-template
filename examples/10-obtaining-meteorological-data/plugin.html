@@ -34,12 +34,12 @@
         </p>
     </div>
     <script>
-        import pluginDataLoader from "@windy/plugins/plugin-data-loader";
-        import map from "@windy/map";
+        import pluginDataLoader from '@windy/plugins/plugin-data-loader';
+        import map from '@windy/map';
 
         const options = {
-            key: "RxcwkWO2XWsfEbdidcsskbyWqhToAwLx",
-            plugin: "windy-plugin-examples",
+            key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx',
+            plugin: 'windy-plugin-examples',
         };
 
         // Create new dataLoder instance
@@ -50,20 +50,20 @@
 
             // dataLoader accepts object with all required parameters
             const dataOptions = {
-                model: "gfs",
+                model: 'gfs',
                 lat: 50,
                 lon: 14,
             };
 
             // Loads point forecast for lat, lon
-            load("forecast", dataOptions).then(({ data }) => {
+            load('forecast', dataOptions).then(({ data }) => {
                 this.refs.forecast.innerHTML = JSON.stringify(data);
 
                 console.log(data);
             });
 
             // Loads air data for lat, lon
-            load("airData", dataOptions).then(({ data }) => {
+            load('airData', dataOptions).then(({ data }) => {
                 this.refs.airData.innerHTML = JSON.stringify(data);
                 console.log(data);
             });

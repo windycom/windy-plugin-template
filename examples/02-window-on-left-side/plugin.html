@@ -25,13 +25,13 @@
         <p>2) Using store to programmatically change overlay</p>
     </div>
     <script>
-        import bcast from "@windy/broadcast";
-        import store from "@windy/store";
+        import bcast from '@windy/broadcast';
+        import store from '@windy/store';
 
         let hasHooks = false,
             timer = null;
 
-        let overlays = ["rain", "wind", "temp", "clouds"],
+        let overlays = ['rain', 'wind', 'temp', 'clouds'],
             i = 0;
 
         const log = params => console.log('Received "redrawFinished" bcast', params);
@@ -45,11 +45,11 @@
             // Change overlay programatically
             timer = setInterval(() => {
                 i = i === 3 ? 0 : i + 1;
-                store.set("overlay", overlays[i]);
+                store.set('overlay', overlays[i]);
             }, 2000);
 
             // Observe the change
-            bcast.on("redrawFinished", log);
+            bcast.on('redrawFinished', log);
 
             hasHooks = true;
         };
@@ -58,7 +58,7 @@
             if (hasHooks) {
                 clearInterval(timer);
 
-                bcast.off("redrawFinished", log);
+                bcast.off('redrawFinished', log);
 
                 hasHooks = false;
             }

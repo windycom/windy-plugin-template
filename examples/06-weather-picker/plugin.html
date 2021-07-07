@@ -1,15 +1,15 @@
 <plugin>
     <script>
-        import picker from "@windy/picker";
-        import utils from "@windy/utils";
+        import picker from '@windy/picker';
+        import utils from '@windy/utils';
 
         const readValues = () => {
             let { lat, lon, values, overlay } = picker.getParams();
             // -> 50.4, 14.3, 'wind', [ U,V, ]
 
-            console.log("Picker is at", lat, lon);
+            console.log('Picker is at', lat, lon);
 
-            if (overlay === "wind") {
+            if (overlay === 'wind') {
                 let windObject = utils.wind2obj(values);
                 console.log(windObject);
             } else if (/weaves|swell/.test(overlay)) {
@@ -19,14 +19,14 @@
         };
 
         // picker has been opened at latLon coords
-        picker.on("pickerOpened", readValues);
+        picker.on('pickerOpened', readValues);
 
         // picker was dragged by user to latLon coords
-        picker.on("pickerMoved", readValues);
+        picker.on('pickerMoved', readValues);
 
         // picker was closed
-        picker.on("pickerClosed", () => {
-            console.log("Picker was closed");
+        picker.on('pickerClosed', () => {
+            console.log('Picker was closed');
         });
     </script>
 </plugin>

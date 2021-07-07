@@ -1,4 +1,4 @@
 module.exports = {
-    displayName: "Picker example",
-    hook: "menu",
+    displayName: 'Picker example',
+    hook: 'menu',
 };

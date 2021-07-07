@@ -14,15 +14,15 @@
         >
     </div>
     <script>
-        import map from "@windy/map";
+        import map from '@windy/map';
 
         let geoJSON = null;
 
         //	Whenever your plugin is mounted, all elements with 'data-ref'
         //	attributes are exposed in this.refs object
-        this.refs.fpl1.onclick = () => loadFpl("fpl1");
-        this.refs.fpl2.onclick = () => loadFpl("fpl2");
-        this.refs.fpl3.onclick = () => loadFpl("fpl3");
+        this.refs.fpl1.onclick = () => loadFpl('fpl1');
+        this.refs.fpl2.onclick = () => loadFpl('fpl2');
+        this.refs.fpl3.onclick = () => loadFpl('fpl3');
 
         this.onclose = () => removeFpl();
 

@@ -1,6 +1,6 @@
 <plugin>
     <script>
-        import map from "@windy/map";
+        import map from '@windy/map';
 
         const BoatIcon = L.divIcon({
             html: `<svg  viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
@@ -16,9 +16,9 @@
         const updateIconStyle = () => {
             for (const marker of markers) {
                 if (marker._icon) {
-                    marker._icon.style.transformOrigin = "12px 12px";
-                    const heading = marker._icon.getAttribute("data-heading");
-                    if (marker._icon.style.transform.indexOf("rotateZ") === -1) {
+                    marker._icon.style.transformOrigin = '12px 12px';
+                    const heading = marker._icon.getAttribute('data-heading');
+                    if (marker._icon.style.transform.indexOf('rotateZ') === -1) {
                         marker._icon.style.transform = `${
                             marker._icon.style.transform
                         } rotateZ(${heading || 0}deg)`;
@@ -28,7 +28,7 @@
         };
 
         const load = () => {
-            fetch("https://www.windy.com/img/windy-plugins/boats.json")
+            fetch('https://www.windy.com/img/windy-plugins/boats.json')
                 .then(response => response.json())
                 .then(result => result.result)
                 .then(result => {
@@ -44,16 +44,16 @@
                             weight: 2,
                         }).addTo(map);
 
-                        layer.on("mouseover", () => layer.setStyle({ weight: 4 }));
+                        layer.on('mouseover', () => layer.setStyle({ weight: 4 }));
 
-                        layer.on("mouseout", () => layer.setStyle({ weight: 2 }));
+                        layer.on('mouseout', () => layer.setStyle({ weight: 2 }));
 
                         const marker = L.marker(boat.track[boat.track.length - 1], {
                             icon: BoatIcon,
                         }).addTo(map);
 
                         markers.push(marker);
-                        marker._icon.setAttribute("data-heading", boat.heading);
+                        marker._icon.setAttribute('data-heading', boat.heading);
                         marker.bindPopup(boatName);
 
                         lines.push(layer);
@@ -80,9 +80,9 @@
 
             load();
 
-            map.on("zoom", updateIconStyle);
-            map.on("zoomend", updateIconStyle);
-            map.on("viewreset", updateIconStyle);
+            map.on('zoom', updateIconStyle);
+            map.on('zoomend', updateIconStyle);
+            map.on('viewreset', updateIconStyle);
             hasHooks = true;
 
             map.setView([14, -29], 4);
@@ -94,9 +94,9 @@
             }
 
             remove();
-            map.off("zoom", updateIconStyle);
-            map.off("zoomend", updateIconStyle);
-            map.off("viewreset", updateIconStyle);
+            map.off('zoom', updateIconStyle);
+            map.off('zoomend', updateIconStyle);
+            map.off('viewreset', updateIconStyle);
             hasHooks = false;
         };
     </script>

@@ -1,15 +1,15 @@
-import overlays from "@windy/overlays";
-import rs from "@windy/rootScope";
-import store from "@windy/store";
-import $ from "@windy/$";
-import _ from "@windy/utils";
-import map from "@windy/map";
+import overlays from '@windy/overlays';
+import rs from '@windy/rootScope';
+import store from '@windy/store';
+import $ from '@windy/$';
+import _ from '@windy/utils';
+import map from '@windy/map';
 
-import sUtils from "./soundingUtils.mjs";
+import sUtils from './soundingUtils.mjs';
 
 let svg = null;
 
-const el = $("#sounding-chart");
+const el = $('#sounding-chart');
 
 const chartWidth = el.clientWidth - 30,
     chartHeight = el.clientHeight - 40;
@@ -40,7 +40,7 @@ const pressureLines = [850, 500, 200];
 let currentData = [],
     currentMouseY = chartHeight,
     currentInfo = {},
-    currentProduct = "gfs",
+    currentProduct = 'gfs',
     zoomIn = false,
     refs = null; // will contain this.refs elements from mytag.html
 
@@ -50,14 +50,14 @@ const convertTemp = overlays.temp.convertNumber,
 
 // Custom conversion of altitude
 // Can not use convertNumber, because it rounds altitude to 100m
-const convertAlt = value => Math.round(overlays.cloudtop.metric === "ft" ? value * 3.28084 : value);
+const convertAlt = value => Math.round(overlays.cloudtop.metric === 'ft' ? value * 3.28084 : value);
 
 const init = _refs => {
     if (svg) {
         return;
     }
 
-    svg = d3.select("#sounding-chart").append("svg");
+    svg = d3.select('#sounding-chart').append('svg');
 
     refs = _refs;
 
@@ -87,200 +87,200 @@ const init = _refs => {
         .y(d => yScale(d.gh));
 
     const chartArea = svg
-        .append("g")
-        .attr("class", "chartArea")
-        .attr("transform", `translate(10,15)`)
-        .style("display", "none"); // Everything is hidden until data is loaded
+        .append('g')
+        .attr('class', 'chartArea')
+        .attr('transform', `translate(10,15)`)
+        .style('display', 'none'); // Everything is hidden until data is loaded
 
     if (rs.isMobile || rs.isTablet) {
         chartArea
-            .on("touchstart", dragStarted)
-            .on("touchmove", dragged)
-            .on("touchend", dragEnded);
+            .on('touchstart', dragStarted)
+            .on('touchmove', dragged)
+            .on('touchend', dragEnded);
     } else {
         chartArea.call(
             d3
                 .drag()
-                .on("start", dragStarted)
-                .on("drag", dragged)
-                .on("end", dragEnded),
+                .on('start', dragStarted)
+                .on('drag', dragged)
+                .on('end', dragEnded),
         );
     }
 
-    svg.append("text")
-        .attr("class", "noDataLabel")
-        .text("No Data")
-        .attr("x", "50%")
-        .attr("y", "50%")
-        .attr("text-anchor", "middle")
-        .style("display", "none");
+    svg.append('text')
+        .attr('class', 'noDataLabel')
+        .text('No Data')
+        .attr('x', '50%')
+        .attr('y', '50%')
+        .attr('text-anchor', 'middle')
+        .style('display', 'none');
 
     chartArea
-        .append("g")
-        .attr("class", "windProfile")
-        .attr("opacity", 0.5)
-        .attr("transform", `translate(${chartWidth - 10}, 0)`);
+        .append('g')
+        .attr('class', 'windProfile')
+        .attr('opacity', 0.5)
+        .attr('transform', `translate(${chartWidth - 10}, 0)`);
 
-    const pressureGrid = chartArea.append("g").attr("class", "pressureGrid");
+    const pressureGrid = chartArea.append('g').attr('class', 'pressureGrid');
 
     pressureLines.forEach(level => {
-        var g = pressureGrid.append("g").attr("class", `l${level}`);
+        var g = pressureGrid.append('g').attr('class', `l${level}`);
 
-        g.append("line")
-            .style("stroke", "black")
-            .attr("opacity", 0.25)
-            .attr("x1", 0)
-            .attr("y1", 0)
-            .attr("x2", 35)
-            .attr("y2", 0);
+        g.append('line')
+            .style('stroke', 'black')
+            .attr('opacity', 0.25)
+            .attr('x1', 0)
+            .attr('y1', 0)
+            .attr('x2', 35)
+            .attr('y2', 0);
 
-        g.append("text")
-            .attr("opacity", 0.3)
-            .attr("x", 40)
-            .attr("y", 2)
+        g.append('text')
+            .attr('opacity', 0.3)
+            .attr('x', 40)
+            .attr('y', 2)
             .text(`${level}hPa`)
-            .style("font-size", "8px");
+            .style('font-size', '8px');
     });
 
     chartArea
-        .append("g")
-        .attr("class", "x axis")
-        .attr("transform", `translate(0,${chartHeight})`);
+        .append('g')
+        .attr('class', 'x axis')
+        .attr('transform', `translate(0,${chartHeight})`);
 
     chartArea
-        .append("g")
-        .attr("class", "y axis")
-        .attr("y", chartHeight + 16);
+        .append('g')
+        .attr('class', 'y axis')
+        .attr('y', chartHeight + 16);
 
     chartArea
-        .append("text")
-        .attr("class", "x label")
-        .attr("opacity", 0.75)
-        .attr("x", chartWidth + 5)
-        .attr("y", chartHeight + 16);
+        .append('text')
+        .attr('class', 'x label')
+        .attr('opacity', 0.75)
+        .attr('x', chartWidth + 5)
+        .attr('y', chartHeight + 16);
 
     chartArea
-        .append("text")
-        .attr("class", "y label")
-        .attr("opacity", 0.75)
-        .attr("x", 0)
-        .attr("y", -4);
+        .append('text')
+        .attr('class', 'y label')
+        .attr('opacity', 0.75)
+        .attr('x', 0)
+        .attr('y', -4);
 
     const auxLines = chartArea
-        .append("g")
-        .attr("class", "auxLines")
-        .attr("opacity", 0.3);
+        .append('g')
+        .attr('class', 'auxLines')
+        .attr('opacity', 0.3);
 
     auxLines
-        .append("line")
-        .attr("class", "humidityLine")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1);
+        .append('line')
+        .attr('class', 'humidityLine')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
 
     auxLines
-        .append("line")
-        .attr("class", "cclDryAdiabat")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1);
+        .append('line')
+        .attr('class', 'cclDryAdiabat')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
 
     auxLines
-        .append("line")
-        .attr("class", "cclWetAdiabat")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1);
+        .append('line')
+        .attr('class', 'cclWetAdiabat')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
 
     auxLines
-        .append("line")
-        .attr("class", "lclDryAdiabat")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1);
+        .append('line')
+        .attr('class', 'lclDryAdiabat')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
 
     chartArea
-        .append("path")
-        .attr("class", "temperature chart")
-        .attr("fill", "none")
-        .attr("stroke", "red")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 1.5);
+        .append('path')
+        .attr('class', 'temperature chart')
+        .attr('fill', 'none')
+        .attr('stroke', 'red')
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-width', 1.5);
 
     chartArea
-        .append("path")
-        .attr("class", "dewpoint chart")
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 1.5);
+        .append('path')
+        .attr('class', 'dewpoint chart')
+        .attr('fill', 'none')
+        .attr('stroke', 'steelblue')
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-width', 1.5);
 
     // There must be rectangle covering whole chartArea
     chartArea
-        .append("rect")
-        .attr("class", "overlay")
-        .attr("width", chartWidth)
-        .attr("height", chartHeight)
-        .attr("opacity", 0);
+        .append('rect')
+        .attr('class', 'overlay')
+        .attr('width', chartWidth)
+        .attr('height', chartHeight)
+        .attr('opacity', 0);
 
     // Mouseinfo widget, displays info for cursor position
     const infoLine = chartArea
-        .append("g")
-        .attr("class", "infoLine")
-        .attr("transform", `translate(0,${currentMouseY})`);
+        .append('g')
+        .attr('class', 'infoLine')
+        .attr('transform', `translate(0,${currentMouseY})`);
 
     infoLine
-        .append("line")
-        .attr("stroke", "black")
-        .attr("stroke-width", 1)
-        .attr("x1", 0)
-        .attr("y1", 0.5)
-        .attr("x2", chartWidth)
-        .attr("y2", 0.5);
+        .append('line')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1)
+        .attr('x1', 0)
+        .attr('y1', 0.5)
+        .attr('x2', chartWidth)
+        .attr('y2', 0.5);
 
     // Semi-transparent white background under text
     infoLine
-        .append("rect")
-        .attr("fill", "white")
-        .attr("x", 0)
-        .attr("y", -20)
-        .attr("width", chartWidth)
-        .attr("height", 20)
-        .attr("opacity", 0.7);
+        .append('rect')
+        .attr('fill', 'white')
+        .attr('x', 0)
+        .attr('y', -20)
+        .attr('width', chartWidth)
+        .attr('height', 20)
+        .attr('opacity', 0.7);
 
-    const labels = infoLine.append("g").attr("transform", `translate(0,-5)`);
+    const labels = infoLine.append('g').attr('transform', `translate(0,-5)`);
 
     labels
-        .append("text")
-        .attr("class", "alt")
-        .attr("x", 10);
+        .append('text')
+        .attr('class', 'alt')
+        .attr('x', 10);
 
     const tempLabels = labels
-        .append("g")
-        .attr("transform", `translate(${chartWidth / 2},0)`)
-        .attr("text-anchor", "end");
+        .append('g')
+        .attr('transform', `translate(${chartWidth / 2},0)`)
+        .attr('text-anchor', 'end');
 
     tempLabels
-        .append("text")
-        .attr("class", "dewpoint")
-        .attr("x", 20)
-        .attr("text-anchor", "end");
+        .append('text')
+        .attr('class', 'dewpoint')
+        .attr('x', 20)
+        .attr('text-anchor', 'end');
 
     tempLabels
-        .append("text")
-        .attr("class", "temp")
-        .attr("x", 23)
-        .attr("text-anchor", "start");
+        .append('text')
+        .attr('class', 'temp')
+        .attr('x', 23)
+        .attr('text-anchor', 'start');
 
     labels
-        .append("text")
-        .attr("class", "windSpeed")
-        .attr("x", chartWidth - 18)
-        .attr("text-anchor", "end");
+        .append('text')
+        .attr('class', 'windSpeed')
+        .attr('x', chartWidth - 18)
+        .attr('text-anchor', 'end');
 
     labels
-        .append("text")
-        .attr("class", "windDir")
-        .attr("x", chartWidth - 15)
-        .attr("text-anchor", "start");
+        .append('text')
+        .attr('class', 'windDir')
+        .attr('x', chartWidth - 15)
+        .attr('text-anchor', 'start');
 
     refs.zoom.onclick = switchZoom;
 
@@ -288,7 +288,7 @@ const init = _refs => {
 };
 
 function updateZoomButton() {
-    refs.zoom.textContent = zoomIn ? "\uE03D" : "\uE03B";
+    refs.zoom.textContent = zoomIn ? '\uE03D' : '\uE03B';
 }
 
 function switchZoom(ev) {
@@ -302,15 +302,15 @@ function updatePressureGrid() {
     pressureLines.forEach(level => {
         const pt = currentData.find(pt => pt.level == level);
         if (!pt) {
-            svg.select(`.pressureGrid .l${level}`).style("display", "none");
+            svg.select(`.pressureGrid .l${level}`).style('display', 'none');
             return;
         }
 
         var y = Math.round(yScale(pt.gh)) + 0.5;
 
         svg.select(`.pressureGrid .l${level}`)
-            .style("display", null)
-            .attr("transform", `translate(0,${y})`);
+            .style('display', null)
+            .attr('transform', `translate(0,${y})`);
     });
 }
 
@@ -350,38 +350,38 @@ function updateAuxLines() {
     ]; // 0.2°C / 100m
 
     svg.select(`.auxLines .humidityLine`)
-        .attr("x1", xScale(humidityLine[0][0]))
-        .attr("y1", yScale(humidityLine[0][1]))
-        .attr("x2", xScale(humidityLine[1][0]))
-        .attr("y2", yScale(humidityLine[1][1]));
+        .attr('x1', xScale(humidityLine[0][0]))
+        .attr('y1', yScale(humidityLine[0][1]))
+        .attr('x2', xScale(humidityLine[1][0]))
+        .attr('y2', yScale(humidityLine[1][1]));
 
     const ccl = currentInfo.ccl;
 
     if (ccl) {
         svg.select(`.auxLines .cclDryAdiabat`)
-            .style("display", null)
-            .attr("x1", xScale(ccl[0]))
-            .attr("y1", yScale(ccl[1]))
-            .attr("x2", xScale(ccl[0] + 0.01 * (ccl[1] - p1.gh))) // 1°C / 100m
-            .attr("y2", yScale(p1.gh));
+            .style('display', null)
+            .attr('x1', xScale(ccl[0]))
+            .attr('y1', yScale(ccl[1]))
+            .attr('x2', xScale(ccl[0] + 0.01 * (ccl[1] - p1.gh))) // 1°C / 100m
+            .attr('y2', yScale(p1.gh));
 
         svg.select(`.auxLines .cclWetAdiabat`)
-            .style("display", null)
-            .attr("x1", xScale(ccl[0]))
-            .attr("y1", yScale(ccl[1]))
-            .attr("x2", xScale(ccl[0] - 0.006 * (p2.gh - ccl[1]))) // 0.6°C / 100m
-            .attr("y2", yScale(p2.gh));
+            .style('display', null)
+            .attr('x1', xScale(ccl[0]))
+            .attr('y1', yScale(ccl[1]))
+            .attr('x2', xScale(ccl[0] - 0.006 * (p2.gh - ccl[1]))) // 0.6°C / 100m
+            .attr('y2', yScale(p2.gh));
     } else {
-        svg.select(`.auxLines .cclDryAdiabat`).style("display", "none");
+        svg.select(`.auxLines .cclDryAdiabat`).style('display', 'none');
 
-        svg.select(`.auxLines .cclWetAdiabat`).style("display", "none");
+        svg.select(`.auxLines .cclWetAdiabat`).style('display', 'none');
     }
 }
 
 function updateWindBarbs() {
-    svg.selectAll(".windbarb").remove();
+    svg.selectAll('.windbarb').remove();
 
-    const windProfile = svg.select(".windProfile");
+    const windProfile = svg.select('.windProfile');
 
     let lastY = 0;
     for (let i = 0; i < currentData.length; ++i) {
@@ -402,7 +402,7 @@ function updateInfoLine() {
 
     const gh = yScale.invert(currentMouseY);
 
-    const infoLine = svg.select(".infoLine");
+    const infoLine = svg.select('.infoLine');
     let idx = currentData.findIndex(pt => pt.gh > gh);
 
     if (idx == -1) {
@@ -421,21 +421,21 @@ function updateInfoLine() {
     const wind = _.wind2obj([pt.wind_u, pt.wind_v]);
 
     infoLine
-        .select(".alt")
+        .select('.alt')
         .text(
             `${convertAlt(Math.round(pt.gh))}${overlays.cloudtop.metric}` +
                 (pt.level
                     ? ` ${convertPressure(Math.round(pt.level) * 100)}${overlays.pressure.metric}`
-                    : ""),
+                    : ''),
         );
-    infoLine.select(".temp").text(`${convertTemp(pt.temp.toFixed(1))}${overlays.temp.metric}`);
+    infoLine.select('.temp').text(`${convertTemp(pt.temp.toFixed(1))}${overlays.temp.metric}`);
     infoLine
-        .select(".dewpoint")
+        .select('.dewpoint')
         .text(`${convertTemp(pt.dewpoint.toFixed(1))}${overlays.temp.metric}`);
     infoLine
-        .select(".windSpeed")
+        .select('.windSpeed')
         .text(`${convertWind(wind.wind.toFixed(1))}${overlays.wind.metric}`);
-    infoLine.select(".windDir").text(`${Math.round(wind.dir)}°`);
+    infoLine.select('.windDir').text(`${Math.round(wind.dir)}°`);
 }
 
 function updateInfoBox() {
@@ -450,7 +450,7 @@ function updateInfoBox() {
         overlays.cloudtop.metric
     }`;
     refs.modelAlt.className =
-        Math.abs(pointData.modelElevation - pointData.elevation) > 200 ? "red" : "ok";
+        Math.abs(pointData.modelElevation - pointData.elevation) > 200 ? 'red' : 'ok';
 }
 
 function dragStarted() {
@@ -479,7 +479,7 @@ function dragged() {
         moveInfoLine(d3.mouse(this));
     } else {
         // Hide infoline when it is dragged out
-        svg.select(".infoLine").style("display", "none");
+        svg.select('.infoLine').style('display', 'none');
     }
 
     if (rs.isMobile || rs.isTablet) {
@@ -490,9 +490,9 @@ function dragged() {
 function moveInfoLine(coords) {
     currentMouseY = Math.max(0, Math.min(chartHeight, coords[1]));
 
-    svg.select(".infoLine")
-        .attr("transform", `translate(0,${currentMouseY})`)
-        .style("display", null);
+    svg.select('.infoLine')
+        .attr('transform', `translate(0,${currentMouseY})`)
+        .style('display', null);
 
     updateInfoLine();
 }
@@ -525,7 +525,7 @@ const setXScale = () => {
 
     // Update axis scale, apply metrics
     xAxisScale.domain([convertTemp(range[0]), convertTemp(range[1])]);
-    svg.select(".x.axis")
+    svg.select('.x.axis')
         .transition()
         .call(xAxis);
 };
@@ -554,7 +554,7 @@ const setYScale = () => {
 
     // Update axis scale, apply metrics
     yAxisScale.domain([convertAlt(range[0]), convertAlt(range[1])]);
-    svg.select(".y.axis")
+    svg.select('.y.axis')
         .transition()
         .call(yAxis);
 };
@@ -640,13 +640,13 @@ const load = (lat, lon, airData) => {
 
     updateSettings();
 
-    store.on("timestamp", redraw);
+    store.on('timestamp', redraw);
 };
 
 // Shows/hides nodata label
 function showNoData(show) {
-    svg.select(".noDataLabel").style("display", show ? null : "none");
-    svg.select(".chartArea").style("display", show ? "none" : null);
+    svg.select('.noDataLabel').style('display', show ? null : 'none');
+    svg.select('.chartArea').style('display', show ? 'none' : null);
 }
 
 // Handler for settings change
@@ -654,9 +654,9 @@ const updateSettings = () => {
     setXScale();
     setYScale();
 
-    svg.select(".x.label").text(overlays.temp.metric);
+    svg.select('.x.label').text(overlays.temp.metric);
 
-    svg.select(".y.label").text(`${overlays.cloudtop.metric}/amsl`);
+    svg.select('.y.label').text(`${overlays.cloudtop.metric}/amsl`);
 
     redraw();
 };
@@ -668,7 +668,7 @@ const redraw = () => {
         return;
     }
 
-    const ts = store.get("timestamp");
+    const ts = store.get('timestamp');
 
     // Find nearest hour
     const hours = Object.keys(pointData.data).sort((a, b) => a - b);
@@ -708,13 +708,13 @@ const redraw = () => {
 
     updateInfoBox();
 
-    svg.select(".temperature.chart")
+    svg.select('.temperature.chart')
         .datum(currentData)
-        .attr("d", tempLine);
+        .attr('d', tempLine);
 
-    svg.select(".dewpoint.chart")
+    svg.select('.dewpoint.chart')
         .datum(currentData)
-        .attr("d", dewPointLine);
+        .attr('d', dewPointLine);
 };
 
 export default { load, init };

@@ -11,9 +11,7 @@ module.exports = async (fullPath, moduleId, namespace) => {
 };
 
 const transform = (file, source, id, namespace) => {
-    const [importDeclarations, importStatements, exportDeclarations] = find(
-        source
-    );
+    const [importDeclarations, importStatements, exportDeclarations] = find(source);
 
     var nameBySource = new Map();
 
@@ -30,22 +28,19 @@ const transform = (file, source, id, namespace) => {
             d.source = d.source.replace(/@windy\/(\S+)/, '$1');
 
             if (/plugins\//.test(d.source)) {
-                d.source = "@" + d.source;
+                d.source = '@' + d.source;
             }
-
         } else if (/\.\/\S+\.mjs/.test(d.source)) {
             // Plugin's module
 
             externalModules.push(d.source);
 
-            d.source = `${namespace}/${d.source.replace(
-                /\.\/(\S+)\.mjs/,
-                '$1'
-            )}`;
-        } else if ( !/@plugins\//.test(d.source) ) {          // "@plugins/xyz" is allowed
+            d.source = `${namespace}/${d.source.replace(/\.\/(\S+)\.mjs/, '$1')}`;
+        } else if (!/@plugins\//.test(d.source)) {
+            // "@plugins/xyz" is allowed
             throw new Error(
                 'Unable to import module. Windy plugin compiler is primitive and' +
-                    ' supports only "@windy/name", or "./filename.mjs" modules'
+                    ' supports only "@windy/name", or "./filename.mjs" modules',
             );
         }
 
@@ -62,9 +57,7 @@ const transform = (file, source, id, namespace) => {
         }
 
         if (d.name) {
-            throw new Error(
-                `mjs2js: Named exports are not supported in ${file}`
-            );
+            throw new Error(`mjs2js: Named exports are not supported in ${file}`);
         }
 
         nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
@@ -104,7 +97,6 @@ W.define('${id}', [${deps}],
     }
 
     transformed += source.slice(c);
-
 
     //import like this:  import name from "./xyz.mjs" if using: export default whatever;
     //or import {name1, name2:yourname} from "./xyz.mjs" if using: export {name1, name2};

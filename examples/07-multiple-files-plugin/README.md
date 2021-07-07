@@ -13,11 +13,11 @@ Usage:
 
 ```js
 // Windy's core modules
-import map from "@windy/map";
-import _ from "@windy/utils";
+import map from '@windy/map';
+import _ from '@windy/utils';
 
 // Your own modules
-import graph from "./soundingGraph.mjs";
+import graph from './soundingGraph.mjs';
 
 // ..your code
 

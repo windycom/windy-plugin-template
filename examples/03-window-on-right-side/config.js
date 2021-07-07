@@ -1,13 +1,13 @@
 module.exports = {
-    displayName: "Window on the right",
+    displayName: 'Window on the right',
 
-    hook: "menu",
+    hook: 'menu',
 
     /*
         List of classnames that will be attached to your
         plugin upon mounting
 	*/
-    className: "plugin-rhpane plugin-mobile-rhpane",
+    className: 'plugin-rhpane plugin-mobile-rhpane',
 
     /*
         Identifier of a pane, where your plugin will reside.
@@ -15,5 +15,5 @@ module.exports = {
         this string will guarantee, that all other plugins
         on the right side will be closed.
 	*/
-    exclusive: "rhpane",
+    exclusive: 'rhpane',
 };

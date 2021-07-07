@@ -8,14 +8,14 @@
         <div id="my-graph" data-ref="graph"></div>
     </div>
     <script>
-        import map from "@windy/map";
-        import rs from "@windy/rootScope";
+        import map from '@windy/map';
+        import rs from '@windy/rootScope';
 
         let marker = null;
 
         // You do NOT NEED jQuery!!!
 
-        console.log("mount");
+        console.log('mount');
 
         console.log(this.node);
         // -> el containing this plugin
@@ -26,7 +26,7 @@
         //	Whenever your plugin is opened from context menu
         //	it recieves { lat, lon } object with required coordinates
         this.onopen = latLonObject => {
-            console.log("plugin opened");
+            console.log('plugin opened');
 
             let lat, lon;
 
@@ -76,7 +76,7 @@
         };
 
         this.onclose = () => {
-            console.log("plugin closed");
+            console.log('plugin closed');
 
             if (marker) {
                 map.removeLayer(marker);
@@ -85,26 +85,26 @@
         };
 
         const renderGraph = () => {
-            this.refs.graph.innerHTML = "";
+            this.refs.graph.innerHTML = '';
 
             //Make an SVG Container
             var svg = d3
-                .select("#my-graph")
-                .append("svg")
-                .attr("width", "100%")
-                .attr("height", 80);
+                .select('#my-graph')
+                .append('svg')
+                .attr('width', '100%')
+                .attr('height', 80);
 
             //Draw the Circle
-            svg.append("circle")
-                .attr("cx", "50%")
-                .attr("cy", "50%")
-                .attr("r", 20);
+            svg.append('circle')
+                .attr('cx', '50%')
+                .attr('cy', '50%')
+                .attr('r', 20);
 
-            svg.append("text")
-                .text("This circle was drawn with d3")
-                .attr("fill", "white")
-                .attr("x", 0)
-                .attr("y", "95%");
+            svg.append('text')
+                .text('This circle was drawn with d3')
+                .attr('fill', 'white')
+                .attr('x', 0)
+                .attr('y', '95%');
         };
     </script>
 </plugin>

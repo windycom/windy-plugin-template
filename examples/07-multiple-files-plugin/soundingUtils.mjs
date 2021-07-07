@@ -1,4 +1,4 @@
-import _ from "@windy/utils";
+import _ from '@windy/utils';
 
 // Remove data points with some null values
 function validateData(data) {
@@ -101,21 +101,21 @@ function dataIntersection(line, polyline, getPoint) {
 function addWindBarb(g, x, y, dir, speed) {
     const scale = 20;
     const windBarb = g
-        .append("g")
-        .attr("class", "windbarb")
-        .attr("transform", `translate(${x}, ${y})rotate(${dir})`);
+        .append('g')
+        .attr('class', 'windbarb')
+        .attr('transform', `translate(${x}, ${y})rotate(${dir})`);
 
     // Convert to 5-knots multimple
     let knots5 = Math.round(speed * 0.388768);
 
     if (knots5 > 0) {
         windBarb
-            .append("line")
-            .attr("stroke", "black")
-            .attr("x1", 0)
-            .attr("x2", 0)
-            .attr("y1", 0)
-            .attr("y2", -scale);
+            .append('line')
+            .attr('stroke', 'black')
+            .attr('x1', 0)
+            .attr('x2', 0)
+            .attr('y1', 0)
+            .attr('y2', -scale);
 
         const d = 0.15 * scale;
         var dy = -scale;
@@ -129,9 +129,9 @@ function addWindBarb(g, x, y, dir, speed) {
         if (knots5 >= 10) {
             while (knots5 >= 10) {
                 windBarb
-                    .append("polygon")
-                    .attr("points", `0 ${dy}, ${2.5 * d} ${dy + d / 2}, 0 ${dy + d}`)
-                    .style("stroke", "black");
+                    .append('polygon')
+                    .attr('points', `0 ${dy}, ${2.5 * d} ${dy + d / 2}, 0 ${dy + d}`)
+                    .style('stroke', 'black');
                 knots5 -= 10;
                 dy += d;
             }
@@ -141,12 +141,12 @@ function addWindBarb(g, x, y, dir, speed) {
         // Small barbs
         while (knots5 > 0) {
             windBarb
-                .append("line")
-                .attr("x1", 0)
-                .attr("x2", knots5 > 1 ? 2.5 * d : 1.25 * d) // Short or normal barb
-                .attr("y1", dy)
-                .attr("y2", dy - 0.25 * d)
-                .style("stroke", "black");
+                .append('line')
+                .attr('x1', 0)
+                .attr('x2', knots5 > 1 ? 2.5 * d : 1.25 * d) // Short or normal barb
+                .attr('y1', dy)
+                .attr('y2', dy - 0.25 * d)
+                .style('stroke', 'black');
             knots5 -= 2;
             dy += d;
         }
@@ -154,20 +154,20 @@ function addWindBarb(g, x, y, dir, speed) {
         // No wind
         // Outline circle
         windBarb
-            .append("circle")
-            .style("stroke", "black")
-            .style("fill", "none")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 0.25 * scale);
+            .append('circle')
+            .style('stroke', 'black')
+            .style('fill', 'none')
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('r', 0.25 * scale);
 
         // Central dot
         windBarb
-            .append("circle")
-            .style("stroke", "black")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 0.05 * scale);
+            .append('circle')
+            .style('stroke', 'black')
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('r', 0.05 * scale);
     }
 }
 

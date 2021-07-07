@@ -14,17 +14,17 @@
     <div class="iconfont clickable-size" data-ref="zoom">&#xe03d;</div>
     <script>
         // Windy's core modules
-        import rs from "@windy/rootScope";
-        import map from "@windy/map";
-        import pluginDataLoader from "@windy/plugins/plugin-data-loader";
-        import _ from "@windy/utils";
+        import rs from '@windy/rootScope';
+        import map from '@windy/map';
+        import pluginDataLoader from '@windy/plugins/plugin-data-loader';
+        import _ from '@windy/utils';
 
         // Our own modules
-        import graph from "./soundingGraph.mjs";
+        import graph from './soundingGraph.mjs';
 
         const options = {
-            key: "RxcwkWO2XWsfEbdidcsskbyWqhToAwLx",
-            plugin: "windy-plugin-examples",
+            key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx',
+            plugin: 'windy-plugin-examples',
         };
 
         const load = pluginDataLoader(options);
@@ -49,7 +49,7 @@
                 { x, y } = map.latLngToLayerPoint(leafletCoords);
 
             if (!rs.isMobile) {
-                this.node.style.position = "absolute";
+                this.node.style.position = 'absolute';
                 this.node.style.left = `${x - 15}px`;
                 this.node.style.top = `${y + 15}px`;
             } else {
@@ -68,8 +68,8 @@
             }
 
             // Load d3 library from external source
-            if (!("d3" in window)) {
-                _.loadScript("https://unpkg.com/d3@5.7.0/dist/d3.min.js").then(() =>
+            if (!('d3' in window)) {
+                _.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js').then(() =>
                     initAndLoad(lat, lon),
                 );
             } else {
@@ -82,7 +82,7 @@
 
         const initAndLoad = (lat, lon) => {
             const dataOptions = {
-                model: "gfs",
+                model: 'gfs',
                 lat,
                 lon,
             };
@@ -90,7 +90,7 @@
             setTimeout(() => {
                 graph.init(this.refs);
 
-                load("airData", dataOptions).then(airData => {
+                load('airData', dataOptions).then(airData => {
                     graph.load(lat, lon, airData.data);
                 });
             }, 500);
