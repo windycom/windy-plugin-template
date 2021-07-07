@@ -1,13 +1,13 @@
 module.exports = {
-    displayName: 'Window on the left',
+    displayName: "Window on the left",
 
-    hook: 'menu',
+    hook: "menu",
 
     /*
         List of class names that will be attached to your
         plugin upon mounting
 	*/
-    className: 'plugin-lhpane plugin-mobile-fullscreen',
+    className: "plugin-lhpane plugin-mobile-fullscreen",
 
     /*
         Identifier of a pane, where your plugin will reside.
@@ -15,5 +15,5 @@ module.exports = {
         this string will guarantee, that all other plugins
         on the left side will be closed.
 	*/
-    exclusive: 'lhpane',
+    exclusive: "lhpane",
 };

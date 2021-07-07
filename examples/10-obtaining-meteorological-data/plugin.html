@@ -5,19 +5,16 @@
         <h2>Loading data from Windy API</h2>
 
         <p>
-            This plugin demonstrates communication with backend API and
-            retrieving varions parameters
+            This plugin demonstrates communication with backend API and retrieving varions
+            parameters
         </p>
 
         <p>
             1) Get your API key
-            <a hrer="https://api4.windy.com/api-key/">here</a>. Ignore "Allowed
-            domains" fields.
+            <a hrer="https://api4.windy.com/api-key/">here</a>. Ignore "Allowed domains" fields.
         </p>
 
-        <p>
-            2) Use <b>@windy/plugins/plugin-data-loader</b> module to retrieve the data.
-        </p>
+        <p>2) Use <b>@windy/plugins/plugin-data-loader</b> module to retrieve the data.</p>
 
         <hr />
 
@@ -33,18 +30,16 @@
 
         <p>
             Do you want to add additional data to our backend API? Let us know
-            <a href="https://community.windy.com/category/21/windy-plugins"
-                >here</a
-            >
+            <a href="https://community.windy.com/category/21/windy-plugins">here</a>
         </p>
     </div>
     <script>
-        import pluginDataLoader from '@windy/plugins/plugin-data-loader';
-        import map from '@windy/map';
+        import pluginDataLoader from "@windy/plugins/plugin-data-loader";
+        import map from "@windy/map";
 
         const options = {
-            key: 'RxcwkWO2XWsfEbdidcsskbyWqhToAwLx',
-            plugin: 'windy-plugin-examples',
+            key: "RxcwkWO2XWsfEbdidcsskbyWqhToAwLx",
+            plugin: "windy-plugin-examples",
         };
 
         // Create new dataLoder instance
@@ -55,20 +50,20 @@
 
             // dataLoader accepts object with all required parameters
             const dataOptions = {
-                model: 'gfs',
+                model: "gfs",
                 lat: 50,
                 lon: 14,
             };
 
             // Loads point forecast for lat, lon
-            load('forecast', dataOptions).then(({ data }) => {
+            load("forecast", dataOptions).then(({ data }) => {
                 this.refs.forecast.innerHTML = JSON.stringify(data);
 
                 console.log(data);
             });
 
             // Loads air data for lat, lon
-            load('airData', dataOptions).then(({ data }) => {
+            load("airData", dataOptions).then(({ data }) => {
                 this.refs.airData.innerHTML = JSON.stringify(data);
                 console.log(data);
             });

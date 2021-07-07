@@ -26,22 +26,22 @@ W.loadPlugin(
 function () {
   var map = W.require('map');
 
-  console.log('I am being mounted');
+  console.log("I am being mounted");
   var popup = null;
 
   this.onopen = function () {
-    console.log('I am being opened');
+    console.log("I am being opened");
     var center = map.getCenter();
 
     if (popup) {
       popup.setLatLng(center);
     } else {
-      popup = L.popup().setLatLng(center).setContent('Hello World').openOn(map);
+      popup = L.popup().setLatLng(center).setContent("Hello World").openOn(map);
     }
   };
 
   this.onclose = function () {
-    console.log('I am being closed');
+    console.log("I am being closed");
 
     if (popup) {
       map.removeLayer(popup);

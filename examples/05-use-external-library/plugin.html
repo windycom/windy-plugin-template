@@ -1,15 +1,15 @@
 <plugin>
     <h3>My graph</h3>
     <div>
-        I was opened at <b data-ref="coords"></b>. You can place any graph,
-        video, picture, or simply anything that relates to the coordinates.
+        I was opened at <b data-ref="coords"></b>. You can place any graph, video, picture, or
+        simply anything that relates to the coordinates.
         <br />
         This plugin also demonstrates loading of external library <b>d3</b>
         <div id="my-graph" data-ref="graph"></div>
     </div>
     <script>
-        import map from '@windy/map';
-        import rs from '@windy/rootScope';
+        import map from "@windy/map";
+        import rs from "@windy/rootScope";
 
         let marker = null;
 
@@ -76,7 +76,6 @@
         };
 
         this.onclose = () => {
-
             console.log("plugin closed");
 
             if (marker) {
@@ -86,26 +85,26 @@
         };
 
         const renderGraph = () => {
-            this.refs.graph.innerHTML = '';
+            this.refs.graph.innerHTML = "";
 
             //Make an SVG Container
             var svg = d3
-                .select('#my-graph')
-                .append('svg')
-                .attr('width', '100%')
-                .attr('height', 80);
+                .select("#my-graph")
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", 80);
 
             //Draw the Circle
-            svg.append('circle')
-                .attr('cx', '50%')
-                .attr('cy', '50%')
-                .attr('r', 20);
+            svg.append("circle")
+                .attr("cx", "50%")
+                .attr("cy", "50%")
+                .attr("r", 20);
 
-            svg.append('text')
-                .text('This circle was drawn with d3')
-                .attr('fill', 'white')
-                .attr('x', 0)
-                .attr('y', '95%');
+            svg.append("text")
+                .text("This circle was drawn with d3")
+                .attr("fill", "white")
+                .attr("x", 0)
+                .attr("y", "95%");
         };
     </script>
 </plugin>
