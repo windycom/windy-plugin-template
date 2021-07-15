@@ -27,8 +27,7 @@ function interpolateArray(data1, data2, w) {
     const data = [];
     for (let lev = 0; lev < data1.length; ++lev) {
         // Some levels may be missing (corrupted data) except ground level
-        let d2 =
-            lev == 0 ? data2[0] : data2.find(d => d.level == data1[lev].level);
+        let d2 = lev == 0 ? data2[0] : data2.find(d => d.level == data1[lev].level);
         if (!d2) {
             continue;
         }
@@ -89,10 +88,7 @@ function intersection(line1, line2) {
 // Returns first intersection of polyline straight line
 function dataIntersection(line, polyline, getPoint) {
     for (let i = 0; i < polyline.length - 1; ++i) {
-        const pt = intersection(line, [
-            getPoint(polyline[i]),
-            getPoint(polyline[i + 1]),
-        ]);
+        const pt = intersection(line, [getPoint(polyline[i]), getPoint(polyline[i + 1])]);
         if (pt) {
             return pt;
         }
@@ -134,10 +130,7 @@ function addWindBarb(g, x, y, dir, speed) {
             while (knots5 >= 10) {
                 windBarb
                     .append('polygon')
-                    .attr(
-                        'points',
-                        `0 ${dy}, ${2.5 * d} ${dy + d / 2}, 0 ${dy + d}`
-                    )
+                    .attr('points', `0 ${dy}, ${2.5 * d} ${dy + d / 2}, 0 ${dy + d}`)
                     .style('stroke', 'black');
                 knots5 -= 10;
                 dy += d;

@@ -1,0 +1,221 @@
+<plugin>
+    <div class="mobile-header">
+        <!-- mobile header is only displayed when scrolling -->
+        Drag demo
+    </div>
+    <div class="plugin-content">
+        <div class="mobile-title">Drag demo</div>
+        <h3 class="section-title">Drag demo</h3>
+        <div id="dragdemo-container">
+            <div id="dragdemo-x"></div>
+            <div id="dragdemo-y"></div>
+            <div id="dragdemo-box"></div>
+        </div>
+        <div style=" border:1px solid blue; border-radius:5px; padding:10px;  margin:5px; ">
+            <h2>This plugin is:</h2>
+            <br />
+            <ul style="margin-left:20px;">
+                <li>
+                    A boilerplate for building plugins for a mobile browser (plugins not accessible
+                    in the app).
+                </li>
+                <li>
+                    A demonstration on how to use the bottomSlider mechanism to close the plugin
+                    pane on mobile.
+                </li>
+                <li>
+                    I have also modified the bottomSlider so that the plugin pane can be dragged
+                    down partially, to display part of the map and the picker.
+                </li>
+                <li>The Drag class is also demonstrated:</li>
+                <ul style="margin-left:20px;">
+                    <li>You can drag the circle in the box above, or</li>
+                    <li>
+                        If you drag the open white area the cross hairs will move.
+                    </li>
+                </ul>
+                <li>
+                    The z-index of the plugin is set to 10 so that it appears on top of the picker.
+                </li>
+                <li>
+                    The z-index of the bottom element is set to 20, so that the calendar is on top
+                    of the plugin.
+                </li>
+                <li>
+                    A backdrop (linear-gradient background image) is created for the calendar
+                    timecode.
+                </li>
+                <li>
+                    The rest of this block is just to demonstrate scrolling. When you scroll down
+                    the "mobile-header" class becomes visible.
+                </li>
+            </ul>
+            <br /><br />
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+            mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+            do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
+            aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+            deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+            minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
+            eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum.
+        </div>
+    </div>
+    <div class="calendar-backdrop"></div>
+
+    <script>
+        import $ from '@windy/$';
+        import rs from '@windy/rootScope';
+        import Drag from '@windy/Drag';
+
+        // LastOpened set to true when plugin opens,  use to determine whether picker (or other actions) should be active.
+        // will be set false by W.plugins.plugins,  when another windy-plugin- plugin opens
+        this.lastOpened = true;
+
+        // Add backdrop for calendar in mobile,  use the same color as content
+        let bgVals = getComputedStyle($('.plugin-content', this.el))
+            .backgroundColor.replace('rgb', 'rgba')
+            .match(/[\d\.]+/g);
+        if (bgVals.length == 3) bgVals.push(1);
+        $(
+            '.calendar-backdrop',
+            this.el,
+        ).style.backgroundImage = `linear-gradient(rgba(${bgVals.slice(
+            0,
+            3,
+        )},0), rgba(${bgVals}) 60%)`;
+
+        // Add a slider for mobile:
+        if (rs.isMobile) {
+            // These properties have to be specified here,  but possibly in the future in the config file.
+            this.addMobileSlider = true;
+            this.closeOnSwipeDown = false;
+
+            //////  Experimental:  Here the mobileSlider is modified to allow the top border of the plugin to be
+            //////  pulled down and reveal part of the map and the picker.
+            //////  The bottomSlider must 1st be created,  so use setTimeout(f,0),  and then modified.
+            //////  Onopen also works,  but this only has to be done the 1st time.  onmounted does not work
+            setTimeout(() => {
+                let bs = this.bottomSlider;
+
+                // remove the bindedStart of bottomSlide
+                bs.el.removeEventListener('mousedown', bs.bindedStart);
+                if (bs.supportTouch) {
+                    bs.el.removeEventListener('touchstart', bs.bindedStart);
+                }
+
+                // attach the default startDrag of Drag class.
+                bs.bindedStart = Drag.startDrag.bind(bs);
+                bs.el.addEventListener('mousedown', bs.bindedStart);
+                if (bs.supportTouch) {
+                    bs.el.addEventListener('touchstart', bs.bindedStart);
+                }
+
+                bs.origTopOfPlugin = this.el.offsetTop;
+
+                bs.ondragstart = () => {
+                    bs.startTop = this.el.offsetTop; // get the current top of the plugin element
+                };
+
+                bs.ondrag = (x, y) => {
+                    let deltaY = y - bs.el.offsetTop;
+                    this.el.style.top = bs.startTop + deltaY + 'px';
+                };
+
+                bs.ondragend = () => {
+                    // if near the top,  set to the top to original value.
+                    if (Math.abs(this.el.offsetTop < 20))
+                        this.el.style.top = bs.origTopOfPlugin + 'px';
+                    // if height very small,  close the plugin.
+                    if (this.el.offsetHeight < 70) {
+                        this.close();
+                        setTimeout(() => (this.el.style.top = bs.origTopOfPlugin + 'px'), 500);
+                    }
+                };
+            }, 0);
+            ////// End of experiment
+        }
+
+        // Here you can remove all the DOM and leaflet elements and unsubscribe for listeners,  when another external plugin is opened.
+        // The W.plugins.plugins looks for this fx in each of the loaded plugins.
+        this.onOtherPluginOpened = plugin => {
+            console.log(`This ${plugin} has opened`);
+        };
+
+        // drag a div with the mouse or touch, it does not trigger events from the container thanks to stopPropagation,  see below
+        const dragDiv = Object.assign(
+            {
+                el: $('#dragdemo-box'),
+
+                ondrag: function(x, y) {
+                    // x and y are based on offsetLeft and offsetTop of el (in this case #dragdemo-container)
+                    // so on drag start: x = this.el.offsetLeft  and y = this.el.offsetTop
+                    x =
+                        x < 0
+                            ? 0
+                            : x > $('#dragdemo-container').offsetWidth - 22
+                            ? $('#dragdemo-container').offsetWidth - 22
+                            : x;
+                    y =
+                        y < 0
+                            ? 0
+                            : y > $('#dragdemo-container').offsetHeight - 22
+                            ? $('#dragdemo-container').offsetHeight - 22
+                            : y;
+                    this.el.style.left = x + 'px';
+                    this.el.style.top = y + 'px';
+                },
+
+                ondragstart: function(xy) {
+                    // xy[0] and xy[1] refers to main window coords.   Available in rest of obj as this.startXY[0] and this.startXY[1].
+                    // not needed here
+                },
+
+                ondragend: function(e) {
+                    console.log('Do something with event:', e);
+                },
+            },
+            Drag,
+        );
+        dragDiv._init();
+
+        // stop propagation for the box to prevent triggering the crosshairs
+        $('#dragdemo-box').addEventListener('touchstart', e => e.stopPropagation());
+        $('#dragdemo-box').addEventListener('mousedown', e => e.stopPropagation());
+
+        // mousedown, touching and dragging the container,  triggers the crosshairs.
+        const dragContainer = Object.assign(
+            {
+                el: $('#dragdemo-container'),
+
+                ondrag: function(x, y) {
+                    $('#dragdemo-x').style.left =
+                        x + this.startLeft - this.el.style.left.slice(0, -2) - 1.5 + 'px'; // -1 for border an -0.5 for line
+                    $('#dragdemo-y').style.top =
+                        y + this.startTop - this.el.style.top.slice(0, -2) - 1.5 + 'px';
+                },
+
+                ondragstart: function(xy) {
+                    let clientRect = this.el.getBoundingClientRect();
+                    this.startLeft = xy[0] - clientRect.left - this.el.offsetLeft;
+                    this.startTop = xy[1] - clientRect.top - this.el.offsetTop;
+                    this.ondrag(this.el.offsetLeft, this.el.offsetTop);
+                },
+
+                ondragend: function(e) {
+                    console.log('Do something with event:', e);
+                },
+            },
+            Drag,
+        );
+        dragContainer._init();
+    </script>
+</plugin>

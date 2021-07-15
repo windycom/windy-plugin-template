@@ -66,13 +66,9 @@
                      */
                     if (Array.isArray(values)) {
                         const { wind, dir } = _.wind2obj(values);
-                        m._icon.innerHTML = `${name}<br />${Math.round(
-                            wind
-                        )}m/s&nbsp;${dir}`;
+                        m._icon.innerHTML = `${name}<br />${Math.round(wind)}m/s&nbsp;${dir}`;
                     } else {
-                        console.warn(
-                            `Unable to interpolate value for ${lat}, ${lon}.`
-                        );
+                        console.warn(`Unable to interpolate value for ${lat}, ${lon}.`);
                     }
                 });
             });

@@ -37,12 +37,7 @@ function importDecl(str, start, end, specifiers, source) {
                     }
                     return 'var ' + s.as + ' = ' + name + '.' + s.name + ';';
                 });
-            return (
-                assignments.join(' ') +
-                ' /*' +
-                str.slice(start, end) +
-                '*/'
-            ).trim();
+            return (assignments.join(' ') + ' /*' + str.slice(start, end) + '*/').trim();
         },
     };
 }
@@ -58,17 +53,8 @@ function exportDefaultDeclaration(str, start, end) {
         },
     };
 }
-function exportSpecifiersDeclaration(
-    str,
-    start,
-    specifiersStart,
-    specifiersEnd,
-    end,
-    source
-) {
-    var specifiers = processSpecifiers(
-        str.slice(specifiersStart + 1, specifiersEnd - 1).trim()
-    );
+function exportSpecifiersDeclaration(str, start, specifiersStart, specifiersEnd, end, source) {
+    var specifiers = processSpecifiers(str.slice(specifiersStart + 1, specifiersEnd - 1).trim());
     return {
         start: start,
         end: end,
@@ -164,13 +150,14 @@ function processImportSpecifiers(str) {
     }
     match = defaultAndStarImport.exec(str);
     if (match) {
-        return [{ name: 'default', as: match[1] }, { name: '*', as: match[2] }];
+        return [
+            { name: 'default', as: match[1] },
+            { name: '*', as: match[2] },
+        ];
     }
     match = defaultAndNamedImport.exec(str);
     if (match) {
-        return [{ name: 'default', as: match[1] }].concat(
-            processSpecifiers(match[2].trim())
-        );
+        return [{ name: 'default', as: match[1] }].concat(processSpecifiers(match[2].trim()));
     }
     if (str[0] === '{') {
         return processSpecifiers(str.slice(1, -1).trim());
@@ -213,9 +200,9 @@ function getImportDeclaration(str, i) {
             str
                 .slice(specifierStart, specifierEnd)
                 .replace(/from\s*$/, '')
-                .trim()
+                .trim(),
         ),
-        str.slice(sourceStart, sourceEnd)
+        str.slice(sourceStart, sourceEnd),
     );
 }
 function getImportStatement(i) {
@@ -256,14 +243,7 @@ function getExportDeclaration(str, i) {
             source = str.slice(sourceStart, i);
             i += 1;
         }
-        return exportSpecifiersDeclaration(
-            str,
-            start,
-            declarationStart,
-            specifiersEnd,
-            i,
-            source
-        );
+        return exportSpecifiersDeclaration(str, start, declarationStart, specifiersEnd, i, source);
     }
     if (str[i] === '*') {
         i += 1;
@@ -279,12 +259,7 @@ function getExportDeclaration(str, i) {
             i += 1;
         }
         var sourceEnd = i++;
-        return exportStarDeclaration(
-            str,
-            start,
-            i,
-            str.slice(sourceStart, sourceEnd)
-        );
+        return exportStarDeclaration(str, start, i, str.slice(sourceStart, sourceEnd));
     }
     if (/default[\s\n]/.test(str.slice(i, i + 8))) {
         return exportDefaultDeclaration(str, start, declarationStart);
@@ -395,11 +370,7 @@ function find(str) {
             },
             // import
             function(i) {
-                if (
-                    i === 0 ||
-                    isWhitespace(str[i - 1]) ||
-                    punctuatorChars.test(str[i - 1])
-                ) {
+                if (i === 0 || isWhitespace(str[i - 1]) || punctuatorChars.test(str[i - 1])) {
                     if (/import[\s\n{"']/.test(str.slice(i, i + 7))) {
                         var d = getImportDeclaration(str, i);
                         importDeclarations.push(d);
@@ -413,11 +384,7 @@ function find(str) {
             },
             // export
             function(i) {
-                if (
-                    i === 0 ||
-                    isWhitespace(str[i - 1]) ||
-                    punctuatorChars.test(str[i - 1])
-                ) {
+                if (i === 0 || isWhitespace(str[i - 1]) || punctuatorChars.test(str[i - 1])) {
                     if (/export[\s\n{]/.test(str.slice(i, i + 7))) {
                         var d = getExportDeclaration(str, i);
                         exportDeclarations.push(d);
@@ -608,17 +575,8 @@ function transform(source, id) {
             return "'" + s + "'";
         })
         .join(', ');
-    var names = ['__import', '__exports']
-        .concat(Array.from(nameBySource.values()))
-        .join(', ');
-    var transformed =
-        "__shimport__.define('" +
-        id +
-        "', [" +
-        deps +
-        '], function(' +
-        names +
-        '){ ';
+    var names = ['__import', '__exports'].concat(Array.from(nameBySource.values())).join(', ');
+    var transformed = "__shimport__.define('" + id + "', [" + deps + '], function(' + names + '){ ';
     var ranges = importDeclarations
         .concat(importStatements, exportDeclarations)
         .sort(function(a, b) {
@@ -627,8 +585,7 @@ function transform(source, id) {
     var c = 0;
     for (var i = 0; i < ranges.length; i += 1) {
         var range = ranges[i];
-        transformed +=
-            source.slice(c, range.start) + range.toString(nameBySource);
+        transformed += source.slice(c, range.start) + range.toString(nameBySource);
         c = range.end;
     }
     transformed += source.slice(c);

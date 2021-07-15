@@ -1,8 +1,8 @@
 <plugin>
     <h3>My graph</h3>
     <div>
-        I was opened at <b data-ref="coords"></b>. You can place any graph,
-        video, picture, or simly anything that relates to the coordinates.
+        I was opened at <b data-ref="coords"></b>. You can place any graph, video, picture, or
+        simply anything that relates to the coordinates.
         <br />
         This plugin also demonstrates loading of external library <b>d3</b>
         <div id="my-graph" data-ref="graph"></div>
@@ -15,7 +15,7 @@
 
         // You do NOT NEED jQuery!!!
 
-        console.log("mount");
+        console.log('mount');
 
         console.log(this.node);
         // -> el containing this plugin
@@ -26,7 +26,7 @@
         //	Whenever your plugin is opened from context menu
         //	it recieves { lat, lon } object with required coordinates
         this.onopen = latLonObject => {
-            console.log("plugin opened");
+            console.log('plugin opened');
 
             let lat, lon;
 
@@ -76,8 +76,7 @@
         };
 
         this.onclose = () => {
-
-            console.log("plugin closed");
+            console.log('plugin closed');
 
             if (marker) {
                 map.removeLayer(marker);

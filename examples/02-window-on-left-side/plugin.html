@@ -2,28 +2,27 @@
     <div class="mobile-header">
         <!-- For the closing arrow of the mobile header, replace windy-plugin-examples with the name of your plugin:
         data-do="rqstClose,windy-plugin-name-of-your-plugin"  -->
-        <div class="mh-closing-x iconfont clickable" data-do="rqstClose,windy-plugin-examples">}</div>
+        <div class="mh-closing-x iconfont clickable" data-do="rqstClose,windy-plugin-examples">
+            }
+        </div>
         This is the title for mobile devices.
     </div>
-
 
     <div class="plugin-content">
         <h2>Plugin on the left side</h2>
 
         <p>
-            Use left side window to present larger amount of information. Check
-            the plugin in mobile phone display to see effect of
-            'plugin-mobile-fullscreen' class
+            Use left side window to present larger amount of information. Check the plugin in mobile
+            phone display to see effect of 'plugin-mobile-fullscreen' class
         </p>
 
         <p>This plugin also demonstrates:</p>
 
         <p>
-            1) Receiving broadcasted messages. Open your console, to see
-            console.log messages
+            1) Receiving broadcasted messages. Open your console, to see console.log messages
         </p>
 
-        <p>2) Using store to programatically change overlay</p>
+        <p>2) Using store to programmatically change overlay</p>
     </div>
     <script>
         import bcast from '@windy/broadcast';
@@ -35,8 +34,7 @@
         let overlays = ['rain', 'wind', 'temp', 'clouds'],
             i = 0;
 
-        const log = params =>
-            console.log('Received "redrawFinished" bcast', params);
+        const log = params => console.log('Received "redrawFinished" bcast', params);
 
         //	this.onopen method is called when your plugin is being opened
         this.onopen = () => {

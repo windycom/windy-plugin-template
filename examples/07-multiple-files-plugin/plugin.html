@@ -1,4 +1,4 @@
-<sounding>
+<plugin>
     <h3>This is my plugin (not official Windy's graph)</h3>
     <div id="sounding-chart"></div>
     <section>
@@ -16,7 +16,7 @@
         // Windy's core modules
         import rs from '@windy/rootScope';
         import map from '@windy/map';
-        import pluginDataLoader from '@windy/pluginDataLoader';
+        import pluginDataLoader from '@windy/plugins/plugin-data-loader';
         import _ from '@windy/utils';
 
         // Our own modules
@@ -69,8 +69,8 @@
 
             // Load d3 library from external source
             if (!('d3' in window)) {
-                _.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js').then(
-                    () => initAndLoad(lat, lon)
+                _.loadScript('https://unpkg.com/d3@5.7.0/dist/d3.min.js').then(() =>
+                    initAndLoad(lat, lon),
                 );
             } else {
                 initAndLoad(lat, lon);
@@ -87,11 +87,13 @@
                 lon,
             };
 
-            graph.init(this.refs);
+            setTimeout(() => {
+                graph.init(this.refs);
 
-            load('airData', dataOptions).then(airData => {
-                graph.load(lat, lon, airData.data);
-            });
+                load('airData', dataOptions).then(airData => {
+                    graph.load(lat, lon, airData.data);
+                });
+            }, 500);
         };
 
         // Called when closed
@@ -102,4 +104,4 @@
             }
         };
     </script>
-</sounding>
+</plugin>

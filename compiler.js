@@ -23,22 +23,10 @@ const utils = require('./dev/utils.js');
 
 const port = 9999;
 
-const {
-    version,
-    name,
-    author,
-    repository,
-    description,
-} = require('./package.json');
+const { version, name, author, repository, description } = require('./package.json');
 
-prog.option(
-    '-b, --build',
-    'Build the plugin in required directory (default src)'
-)
-    .option(
-        '-w, --watch',
-        'Build plugin and watch file changes in required directory'
-    )
+prog.option('-b, --build', 'Build the plugin in required directory (default src)')
+    .option('-w, --watch', 'Build plugin and watch file changes in required directory')
     .option('-s, --serve', `Serve dist directory on port ${port}`)
     .option('-p, --prompt', 'Show command line promt with all the examples')
     .option('-t, --transpile', 'Transpile your code with Babel')
@@ -69,15 +57,14 @@ let config,
         // Basic assertions
         assert(
             typeof config === 'object',
-            'Missing basic config object. Make sure you have valid ' +
-                'config.js in src dir'
+            'Missing basic config object. Make sure you have valid ' + 'config.js in src dir',
         );
 
         assert(
             /^windy-plugin-/.test(name),
             'Your repository (and also your published npm package) ' +
                 'must be named "windy-plugin-AnyOfYourName".' +
-                ' Change the name in your package.json'
+                ' Change the name in your package.json',
         );
 
         // Tasks
@@ -90,10 +77,16 @@ let config,
         }
 
         if (prog.watch) {
-            c.start(`Staring watch on ${ gray( srcDir )} and ${gray('package.json')}.  Build 1 sec after change....`)
-                chokidar.watch([srcDir],
-                    { awaitWriteFinish: { stabilityThreshold:1000, pollInterval:100 }}
-                ).on('change', onChange )
+            c.start(
+                `Staring watch on ${gray(srcDir)} and ${gray(
+                    'package.json',
+                )}.  Build 1 sec after change....`,
+            );
+            chokidar
+                .watch([srcDir], {
+                    awaitWriteFinish: { stabilityThreshold: 1000, pollInterval: 100 },
+                })
+                .on('change', onChange);
         }
     } catch (e) {
         c.error(`Error\u0007`, e);
@@ -105,19 +98,16 @@ function startServer() {
         const httpsOptions = {
             // https://www.ibm.com/support/knowledgecenter/en/SSWHYP_4.0.0/com.ibm.apimgmt.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html
             key: fs.readFileSync(join(__dirname, 'dev', 'key.pem'), 'utf8'),
-            cert: fs.readFileSync(
-                join(__dirname, 'dev', 'certificate.pem'),
-                'utf8'
-            ),
+            cert: fs.readFileSync(join(__dirname, 'dev', 'certificate.pem'), 'utf8'),
         };
 
         app.use(express.static('dist'));
 
         https.createServer(httpsOptions, app).listen(port, () => {
             c.success(
-`Your plugin is published at
-    ${gray( "https://localhost:"+port+"/plugin.js" )}.
-    Use ${yellow('https://www.windy.com/dev')} to test it.\n`
+                `Your plugin is published at
+    ${gray('https://localhost:' + port + '/plugin.js')}.
+    Use ${yellow('https://www.windy.com/dev')} to test it.\n`,
             );
             resolve();
         });
@@ -166,7 +156,7 @@ async function build() {
             repository,
             description,
         },
-        config
+        config,
     );
 
     const internalModules = {};
@@ -182,12 +172,7 @@ async function build() {
             // detect syntax "import graph from './soundingGraph.mjs'"
             // and loads external module
             if (!isCore) {
-                module = await utils.externalMjs(
-                    srcDir,
-                    internalModules,
-                    module,
-                    name
-                );
+                module = await utils.externalMjs(srcDir, internalModules, module, name);
             }
             js = `\tconst ${lex} = W.require('${(isPlugin ? '@plugins/' : '') + module}');\n${js}`;
         }
@@ -215,9 +200,7 @@ async function build() {
 
     await fs.outputFile(destination, output);
 
-    c.success(
-        `Your plugin ${gray(name)} has been compiled to ${gray(destination)}`
-    );
+    c.success(`Your plugin ${gray(name)} has been compiled to ${gray(destination)}`);
 }
 
 //

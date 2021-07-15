@@ -3,6 +3,7 @@ import rs from '@windy/rootScope';
 import store from '@windy/store';
 import $ from '@windy/$';
 import _ from '@windy/utils';
+import map from '@windy/map';
 
 import sUtils from './soundingUtils.mjs';
 
@@ -49,8 +50,7 @@ const convertTemp = overlays.temp.convertNumber,
 
 // Custom conversion of altitude
 // Can not use convertNumber, because it rounds altitude to 100m
-const convertAlt = value =>
-    Math.round(overlays.cloudtop.metric === 'ft' ? value * 3.28084 : value);
+const convertAlt = value => Math.round(overlays.cloudtop.metric === 'ft' ? value * 3.28084 : value);
 
 const init = _refs => {
     if (svg) {
@@ -93,13 +93,17 @@ const init = _refs => {
         .style('display', 'none'); // Everything is hidden until data is loaded
 
     if (rs.isMobile || rs.isTablet) {
-        chartArea.on('touchstart', dragStarted).on('touchmove', dragged);
+        chartArea
+            .on('touchstart', dragStarted)
+            .on('touchmove', dragged)
+            .on('touchend', dragEnded);
     } else {
         chartArea.call(
             d3
                 .drag()
                 .on('start', dragStarted)
                 .on('drag', dragged)
+                .on('end', dragEnded),
         );
     }
 
@@ -320,14 +324,10 @@ function calcCurrentInfo() {
     ]; // 0.2°C / 100m
 
     // Convective condensation level intersection
-    currentInfo.ccl = sUtils.dataIntersection(humidityLine, currentData, d => [
-        d.temp,
-        d.gh,
-    ]);
+    currentInfo.ccl = sUtils.dataIntersection(humidityLine, currentData, d => [d.temp, d.gh]);
 
     if (currentInfo.ccl) {
-        currentInfo.tcon =
-            currentInfo.ccl[0] + 0.01 * (currentInfo.ccl[1] - p1.gh);
+        currentInfo.tcon = currentInfo.ccl[0] + 0.01 * (currentInfo.ccl[1] - p1.gh);
     } else {
         currentInfo.tcon = null;
     }
@@ -425,14 +425,10 @@ function updateInfoLine() {
         .text(
             `${convertAlt(Math.round(pt.gh))}${overlays.cloudtop.metric}` +
                 (pt.level
-                    ? ` ${convertPressure(Math.round(pt.level) * 100)}${
-                          overlays.pressure.metric
-                      }`
-                    : '')
+                    ? ` ${convertPressure(Math.round(pt.level) * 100)}${overlays.pressure.metric}`
+                    : ''),
         );
-    infoLine
-        .select('.temp')
-        .text(`${convertTemp(pt.temp.toFixed(1))}${overlays.temp.metric}`);
+    infoLine.select('.temp').text(`${convertTemp(pt.temp.toFixed(1))}${overlays.temp.metric}`);
     infoLine
         .select('.dewpoint')
         .text(`${convertTemp(pt.dewpoint.toFixed(1))}${overlays.temp.metric}`);
@@ -444,33 +440,30 @@ function updateInfoLine() {
 
 function updateInfoBox() {
     refs.model.textContent = `model: ${currentProduct}`;
-    refs.tcon.textContent = `TCON: ${convertTemp(currentInfo.tcon)}${
-        overlays.temp.metric
-    }`;
-    refs.ccl.textContent = `CCL: ${convertAlt(currentInfo.ccl[1])}${
-        overlays.cloudtop.metric
-    }`;
-    refs.lcl.textContent = `LCL: ${convertAlt(currentInfo.lcl[1])}${
-        overlays.cloudtop.metric
-    }`;
+    refs.tcon.textContent = `TCON: ${convertTemp(currentInfo.tcon)}${overlays.temp.metric}`;
+    refs.ccl.textContent = `CCL: ${convertAlt(currentInfo.ccl[1])}${overlays.cloudtop.metric}`;
+    refs.lcl.textContent = `LCL: ${convertAlt(currentInfo.lcl[1])}${overlays.cloudtop.metric}`;
     refs.alt.textContent = `altitude: ${convertAlt(pointData.elevation)}${
         overlays.cloudtop.metric
     }`;
-    refs.modelAlt.textContent = `model altitude: ${convertAlt(
-        pointData.modelElevation
-    )}${overlays.cloudtop.metric}`;
+    refs.modelAlt.textContent = `model altitude: ${convertAlt(pointData.modelElevation)}${
+        overlays.cloudtop.metric
+    }`;
     refs.modelAlt.className =
-        Math.abs(pointData.modelElevation - pointData.elevation) > 200
-            ? 'red'
-            : 'ok';
+        Math.abs(pointData.modelElevation - pointData.elevation) > 200 ? 'red' : 'ok';
 }
 
 function dragStarted() {
+    map.dragging.disable();
     moveInfoLine(d3.mouse(this));
 
     if (rs.isMobile || rs.isTablet) {
         d3.event.stopPropagation();
     }
+}
+
+function dragEnded() {
+    map.dragging.enable();
 }
 
 function dragged() {
@@ -515,11 +508,8 @@ const setXScale = () => {
     // pt.dewpoint <= pt.temp by definition
     for (let hour in pointData.data) {
         const minMax = pointData.data[hour].reduce(
-            (acc, pt) => [
-                Math.min(acc[0], pt.dewpoint),
-                Math.max(acc[1], pt.temp),
-            ],
-            range
+            (acc, pt) => [Math.min(acc[0], pt.dewpoint), Math.max(acc[1], pt.temp)],
+            range,
         );
 
         range[0] = Math.min(range[0], minMax[0]);
@@ -631,9 +621,7 @@ const load = (lat, lon, airData) => {
     // Skip data under the ground, add the ground point
     for (let hour in res) {
         let hourData = res[hour];
-        const idx = hourData.findIndex(
-            pt => pt.gh > airData.header.modelElevation
-        );
+        const idx = hourData.findIndex(pt => pt.gh > airData.header.modelElevation);
 
         // All levels are under the ground or last level is at the ground
         if (idx == -1) {
@@ -704,7 +692,7 @@ const redraw = () => {
     currentData = sUtils.interpolateArray(
         pointData.data[ts1],
         pointData.data[ts2],
-        ts2 != ts1 ? (ts - ts1) / (ts2 - ts1) : 0
+        ts2 != ts1 ? (ts - ts1) / (ts2 - ts1) : 0,
     );
 
     // Calculate derived values from current data
