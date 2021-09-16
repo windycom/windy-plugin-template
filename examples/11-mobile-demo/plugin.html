@@ -72,7 +72,8 @@
     <div class="calendar-backdrop"></div>
 
     <script>
-        import $ from '@windy/$';
+        import _ from '@windy/utils';
+        const {$} = _;
         import rs from '@windy/rootScope';
         import Drag from '@windy/Drag';
 
@@ -85,13 +86,8 @@
             .backgroundColor.replace('rgb', 'rgba')
             .match(/[\d\.]+/g);
         if (bgVals.length == 3) bgVals.push(1);
-        $(
-            '.calendar-backdrop',
-            this.el,
-        ).style.backgroundImage = `linear-gradient(rgba(${bgVals.slice(
-            0,
-            3,
-        )},0), rgba(${bgVals}) 60%)`;
+        $( '.calendar-backdrop', this.el )
+            .style.backgroundImage = `linear-gradient(rgba(${bgVals.slice(0, 3)},0), rgba(${bgVals}) 60%)`;
 
         // Add a slider for mobile:
         if (rs.isMobile) {
