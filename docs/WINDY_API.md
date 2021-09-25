@@ -239,7 +239,8 @@ Handy shortcut to `document.querySelector`.
 
 Usage:
 ```js
-  const el = $('.closing-x', parentEl ) // parentEl is optional
+  const $ = {utils};
+  const el = $('.closing-x', parentEl ); // parentEl is optional
 ```
 
 ## Module: plugins
