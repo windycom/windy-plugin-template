@@ -6,7 +6,7 @@ import map from '@windy/map';
 
 import sUtils from './soundingUtils.mjs';
 
-const {$} = _;
+const { $ } = _;
 
 let svg = null;
 
