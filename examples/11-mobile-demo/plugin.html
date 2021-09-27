@@ -72,9 +72,11 @@
     <div class="calendar-backdrop"></div>
 
     <script>
-        import $ from '@windy/$';
+        import _ from '@windy/utils';
         import rs from '@windy/rootScope';
         import Drag from '@windy/Drag';
+
+        const { $ } = _;
 
         // LastOpened set to true when plugin opens,  use to determine whether picker (or other actions) should be active.
         // will be set false by W.plugins.plugins,  when another windy-plugin- plugin opens

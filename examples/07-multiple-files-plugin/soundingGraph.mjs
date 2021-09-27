@@ -1,11 +1,12 @@
 import overlays from '@windy/overlays';
 import rs from '@windy/rootScope';
 import store from '@windy/store';
-import $ from '@windy/$';
 import _ from '@windy/utils';
 import map from '@windy/map';
 
 import sUtils from './soundingUtils.mjs';
+
+const { $ } = _;
 
 let svg = null;
 

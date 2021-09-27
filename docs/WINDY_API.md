@@ -3,7 +3,6 @@
 <!-- toc -->
 
 - [About Windy API](#about-windy-api)
-- [Module: $](#module-)
 - [Module: map](#module-map)
   * [map.myMarkers: Predefined Leaflet markers](#mapmymarkers-predefined-leaflet-markers)
 - [Class: Evented](#class-evented)
@@ -38,14 +37,6 @@ Example of loading a module to your plugin:
 > While plugin codes use `import` keyword, Windy client uses its own
 > dependency injection system. If you plan to compile plugin on
 > your own, use `const map = W.require('map')`
-
-## Module: $
-Handy shortcut to `document.querySelector`.
-
-Usage:
-```js
-  const el = $('.closing-x', parentEl ) // parentEl is optional
-```
 
 ## Module: map
 Instance of Leaflet map is available as `map` module. Windy uses Leaflet version `1.4.0` that is [well documented here](http://leafletjs.com/reference-1.4.0.html) and contains plenty of [plugins that you can use](http://leafletjs.com/plugins.html).
@@ -242,6 +233,15 @@ Example:
 
 ### utils.wave2obj(arr)
 Converts raw meterological values into wave Object.
+
+### utils.$(selector[,parentEl])
+Handy shortcut to `document.querySelector`.
+
+Usage:
+```js
+  const $ = {utils};
+  const el = $('.closing-x', parentEl ); // parentEl is optional
+```
 
 ## Module: plugins
 Windy can use plugins that are loaded whenever necessary, making core codes small and fast. Plugin can be for example JavaScript library, or some user feature (like menu sliding from the right side). We recommend to access these plugins just by emitting messages `rqstOpen` and `rqstClose` on major `broadcast`. Some of the plugins require parameters for opening.
