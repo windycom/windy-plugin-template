@@ -4,20 +4,20 @@
  * This is plugin building script. Feel free to modify it
  * All is MIT licenced
  */
-const prog = require('commander'),
-    { join } = require('path'),
-    c = require('consola'),
-    fs = require('fs-extra'),
-    { yellow, gray } = require('colorette'),
-    riot = require('riot-compiler'),
-    assert = require('assert'),
-    express = require('express'),
-    app = express(),
-    less = require('less'),
-    chokidar = require('chokidar'),
-    decache = require('decache'),
-    https = require('https'),
-    babel = require('@babel/core');
+const prog = require('commander');
+const { join } = require('path');
+const c = require('consola');
+const fs = require('fs-extra');
+const { yellow, gray } = require('colorette');
+const riot = require('riot-compiler');
+const assert = require('assert');
+const express = require('express');
+const app = express();
+const less = require('less');
+const chokidar = require('chokidar');
+const decache = require('decache');
+const https = require('https');
+const babel = require('@babel/core');
 
 const utils = require('./dev/utils.js');
 
@@ -165,8 +165,8 @@ async function build() {
     // Rewrite imports into W.require
     //
     if (imports) {
-        let match,
-            importsRegEx = /import\s+(\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/g;
+        let match;
+        const importsRegEx = /import\s+(\{[^}]+\}|\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/g;
         while ((match = importsRegEx.exec(imports)) !== null) {
             let [, lex, isCore, isPlugin, module] = match;
             // detect syntax "import graph from './soundingGraph.mjs'"
