@@ -166,7 +166,7 @@ async function build() {
     //
     if (imports) {
         let match;
-        const importsRegEx = /import\s+(\{[^}]+\}|\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/g;
+        const importsRegEx = /import\s+(?:\*\s+as\s+)?(\{[^}]+\}|\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/gm;
         while ((match = importsRegEx.exec(imports)) !== null) {
             let [, lex, isCore, isPlugin, module] = match;
             // detect syntax "import graph from './soundingGraph.mjs'"

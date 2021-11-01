@@ -3,126 +3,121 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 function get_alias(specifiers, name) {
-    var i = specifiers.length;
+    let i = specifiers.length;
     while (i--) {
-        if (specifiers[i].name === name) {
-            return specifiers[i].as;
-        }
+        if (specifiers[i].name === name) return specifiers[i].as;
     }
 }
+
 function importDecl(str, start, end, specifiers, source) {
-    var name = get_alias(specifiers, '*') || get_alias(specifiers, 'default');
+    const name = get_alias(specifiers, '*') || get_alias(specifiers, 'default');
+
     return {
-        start: start,
-        end: end,
-        source: source,
-        name: name,
-        toString: function(nameBySource) {
-            var name = nameBySource.get(source);
-            var assignments = specifiers
-                .sort(function(a, b) {
-                    if (a.name === 'default') {
-                        return 1;
-                    }
-                    if (b.name === 'default') {
-                        return -1;
-                    }
-                })
-                .map(function(s) {
-                    if (s.name === '*') {
-                        return null;
-                    }
-                    if (s.name === 'default' && s.as === name) {
-                        return s.as + ' = ' + name + '.default;';
-                    }
-                    return 'var ' + s.as + ' = ' + name + '.' + s.name + ';';
-                });
-            return (assignments.join(' ') + ' /*' + str.slice(start, end) + '*/').trim();
+        start,
+        end,
+        source,
+        name,
+        specifiers,
+        toString() {
+            return `/*${str.slice(start, end)}*/`;
         },
     };
 }
+
 function exportDefaultDeclaration(str, start, end) {
-    while (/\S/.test(str[end])) {
-        end += 1;
+    const match = /^\s*(?:(class)(\s+extends|\s*{)|(function)\s*\()/.exec(str.slice(end));
+
+    if (match) {
+        // anonymous class declaration
+        end += match[0].length;
+
+        const name = '__default_export';
+
+        return {
+            start,
+            end,
+            name,
+            as: 'default',
+            toString() {
+                return match[1] ? `class ${name}${match[2]}` : `function ${name}(`;
+            },
+        };
     }
+
     return {
-        start: start,
-        end: end,
-        toString: function() {
-            return '__exports.default =';
+        start,
+        end,
+        toString() {
+            return `__exports.default =`;
         },
     };
 }
+
 function exportSpecifiersDeclaration(str, start, specifiersStart, specifiersEnd, end, source) {
-    var specifiers = processSpecifiers(str.slice(specifiersStart + 1, specifiersEnd - 1).trim());
+    const specifiers = processSpecifiers(str.slice(specifiersStart + 1, specifiersEnd - 1).trim());
+
     return {
-        start: start,
-        end: end,
-        source: source,
-        toString: function(nameBySource) {
-            var name = nameBySource.get(source);
+        start,
+        end,
+        source,
+        toString(nameBySource) {
+            const name = source && nameBySource.get(source);
+
             return (
                 specifiers
-                    .map(function(s) {
-                        return (
-                            '__exports.' +
-                            s.as +
-                            ' = ' +
-                            (name ? name + '.' + s.name : s.name) +
-                            '; '
-                        );
+                    .map(s => {
+                        return `__exports.${s.as} = ${name ? `${name}.${s.name}` : s.name}; `;
                     })
-                    .join('') +
-                ('/*' + str.slice(start, end) + '*/')
+                    .join('') + `/*${str.slice(start, end)}*/`
             );
         },
     };
 }
+
 function exportDecl(str, start, c) {
-    var end = c;
-    while (str[c] && /\S/.test(str[c])) {
-        c += 1;
-    }
-    while (str[c] && !/\S/.test(str[c])) {
-        c += 1;
-    }
-    var nameStart = c;
-    while (str[c] && !punctuatorChars.test(str[c]) && !isWhitespace(str[c])) {
-        c += 1;
-    }
-    var nameEnd = c;
-    var name = str.slice(nameStart, nameEnd);
+    const end = c;
+
+    while (str[c] && /\S/.test(str[c])) c += 1;
+    while (str[c] && !/\S/.test(str[c])) c += 1;
+
+    const nameStart = c;
+    while (str[c] && !punctuatorChars.test(str[c]) && !isWhitespace(str[c])) c += 1;
+    const nameEnd = c;
+
+    const name = str.slice(nameStart, nameEnd);
+
     return {
-        start: start,
-        end: end,
-        name: name,
-        toString: function() {
+        start,
+        end,
+        name,
+        toString() {
             return '';
         },
     };
 }
+
 function exportStarDeclaration(str, start, end, source) {
     return {
-        start: start,
-        end: end,
-        source: source,
-        toString: function(nameBySource) {
-            return (
-                'Object.assign(__exports, ' +
-                nameBySource.get(source) +
-                '); /*' +
-                str.slice(start, end) +
-                '*/'
-            );
+        start,
+        end,
+        source,
+        toString(nameBySource) {
+            return `Object.assign(__exports, ${nameBySource.get(source)}); /*${str.slice(
+                start,
+                end,
+            )}*/`;
         },
     };
 }
-var keywords = /\b(case|default|delete|do|else|in|instanceof|new|return|throw|typeof|void)\s*$/;
-var punctuators = /(^|\{|\(|\[\.|;|,|<|>|<=|>=|==|!=|===|!==|\+|-|\*%|<<|>>|>>>|&|\||^|!|~|&&|\|\||\?|:|=|\+=|-=|\*=|%=|<<=|>>=|>>>=|&=|\|=|^=|\/=|\/)\s*$/;
-var ambiguous = /(\}|\)|\+\+|--)\s*$/;
-var punctuatorChars = /[{}()[.;,<>=+\-*%&|^!~?:/]/;
-var keywordChars = /[a-z]/;
-var whitespace_obj = {
+
+const keywords = /\b(case|default|delete|do|else|in|instanceof|new|return|throw|typeof|void)\s*$/;
+const punctuators = /(^|\{|\(|\[\.|;|,|<|>|<=|>=|==|!=|===|!==|\+|-|\*\%|<<|>>|>>>|&|\||\^|!|~|&&|\|\||\?|:|=|\+=|-=|\*=|%=|<<=|>>=|>>>=|&=|\|=|\^=|\/=|\/)\s*$/;
+const ambiguous = /(\}|\)|\+\+|--)\s*$/;
+
+const punctuatorChars = /[{}()[.;,<>=+\-*%&|\^!~?:/]/;
+const keywordChars = /[a-zA-Z_$0-9]/;
+
+const whitespace_obj = {
     ' ': 1,
     '\t': 1,
     '\n': 1,
@@ -133,21 +128,26 @@ var whitespace_obj = {
     '\u2028': 1,
     '\u2029': 1,
 };
+
 function isWhitespace(char) {
     // this is faster than testing a regex
     return char in whitespace_obj;
 }
+
 function isQuote(char) {
     return char === "'" || char === '"';
 }
-var namespaceImport = /^\*\s+as\s+(\w+)$/;
-var defaultAndStarImport = /(\w+)\s*,\s*\*\s*as\s*(\w+)$/;
-var defaultAndNamedImport = /(\w+)\s*,\s*{(.+)}$/;
+
+const namespaceImport = /^\*\s+as\s+(\S+)$/;
+const defaultAndStarImport = /(\w+)\s*,\s*\*\s*as\s*(\S+)$/;
+const defaultAndNamedImport = /(\w+)\s*,\s*{(.+)}$/;
+
 function processImportSpecifiers(str) {
-    var match = namespaceImport.exec(str);
+    let match = namespaceImport.exec(str);
     if (match) {
         return [{ name: '*', as: match[1] }];
     }
+
     match = defaultAndStarImport.exec(str);
     if (match) {
         return [
@@ -155,43 +155,40 @@ function processImportSpecifiers(str) {
             { name: '*', as: match[2] },
         ];
     }
+
     match = defaultAndNamedImport.exec(str);
     if (match) {
         return [{ name: 'default', as: match[1] }].concat(processSpecifiers(match[2].trim()));
     }
-    if (str[0] === '{') {
-        return processSpecifiers(str.slice(1, -1).trim());
-    }
-    if (str) {
-        return [{ name: 'default', as: str }];
-    }
+
+    if (str[0] === '{') return processSpecifiers(str.slice(1, -1).trim());
+
+    if (str) return [{ name: 'default', as: str }];
+
     return [];
 }
+
 function processSpecifiers(str) {
     return str
-        ? str.split(',').map(function(part) {
-              var _a = part.trim().split(/[^\S]+/),
-                  name = _a[0],
-                  as = _a[2];
-              return { name: name, as: as || name };
+        ? str.split(',').map(part => {
+              const [name, , as] = part.trim().split(/[^\S]+/);
+              return { name, as: as || name };
           })
         : [];
 }
+
 function getImportDeclaration(str, i) {
-    var start = i;
-    var specifierStart = (i += 6);
-    while (str[i] && isWhitespace(str[i])) {
-        i += 1;
-    }
-    while (str[i] && !isQuote(str[i])) {
-        i += 1;
-    }
-    var specifierEnd = i;
-    var sourceStart = (i += 1);
-    while (str[i] && !isQuote(str[i])) {
-        i += 1;
-    }
-    var sourceEnd = i++;
+    const start = i;
+
+    const specifierStart = (i += 6);
+    while (str[i] && isWhitespace(str[i])) i += 1;
+    while (str[i] && !isQuote(str[i])) i += 1;
+    const specifierEnd = i;
+
+    const sourceStart = (i += 1);
+    while (str[i] && !isQuote(str[i])) i += 1;
+    const sourceEnd = i++;
+
     return importDecl(
         str,
         start,
@@ -205,145 +202,177 @@ function getImportDeclaration(str, i) {
         str.slice(sourceStart, sourceEnd),
     );
 }
+
 function getImportStatement(i) {
     return {
         start: i,
         end: i + 6,
-        toString: function() {
+        toString() {
             return '__import';
         },
     };
 }
-function getExportDeclaration(str, i) {
-    var start = i;
-    i += 6;
-    while (str[i] && isWhitespace(str[i])) {
-        i += 1;
+
+const importMetaUrlPattern = /^import\s*\.\s*meta\s*\.\s*url/;
+
+function getImportMetaUrl(str, start, id) {
+    const match = importMetaUrlPattern.exec(str.slice(start));
+    if (match) {
+        return {
+            start,
+            end: start + match[0].length,
+            toString() {
+                return JSON.stringify('' + id);
+            },
+        };
     }
-    var declarationStart = i;
+}
+
+function getExportDeclaration(str, i) {
+    const start = i;
+
+    i += 6;
+    while (str[i] && isWhitespace(str[i])) i += 1;
+
+    const declarationStart = i;
+
     if (str[i] === '{') {
-        while (str[i] !== '}') {
-            i += 1;
-        }
+        while (str[i] !== '}') i += 1;
         i += 1;
-        var specifiersEnd = i;
-        var source = null;
-        while (isWhitespace(str[i])) {
-            i += 1;
-        }
-        if (/^from[\s\n]/.test(str.slice(i, i + 5))) {
-            i += 5;
-            while (str[i] && !isQuote(str[i])) {
-                i += 1;
-            }
-            var sourceStart = (i += 1);
-            while (str[i] && !isQuote(str[i])) {
-                i += 1;
-            }
+
+        const specifiersEnd = i;
+
+        let source = null;
+
+        while (isWhitespace(str[i])) i += 1;
+        if (/^from[\s\n'"]/.test(str.slice(i, i + 5))) {
+            i += 4;
+            while (isWhitespace(str[i])) i += 1;
+
+            while (str[i] && !isQuote(str[i])) i += 1;
+            const sourceStart = (i += 1);
+            while (str[i] && !isQuote(str[i])) i += 1;
+
             source = str.slice(sourceStart, i);
             i += 1;
         }
+
         return exportSpecifiersDeclaration(str, start, declarationStart, specifiersEnd, i, source);
     }
+
     if (str[i] === '*') {
         i += 1;
-        while (isWhitespace(str[i])) {
-            i += 1;
-        }
+        while (isWhitespace(str[i])) i += 1;
         i += 4;
-        while (str[i] && !isQuote(str[i])) {
-            i += 1;
-        }
-        var sourceStart = (i += 1);
-        while (str[i] && !isQuote(str[i])) {
-            i += 1;
-        }
-        var sourceEnd = i++;
+        while (str[i] && !isQuote(str[i])) i += 1;
+
+        const sourceStart = (i += 1);
+        while (str[i] && !isQuote(str[i])) i += 1;
+        const sourceEnd = i++;
+
         return exportStarDeclaration(str, start, i, str.slice(sourceStart, sourceEnd));
     }
-    if (/default[\s\n]/.test(str.slice(i, i + 8))) {
-        return exportDefaultDeclaration(str, start, declarationStart);
+
+    if (/^default\b/.test(str.slice(i, i + 8))) {
+        return exportDefaultDeclaration(str, start, declarationStart + 7);
     }
+
     return exportDecl(str, start, declarationStart);
 }
-function find(str) {
-    var escapedFrom;
-    var regexEnabled = true;
-    var pfixOp = false;
-    var stack = [];
-    var lsci = -1; // last significant character index
-    var lsc = function() {
-        return str[lsci];
-    };
+
+function find(str, id) {
+    let escapedFrom;
+    let regexEnabled = true;
+    let pfixOp = false;
+
+    const stack = [];
+
+    let lsci = -1; // last significant character index
+    const lsc = () => str[lsci];
+
     var parenMatches = {};
     var openingParenPositions = {};
     var parenDepth = 0;
-    var importDeclarations = [];
-    var importStatements = [];
-    var exportDeclarations = [];
+
+    const importDeclarations = [];
+    const importStatements = [];
+    const importMetaUrls = [];
+    const exportDeclarations = [];
+
     function tokenClosesExpression() {
         if (lsc() === ')') {
             var c = parenMatches[lsci];
             while (isWhitespace(str[c - 1])) {
                 c -= 1;
             }
+
             // if parenthesized expression is immediately preceded by `if`/`while`, it's not closing an expression
             return !/(if|while)$/.test(str.slice(c - 5, c));
         }
+
         // TODO handle }, ++ and -- tokens immediately followed by / character
         return true;
     }
-    var base = {
+
+    const base = {
         pattern: /(?:(\()|(\))|({)|(})|(")|(')|(\/\/)|(\/\*)|(\/)|(`)|(import)|(export)|(\+\+|--))/g,
+
         handlers: [
             // (
-            function(i) {
+            i => {
                 lsci = i;
                 openingParenPositions[parenDepth++] = i;
             },
+
             // )
-            function(i) {
+            i => {
                 lsci = i;
                 parenMatches[i] = openingParenPositions[--parenDepth];
             },
+
             // {
-            function(i) {
+            i => {
                 lsci = i;
                 stack.push(base);
             },
+
             // }
-            function(i) {
+            i => {
                 lsci = i;
                 return stack.pop();
             },
+
             // "
-            function(i) {
+            i => {
                 stack.push(base);
                 return double_quoted;
             },
+
             // '
-            function(i) {
+            i => {
                 stack.push(base);
                 return single_quoted;
             },
+
             // //
-            function(i) {
-                return line_comment;
-            },
+            i => line_comment,
+
             // /*
-            function(i) {
-                return block_comment;
-            },
+            i => block_comment,
+
             // /
-            function(i) {
+            i => {
                 // could be start of regex literal OR division punctuator. Solution via
                 // http://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash/27120110#27120110
+
                 var b = i;
                 while (b > 0 && isWhitespace(str[b - 1])) {
                     b -= 1;
                 }
+
                 if (b > 0) {
                     var a = b;
+
                     if (punctuatorChars.test(str[a - 1])) {
                         while (a > 0 && punctuatorChars.test(str[a - 1])) {
                             a -= 1;
@@ -353,7 +382,9 @@ function find(str) {
                             a -= 1;
                         }
                     }
+
                     var token = str.slice(a, b);
+
                     regexEnabled = token
                         ? keywords.test(token) ||
                           punctuators.test(token) ||
@@ -362,241 +393,345 @@ function find(str) {
                 } else {
                     regexEnabled = true;
                 }
+
                 return slash;
             },
+
             // `
-            function(i) {
-                return template_string;
-            },
+            i => template_string,
+
             // import
-            function(i) {
+            i => {
                 if (i === 0 || isWhitespace(str[i - 1]) || punctuatorChars.test(str[i - 1])) {
-                    if (/import[\s\n{"']/.test(str.slice(i, i + 7))) {
-                        var d = getImportDeclaration(str, i);
+                    let j = i + 6;
+                    let char;
+
+                    do {
+                        char = str[j++];
+                    } while (isWhitespace(char));
+
+                    const hasWhitespace = j > i + 7;
+
+                    if (/^['"{*]$/.test(char) || (hasWhitespace && /^[a-zA-Z_$]$/.test(char))) {
+                        const d = getImportDeclaration(str, i);
                         importDeclarations.push(d);
                         p = d.end;
-                    } else if (str.slice(i, i + 7) === 'import(') {
-                        var s = getImportStatement(i);
+                    } else if (char === '(') {
+                        const s = getImportStatement(i);
                         importStatements.push(s);
                         p = s.end;
+                    } else if (char === '.') {
+                        const u = getImportMetaUrl(str, i, id);
+                        if (u) {
+                            importMetaUrls.push(u);
+                            p = u.end;
+                        }
                     }
                 }
             },
+
             // export
-            function(i) {
+            i => {
                 if (i === 0 || isWhitespace(str[i - 1]) || punctuatorChars.test(str[i - 1])) {
                     if (/export[\s\n{]/.test(str.slice(i, i + 7))) {
-                        var d = getExportDeclaration(str, i);
+                        const d = getExportDeclaration(str, i);
                         exportDeclarations.push(d);
                         p = d.end;
                     }
                 }
             },
+
             // ++/--
-            function(i) {
+            i => {
                 pfixOp = !pfixOp && str[i - 1] === '+';
             },
         ],
     };
-    var slash = {
+
+    const slash = {
         pattern: /(?:(\[)|(\\)|(.))/g,
+
         handlers: [
             // [
-            function(i) {
-                return regexEnabled ? regex_character : base;
-            },
+            i => (regexEnabled ? regex_character : base),
+
             // \\
-            function(i) {
-                return (escapedFrom = regex), escaped;
-            },
+            i => ((escapedFrom = regex), escaped),
+
             // anything else
-            function(i) {
-                return regexEnabled && !pfixOp ? regex : base;
-            },
+            i => (regexEnabled && !pfixOp ? regex : base),
         ],
     };
-    var regex = {
+
+    const regex = {
         pattern: /(?:(\[)|(\\)|(\/))/g,
+
         handlers: [
             // [
-            function() {
-                return regex_character;
-            },
+            () => regex_character,
+
             // \\
-            function() {
-                return (escapedFrom = regex), escaped;
-            },
+            () => ((escapedFrom = regex), escaped),
+
             // /
-            function() {
-                return base;
-            },
+            () => base,
         ],
     };
-    var regex_character = {
+
+    const regex_character = {
         pattern: /(?:(\])|(\\))/g,
+
         handlers: [
             // ]
-            function() {
-                return regex;
-            },
+            () => regex,
+
             // \\
-            function() {
-                return (escapedFrom = regex_character), escaped;
-            },
+            () => ((escapedFrom = regex_character), escaped),
         ],
     };
-    var double_quoted = {
+
+    const double_quoted = {
         pattern: /(?:(\\)|("))/g,
+
         handlers: [
             // \\
-            function() {
-                return (escapedFrom = double_quoted), escaped;
-            },
+            () => ((escapedFrom = double_quoted), escaped),
+
             // "
-            function() {
-                return stack.pop();
-            },
+            () => stack.pop(),
         ],
     };
-    var single_quoted = {
+
+    const single_quoted = {
         pattern: /(?:(\\)|('))/g,
+
         handlers: [
             // \\
-            function() {
-                return (escapedFrom = single_quoted), escaped;
-            },
+            () => ((escapedFrom = single_quoted), escaped),
+
             // '
-            function() {
-                return stack.pop();
-            },
+            () => stack.pop(),
         ],
     };
-    var escaped = {
+
+    const escaped = {
         pattern: /(.)/g,
-        handlers: [
-            function() {
-                return escapedFrom;
-            },
-        ],
+
+        handlers: [() => escapedFrom],
     };
-    var template_string = {
-        pattern: /(?:(\$)|(\\)|(`))/g,
+
+    const template_string = {
+        pattern: /(?:(\${)|(\\)|(`))/g,
+
         handlers: [
-            // $
-            function() {
-                return template_string_dollar;
-            },
-            // \\
-            function() {
-                return (escapedFrom = template_string), escaped;
-            },
-            // `
-            function() {
-                return base;
-            },
-        ],
-    };
-    var template_string_dollar = {
-        pattern: /({)/g,
-        handlers: [
-            // {
-            function() {
+            // ${
+            () => {
                 stack.push(template_string);
                 return base;
             },
-            function() {
-                return template_string;
-            },
+
+            // \\
+            () => ((escapedFrom = template_string), escaped),
+
+            // `
+            () => base,
         ],
     };
-    var line_comment = {
+
+    const line_comment = {
         pattern: /((?:\n|$))/g,
+
         handlers: [
             // \n
-            function() {
-                return base;
-            },
+            () => base,
         ],
     };
-    var block_comment = {
+
+    const block_comment = {
         pattern: /(\*\/)/g,
+
         handlers: [
             // \n
-            function() {
-                return base;
-            },
+            () => base,
         ],
     };
-    var state = base;
-    var p = 0;
+
+    let state = base;
+
+    let p = 0;
+
     while (p < str.length) {
         state.pattern.lastIndex = p;
-        var match = state.pattern.exec(str);
+        const match = state.pattern.exec(str);
+
         if (!match) {
             if (stack.length > 0 || state !== base) {
-                console.error('Sshimport: Unexpecgted end of file');
-                //throw new Error("Unexpected end of file");
+                throw new Error(`Unexpected end of file`);
             }
+
             break;
         }
+
         p = match.index + match[0].length;
-        for (var j = 1; j < match.length; j += 1) {
+
+        for (let j = 1; j < match.length; j += 1) {
             if (match[j]) {
                 state = state.handlers[j - 1](match.index) || state;
                 break;
             }
         }
     }
-    return [importDeclarations, importStatements, exportDeclarations];
+
+    return [importDeclarations, importStatements, importMetaUrls, exportDeclarations];
 }
-function transform(source, id) {
-    var _a = find(source),
-        importDeclarations = _a[0],
-        importStatements = _a[1],
-        exportDeclarations = _a[2];
-    var nameBySource = new Map();
-    importDeclarations.forEach(function(d) {
-        if (nameBySource.has(d.source)) {
-            return;
-        }
-        nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
+
+function transform(source, id, sourcePath, html, css) {
+    const [importDeclarations, importStatements, importMetaUrls, exportDeclarations] = find(
+        source,
+        id,
+    );
+
+    const nameBySource = new Map();
+
+    importDeclarations.forEach(d => {
+        if (nameBySource.has(d.source)) return;
+        nameBySource.set(d.source, d.name || `__dep_${nameBySource.size}`);
     });
-    exportDeclarations.forEach(function(d) {
-        if (!d.source) {
-            return;
+
+    let moduleHasNamedExport = false;
+    let moduleHaDefaultExport = false;
+
+    exportDeclarations.forEach(d => {
+        if (!d.name) {
+            moduleHaDefaultExport = true;
+        } else {
+            moduleHasNamedExport = true;
         }
-        if (nameBySource.has(d.source)) {
-            return;
-        }
-        nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
+
+        if (!d.source) return;
+        if (nameBySource.has(d.source)) return;
+        nameBySource.set(d.source, d.name || `__dep_${nameBySource.size}`);
     });
-    var deps = Array.from(nameBySource.keys())
-        .map(function(s) {
-            return "'" + s + "'";
-        })
+
+    if (moduleHaDefaultExport && moduleHasNamedExport) {
+        console.log(exportDeclarations);
+        consola.error(
+            `es2Wdefine detected combination of named and default exports in one module: ${gray(
+                id,
+            )}`,
+        );
+    }
+
+    const deps = Array.from(nameBySource.keys())
+        .map(s => `'${s.replace(/^@windy\//, '')}'`)
         .join(', ');
-    var names = ['__import', '__exports'].concat(Array.from(nameBySource.values())).join(', ');
-    var transformed = "__shimport__.define('" + id + "', [" + deps + '], function(' + names + '){ ';
-    var ranges = importDeclarations
-        .concat(importStatements, exportDeclarations)
-        .sort(function(a, b) {
-            return a.start - b.start;
-        });
-    var c = 0;
-    for (var i = 0; i < ranges.length; i += 1) {
-        var range = ranges[i];
+
+    const names = ['__exports'].concat(Array.from(nameBySource.values())).join(', ');
+
+    const hoisted = [];
+
+    importDeclarations.forEach(decl => {
+        const name = nameBySource.get(decl.source);
+        let moduleHasNamedImport = false;
+        let moduleHaDefaultImport = false;
+
+        decl.specifiers
+            .sort((a, b) => {
+                if (a.name === 'default') {
+                    return 1;
+                }
+                if (b.name === 'default') {
+                    return -1;
+                }
+            })
+            .forEach(s => {
+                if (s.name === 'default') {
+                    moduleHaDefaultImport = true;
+                } else {
+                    moduleHasNamedImport = true;
+                }
+
+                if (s.name !== '*') {
+                    /**
+                     * Original version combining default & named exports
+
+                    const assignment =
+                        s.name === 'default' && s.as === name
+                            ? `${s.as} = ${name}.default; `
+                            : `var ${s.as} = ${name}.${s.name}; `;
+
+                    hoisted.push(assignment);
+
+                    */
+
+                    if (s.name !== 'default') {
+                        hoisted.push(`var ${s.as} = ${name}.${s.name}; `);
+                    }
+                }
+            });
+        if (moduleHaDefaultImport && moduleHasNamedImport) {
+            consola.error(
+                `es2Wdefine detected combination of named and default import in one module: ${gray(
+                    id,
+                )}`,
+            );
+        }
+    });
+
+    let transformed = `W.define('${id}',\n[${deps}], function(${names}){ \n\n${hoisted.join('\n') +
+        '\n\n'}`;
+
+    const ranges = [
+        ...importDeclarations,
+        ...importStatements,
+        ...importMetaUrls,
+        ...exportDeclarations,
+    ].sort((a, b) => a.start - b.start);
+
+    let c = 0;
+
+    for (let i = 0; i < ranges.length; i += 1) {
+        const range = ranges[i];
         transformed += source.slice(c, range.start) + range.toString(nameBySource);
+
         c = range.end;
     }
+
     transformed += source.slice(c);
-    exportDeclarations.forEach(function(d) {
-        if (d.name) {
-            transformed += '\n__exports.' + d.name + ' = ' + d.name + ';';
-        }
+
+    exportDeclarations.forEach(d => {
+        if (d.name) transformed += `\n__exports.${d.as || d.name} = ${d.name};`;
     });
-    transformed += '\n});\n//# sourceURL=' + id;
+
+    /**
+     * Appned css, html to the define
+     */
+    if (html) {
+        html = `,\n/*! */\n${_q(html, true)}`;
+    }
+
+    if (css) {
+        css = `,\n/*! */\n${_q(css)}`;
+        if (!html) {
+            html = ',\n/*! */\nfalse';
+        }
+    }
+
+    transformed += `\n}${html || ''}${css || ''});\n//# XXXXsourceURL=${sourcePath || id}`;
+
     return transformed;
 }
+
+/**
+ * Ensloses the string in single quotes
+ */
+const _q = (s, r) => {
+    if (!s) {
+        return "''";
+    }
+    s = "'" + s.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+    return r && s.indexOf('\n') !== -1 ? s.replace(/\n/g, '\\n') : s;
+};
 
 var VERSION = '0.0.12';
 

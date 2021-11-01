@@ -1,30 +1,28 @@
 // .mjs -> es6 -> native js
-const fs = require('fs-extra'),
-    { find } = require('./shimport');
+const fs = require('fs-extra');
+const { find } = require('./shimport');
 
 // Replaces all imports, exports in a file
 module.exports = async (fullPath, moduleId, namespace) => {
-    const body = await fs.readFile(fullPath, 'utf8'),
-        transformed = transform(fullPath, body, moduleId, namespace);
+    const body = await fs.readFile(fullPath, 'utf8');
+    const transformed = transform(fullPath, body, moduleId, namespace);
 
     return transformed;
 };
 
 const transform = (file, source, id, namespace) => {
-    const [importDeclarations, importStatements, exportDeclarations] = find(source);
+    const [importDeclarations, importStatements, importMetaUrls, exportDeclarations] = find(
+        source,
+        id,
+    );
 
-    var nameBySource = new Map();
-
+    const nameBySource = new Map();
     const externalModules = [];
 
     importDeclarations.forEach(d => {
-        if (nameBySource.has(d.source)) {
-            return;
-        }
-
+        if (nameBySource.has(d.source)) return;
         if (/@windy\//.test(d.source)) {
             // Windy's core module
-
             d.source = d.source.replace(/@windy\/(\S+)/, '$1');
 
             if (/plugins\//.test(d.source)) {
@@ -34,7 +32,6 @@ const transform = (file, source, id, namespace) => {
             // Plugin's module
 
             externalModules.push(d.source);
-
             d.source = `${namespace}/${d.source.replace(/\.\/(\S+)\.mjs/, '$1')}`;
         } else if (!/@plugins\//.test(d.source)) {
             // "@plugins/xyz" is allowed
@@ -43,67 +40,112 @@ const transform = (file, source, id, namespace) => {
                     ' supports only "@windy/name", or "./filename.mjs" modules',
             );
         }
-
-        nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
+        nameBySource.set(d.source, d.name || `__dep_${nameBySource.size}`);
     });
+
+    let moduleHasNamedExport = false;
+    let moduleHaDefaultExport = false;
 
     exportDeclarations.forEach(d => {
-        if (!d.source) {
-            return;
+        if (!d.name) {
+            moduleHaDefaultExport = true;
+        } else {
+            moduleHasNamedExport = true;
         }
 
-        if (nameBySource.has(d.source)) {
-            return;
-        }
-
-        if (d.name) {
-            throw new Error(`mjs2js: Named exports are not supported in ${file}`);
-        }
-
-        nameBySource.set(d.source, d.name || '__dep_' + nameBySource.size);
+        if (!d.source) return;
+        if (nameBySource.has(d.source)) return;
+        nameBySource.set(d.source, d.name || `__dep_${nameBySource.size}`);
     });
 
-    var deps = Array.from(nameBySource.keys())
-        .map(s => `'${s}'`)
+    if (moduleHaDefaultExport && moduleHasNamedExport) {
+        console.log(exportDeclarations);
+        consola.error(
+            `es2Wdefine detected combination of named and default exports in one module: ${gray(
+                id,
+            )}`,
+        );
+    }
+
+    const deps = Array.from(nameBySource.keys())
+        .map(s => `'${s.replace(/^@windy\//, '')}'`)
         .join(', ');
 
-    var names = Array.from(nameBySource.values()).join(', ');
+    const names = ['__exports'].concat(Array.from(nameBySource.values())).join(', ');
 
-    var transformed = `/*! */
-// This page was transpiled automatically from ${file}
-W.define('${id}', [${deps}],
-    function(__exports,  ${names}) {
-`;
+    const hoisted = [];
 
-    var ranges = importDeclarations
-        .concat(importStatements, exportDeclarations)
-        .sort((a, b) => a.start - b.start);
+    importDeclarations.forEach(decl => {
+        const name = nameBySource.get(decl.source);
+        let moduleHasNamedImport = false;
+        let moduleHaDefaultImport = false;
 
-    var c = 0;
+        decl.specifiers
+            .sort((a, b) => {
+                if (a.name === 'default') {
+                    return 1;
+                }
+                if (b.name === 'default') {
+                    return -1;
+                }
+            })
+            .forEach(s => {
+                if (s.name === 'default') {
+                    moduleHaDefaultImport = true;
+                } else {
+                    moduleHasNamedImport = true;
+                }
 
-    for (var i = 0; i < ranges.length; i += 1) {
-        var range = ranges[i];
+                if (s.name !== '*') {
+                    /**
+                     * Original version combining default & named exports
 
-        transformed += source.slice(c, range.start);
+                    const assignment =
+                        s.name === 'default' && s.as === name
+                            ? `${s.as} = ${name}.default; `
+                            : `var ${s.as} = ${name}.${s.name}; `;
 
-        if (!(range.name && range.source)) {
-            transformed += range.toString(nameBySource);
+                    hoisted.push(assignment);
+
+                    */
+
+                    if (s.name !== 'default') {
+                        hoisted.push(`var ${s.as} = ${name}.${s.name}; `);
+                    }
+                }
+            });
+        if (moduleHaDefaultImport && moduleHasNamedImport) {
+            consola.error(
+                `es2Wdefine detected combination of named and default import in one module: ${gray(
+                    id,
+                )}`,
+            );
         }
+    });
 
-        // remove trailing \n
-        transformed = transformed.replace(/\n$/, '');
+    let transformed = `W.define('${id}',\n[${deps}], function(${names}){ \n\n${hoisted.join('\n') +
+        '\n\n'}`;
+
+    const ranges = [
+        ...importDeclarations,
+        ...importStatements,
+        ...importMetaUrls,
+        ...exportDeclarations,
+    ].sort((a, b) => a.start - b.start);
+
+    let c = 0;
+
+    for (let i = 0; i < ranges.length; i += 1) {
+        const range = ranges[i];
+        transformed += source.slice(c, range.start) + range.toString(nameBySource);
 
         c = range.end;
     }
 
     transformed += source.slice(c);
-
-    //import like this:  import name from "./xyz.mjs" if using: export default whatever;
-    //or import {name1, name2:yourname} from "./xyz.mjs" if using: export {name1, name2};
-    //cannot use default and named exports
-
-    //transformed = transformed.replace('__exports.default =', '\treturn ');    //this line removed
-
+    exportDeclarations.forEach(d => {
+        if (d.name) transformed += `\n__exports.${d.as || d.name} = ${d.name};`;
+    });
     transformed += '\n});\n';
 
     return { externalModules, transformed };

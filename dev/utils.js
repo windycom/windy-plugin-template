@@ -110,12 +110,12 @@ exports.externalMjs = async (src, internalModules, module, name) => {
 
         return moduleId;
     } else {
-        const file = join(src, `${base}.mjs`),
-            { externalModules, transformed } = await mjs2js(file, moduleId, name);
+        const file = join(src, `${base}.mjs`);
+        const { externalModules, transformed } = await mjs2js(file, moduleId, name);
 
         internalModules[module] = transformed;
 
-        for (let internal of externalModules) {
+        for (const internal of externalModules) {
             //
             // Here circular dep can occur
             ////
