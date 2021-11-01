@@ -1,5 +1,6 @@
 // .mjs -> es6 -> native js
 const fs = require('fs-extra');
+const consola = require('console');
 const { find } = require('./shimport');
 
 // Replaces all imports, exports in a file
@@ -59,11 +60,8 @@ const transform = (file, source, id, namespace) => {
     });
 
     if (moduleHaDefaultExport && moduleHasNamedExport) {
-        console.log(exportDeclarations);
         consola.error(
-            `es2Wdefine detected combination of named and default exports in one module: ${gray(
-                id,
-            )}`,
+            `es2Wdefine detected combination of named and default exports in one module: ${id}`,
         );
     }
 
@@ -116,9 +114,7 @@ const transform = (file, source, id, namespace) => {
             });
         if (moduleHaDefaultImport && moduleHasNamedImport) {
             consola.error(
-                `es2Wdefine detected combination of named and default import in one module: ${gray(
-                    id,
-                )}`,
+                `es2Wdefine detected combination of named and default import in one module: ${id}`,
             );
         }
     });
@@ -147,6 +143,9 @@ const transform = (file, source, id, namespace) => {
         if (d.name) transformed += `\n__exports.${d.as || d.name} = ${d.name};`;
     });
     transformed += '\n});\n';
+
+    // replace trailing ; at the end of commented out lines
+    transformed = transformed.replace(/(^\/\*import\s+.*\*\/);/gm, '$1');
 
     return { externalModules, transformed };
 };
