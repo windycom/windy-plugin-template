@@ -1,6 +1,6 @@
 <plugin>
     <script>
-        import map from '@windy/map';
+        import { map } from '@windy/map';
 
         const BoatIcon = L.divIcon({
             html: `<svg  viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
@@ -19,9 +19,9 @@
                     marker._icon.style.transformOrigin = '12px 12px';
                     const heading = marker._icon.getAttribute('data-heading');
                     if (marker._icon.style.transform.indexOf('rotateZ') === -1) {
-                        marker._icon.style.transform = `${
-                            marker._icon.style.transform
-                        } rotateZ(${heading || 0}deg)`;
+                        marker._icon.style.transform = `${marker._icon.style.transform} rotateZ(${
+                            heading || 0
+                        }deg)`;
                     }
                 }
             }

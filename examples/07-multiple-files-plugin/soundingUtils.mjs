@@ -1,4 +1,4 @@
-import _ from '@windy/utils';
+import * as _ from '@windy/utils';
 
 // Remove data points with some null values
 function validateData(data) {

@@ -11,10 +11,10 @@
             <div id="dragdemo-y"></div>
             <div id="dragdemo-box"></div>
         </div>
-        <div style=" border:1px solid blue; border-radius:5px; padding:10px;  margin:5px; ">
+        <div style="border: 1px solid blue; border-radius: 5px; padding: 10px; margin: 5px">
             <h2>This plugin is:</h2>
             <br />
-            <ul style="margin-left:20px;">
+            <ul style="margin-left: 20px">
                 <li>
                     A boilerplate for building plugins for a mobile browser (plugins not accessible
                     in the app).
@@ -28,11 +28,9 @@
                     down partially, to display part of the map and the picker.
                 </li>
                 <li>The Drag class is also demonstrated:</li>
-                <ul style="margin-left:20px;">
+                <ul style="margin-left: 20px">
                     <li>You can drag the circle in the box above, or</li>
-                    <li>
-                        If you drag the open white area the cross hairs will move.
-                    </li>
+                    <li>If you drag the open white area the cross hairs will move.</li>
                 </ul>
                 <li>
                     The z-index of the plugin is set to 10 so that it appears on top of the picker.
@@ -72,21 +70,21 @@
     <div class="calendar-backdrop"></div>
 
     <script>
-        import _ from '@windy/utils';
-        import rs from '@windy/rootScope';
+        import { $ } from '@windy/utils';
+        import * as rs from '@windy/rootScope';
         import Drag from '@windy/Drag';
-
-        const { $ } = _;
 
         // LastOpened set to true when plugin opens,  use to determine whether picker (or other actions) should be active.
         // will be set false by W.plugins.plugins,  when another windy-plugin- plugin opens
         this.lastOpened = true;
 
         // Add backdrop for calendar in mobile,  use the same color as content
-        let bgVals = getComputedStyle($('.plugin-content', this.el))
+        const bgVals = getComputedStyle($('.plugin-content', this.el))
             .backgroundColor.replace('rgb', 'rgba')
-            .match(/[\d\.]+/g);
-        if (bgVals.length == 3) bgVals.push(1);
+            .match(/[\d.]+/g);
+        if (bgVals.length == 3) {
+            bgVals.push(1);
+        }
         $(
             '.calendar-backdrop',
             this.el,
@@ -134,8 +132,9 @@
 
                 bs.ondragend = () => {
                     // if near the top,  set to the top to original value.
-                    if (Math.abs(this.el.offsetTop < 20))
-                        this.el.style.top = bs.origTopOfPlugin + 'px';
+                    if (Math.abs(this.el.offsetTop < 20)) {
+                        this.el.style.top = `${bs.origTopOfPlugin}px`;
+                    }
                     // if height very small,  close the plugin.
                     if (this.el.offsetHeight < 70) {
                         this.close();
@@ -157,7 +156,7 @@
             {
                 el: $('#dragdemo-box'),
 
-                ondrag: function(x, y) {
+                ondrag: function (x, y) {
                     // x and y are based on offsetLeft and offsetTop of el (in this case #dragdemo-container)
                     // so on drag start: x = this.el.offsetLeft  and y = this.el.offsetTop
                     x =
@@ -176,12 +175,13 @@
                     this.el.style.top = y + 'px';
                 },
 
-                ondragstart: function(xy) {
+                ondragstart: function (xy) {
+                    console.log(xy);
                     // xy[0] and xy[1] refers to main window coords.   Available in rest of obj as this.startXY[0] and this.startXY[1].
                     // not needed here
                 },
 
-                ondragend: function(e) {
+                ondragend: function (e) {
                     console.log('Do something with event:', e);
                 },
             },
@@ -198,21 +198,21 @@
             {
                 el: $('#dragdemo-container'),
 
-                ondrag: function(x, y) {
+                ondrag: function (x, y) {
                     $('#dragdemo-x').style.left =
                         x + this.startLeft - this.el.style.left.slice(0, -2) - 1.5 + 'px'; // -1 for border an -0.5 for line
                     $('#dragdemo-y').style.top =
                         y + this.startTop - this.el.style.top.slice(0, -2) - 1.5 + 'px';
                 },
 
-                ondragstart: function(xy) {
+                ondragstart: function (xy) {
                     let clientRect = this.el.getBoundingClientRect();
                     this.startLeft = xy[0] - clientRect.left - this.el.offsetLeft;
                     this.startTop = xy[1] - clientRect.top - this.el.offsetTop;
                     this.ondrag(this.el.offsetLeft, this.el.offsetTop);
                 },
 
-                ondragend: function(e) {
+                ondragend: function (e) {
                     console.log('Do something with event:', e);
                 },
             },

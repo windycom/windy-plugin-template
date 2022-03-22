@@ -8,8 +8,8 @@
         <div id="my-graph" data-ref="graph"></div>
     </div>
     <script>
-        import map from '@windy/map';
-        import rs from '@windy/rootScope';
+        import { map, markers } from '@windy/map';
+        import * as rs from '@windy/rootScope';
 
         let marker = null;
 
@@ -63,7 +63,7 @@
                 marker.setLatLng([lat, lon]);
             } else {
                 marker = L.marker([lat, lon], {
-                    icon: map.myMarkers.pulsatingIcon,
+                    icon: markers.pulsatingIcon,
                     zIndexOffset: -300,
                 }).addTo(map);
             }
@@ -71,8 +71,10 @@
             this.refs.coords.textContent = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
 
             // Catch all unhandled clicks not to fall into Leaflet map
-            this.node.oncontextmenu = this.node.ondblclick = this.node.onclick = ev =>
-                ev.stopPropagation();
+            this.node.oncontextmenu =
+                this.node.ondblclick =
+                this.node.onclick =
+                    ev => ev.stopPropagation();
         };
 
         this.onclose = () => {
@@ -88,17 +90,10 @@
             this.refs.graph.innerHTML = '';
 
             //Make an SVG Container
-            var svg = d3
-                .select('#my-graph')
-                .append('svg')
-                .attr('width', '100%')
-                .attr('height', 80);
+            var svg = d3.select('#my-graph').append('svg').attr('width', '100%').attr('height', 80);
 
             //Draw the Circle
-            svg.append('circle')
-                .attr('cx', '50%')
-                .attr('cy', '50%')
-                .attr('r', 20);
+            svg.append('circle').attr('cx', '50%').attr('cy', '50%').attr('r', 20);
 
             svg.append('text')
                 .text('This circle was drawn with d3')

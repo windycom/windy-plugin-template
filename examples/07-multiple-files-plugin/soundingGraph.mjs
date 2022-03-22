@@ -1,8 +1,8 @@
+import * as rs from '@windy/rootScope';
+import * as _ from '@windy/utils';
+import { map } from '@windy/map';
 import overlays from '@windy/overlays';
-import rs from '@windy/rootScope';
 import store from '@windy/store';
-import _ from '@windy/utils';
-import map from '@windy/map';
 
 import sUtils from './soundingUtils.mjs';
 
@@ -94,18 +94,9 @@ const init = _refs => {
         .style('display', 'none'); // Everything is hidden until data is loaded
 
     if (rs.isMobile || rs.isTablet) {
-        chartArea
-            .on('touchstart', dragStarted)
-            .on('touchmove', dragged)
-            .on('touchend', dragEnded);
+        chartArea.on('touchstart', dragStarted).on('touchmove', dragged).on('touchend', dragEnded);
     } else {
-        chartArea.call(
-            d3
-                .drag()
-                .on('start', dragStarted)
-                .on('drag', dragged)
-                .on('end', dragEnded),
-        );
+        chartArea.call(d3.drag().on('start', dragStarted).on('drag', dragged).on('end', dragEnded));
     }
 
     svg.append('text')
@@ -143,10 +134,7 @@ const init = _refs => {
             .style('font-size', '8px');
     });
 
-    chartArea
-        .append('g')
-        .attr('class', 'x axis')
-        .attr('transform', `translate(0,${chartHeight})`);
+    chartArea.append('g').attr('class', 'x axis').attr('transform', `translate(0,${chartHeight})`);
 
     chartArea
         .append('g')
@@ -167,10 +155,7 @@ const init = _refs => {
         .attr('x', 0)
         .attr('y', -4);
 
-    const auxLines = chartArea
-        .append('g')
-        .attr('class', 'auxLines')
-        .attr('opacity', 0.3);
+    const auxLines = chartArea.append('g').attr('class', 'auxLines').attr('opacity', 0.3);
 
     auxLines
         .append('line')
@@ -249,27 +234,16 @@ const init = _refs => {
 
     const labels = infoLine.append('g').attr('transform', `translate(0,-5)`);
 
-    labels
-        .append('text')
-        .attr('class', 'alt')
-        .attr('x', 10);
+    labels.append('text').attr('class', 'alt').attr('x', 10);
 
     const tempLabels = labels
         .append('g')
         .attr('transform', `translate(${chartWidth / 2},0)`)
         .attr('text-anchor', 'end');
 
-    tempLabels
-        .append('text')
-        .attr('class', 'dewpoint')
-        .attr('x', 20)
-        .attr('text-anchor', 'end');
+    tempLabels.append('text').attr('class', 'dewpoint').attr('x', 20).attr('text-anchor', 'end');
 
-    tempLabels
-        .append('text')
-        .attr('class', 'temp')
-        .attr('x', 23)
-        .attr('text-anchor', 'start');
+    tempLabels.append('text').attr('class', 'temp').attr('x', 23).attr('text-anchor', 'start');
 
     labels
         .append('text')
@@ -526,9 +500,7 @@ const setXScale = () => {
 
     // Update axis scale, apply metrics
     xAxisScale.domain([convertTemp(range[0]), convertTemp(range[1])]);
-    svg.select('.x.axis')
-        .transition()
-        .call(xAxis);
+    svg.select('.x.axis').transition().call(xAxis);
 };
 
 const setYScale = () => {
@@ -555,9 +527,7 @@ const setYScale = () => {
 
     // Update axis scale, apply metrics
     yAxisScale.domain([convertAlt(range[0]), convertAlt(range[1])]);
-    svg.select('.y.axis')
-        .transition()
-        .call(yAxis);
+    svg.select('.y.axis').transition().call(yAxis);
 };
 
 // Handler for data request
@@ -709,13 +679,9 @@ const redraw = () => {
 
     updateInfoBox();
 
-    svg.select('.temperature.chart')
-        .datum(currentData)
-        .attr('d', tempLine);
+    svg.select('.temperature.chart').datum(currentData).attr('d', tempLine);
 
-    svg.select('.dewpoint.chart')
-        .datum(currentData)
-        .attr('d', dewPointLine);
+    svg.select('.dewpoint.chart').datum(currentData).attr('d', dewPointLine);
 };
 
 export default { load, init };

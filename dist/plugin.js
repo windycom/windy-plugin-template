@@ -24,7 +24,8 @@ W.loadPlugin(
 '',
 /* Constructor */
 function () {
-  var map = W.require('map');
+  var _W$require = W.require('map'),
+      map = _W$require.map;
 
   console.log('I am being mounted');
   var popup = null;
