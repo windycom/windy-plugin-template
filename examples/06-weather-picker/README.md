@@ -2,7 +2,7 @@
 
 # Weather picker
 
-Picker emits messages `pickerOpened`, `pickerClosed` and `pickerMoved`. Open your console, to see it in action.
+Picker emits messages `pickerOpened` and `pickerClosed`. Current picker location is stored in `@windy/store` under the `pickerLocation` key. Open your console, to see it in action.
 
 ---
 
