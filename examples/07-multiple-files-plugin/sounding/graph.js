@@ -1,32 +1,21 @@
+/* global d3 */
+
 import * as rs from '@windy/rootScope';
-import * as _ from '@windy/utils';
+import { $, wind2obj } from '@windy/utils';
 import { map } from '@windy/map';
 import overlays from '@windy/overlays';
 import store from '@windy/store';
 
-import sUtils from './soundingUtils.mjs';
-
-const { $ } = _;
+import * as sUtils from './utils.js';
 
 let svg = null;
 
-const el = $('#sounding-chart');
-
-const chartWidth = el.clientWidth - 30,
-    chartHeight = el.clientHeight - 40;
-
 // Scale for chart
+let chartWidth, chartHeight;
 let xScale, yScale;
-
 let xAxisScale, yAxisScale;
-
-let xAxis;
-
-let yAxis;
-
-let tempLine;
-
-let dewPointLine;
+let xAxis, yAxis;
+let tempLine, dewPointLine;
 
 const pointData = {
     lat: 0,
@@ -38,22 +27,23 @@ const pointData = {
 
 const pressureLines = [850, 500, 200];
 
-let currentData = [],
-    currentMouseY = chartHeight,
-    currentInfo = {},
-    currentProduct = 'gfs',
-    zoomIn = false,
-    refs = null; // will contain this.refs elements from mytag.html
+let currentData = [];
+let currentMouseY = chartHeight;
+let zoomIn = false;
+let refs = null;
 
-const convertTemp = overlays.temp.convertNumber,
-    convertWind = overlays.wind.convertNumber,
-    convertPressure = overlays.pressure.convertNumber;
+const currentInfo = {};
+const currentProduct = 'gfs';
+
+const convertTemp = overlays.temp.convertNumber;
+const convertWind = overlays.wind.convertNumber;
+const convertPressure = overlays.pressure.convertNumber;
 
 // Custom conversion of altitude
 // Can not use convertNumber, because it rounds altitude to 100m
 const convertAlt = value => Math.round(overlays.cloudtop.metric === 'ft' ? value * 3.28084 : value);
 
-const init = _refs => {
+export const init = _refs => {
     if (svg) {
         return;
     }
@@ -61,6 +51,10 @@ const init = _refs => {
     svg = d3.select('#sounding-chart').append('svg');
 
     refs = _refs;
+
+    const el = $('#sounding-chart');
+    chartWidth = el.clientWidth - 30;
+    chartHeight = el.clientHeight - 40;
 
     // Scale for chart
     xScale = d3.scaleLinear().range([0, chartWidth]);
@@ -116,7 +110,7 @@ const init = _refs => {
     const pressureGrid = chartArea.append('g').attr('class', 'pressureGrid');
 
     pressureLines.forEach(level => {
-        var g = pressureGrid.append('g').attr('class', `l${level}`);
+        const g = pressureGrid.append('g').attr('class', `l${level}`);
 
         g.append('line')
             .style('stroke', 'black')
@@ -281,7 +275,7 @@ function updatePressureGrid() {
             return;
         }
 
-        var y = Math.round(yScale(pt.gh)) + 0.5;
+        const y = Math.round(yScale(pt.gh)) + 0.5;
 
         svg.select(`.pressureGrid .l${level}`)
             .style('display', null)
@@ -360,7 +354,7 @@ function updateWindBarbs() {
 
     let lastY = 0;
     for (let i = 0; i < currentData.length; ++i) {
-        const wind = _.wind2obj([currentData[i].wind_u, currentData[i].wind_v]);
+        const wind = wind2obj([currentData[i].wind_u, currentData[i].wind_v]);
         const y = yScale(currentData[i].gh);
         if (!i || Math.abs(y - lastY) > 15) {
             // Min distance to reduce barbs overlapping
@@ -388,12 +382,11 @@ function updateInfoLine() {
     if (idx == 0) {
         pt = currentData[idx];
     } else {
-        let p1 = currentData[idx - 1];
-        let p2 = currentData[idx];
+        const p1 = currentData[idx - 1];
+        const p2 = currentData[idx];
         pt = sUtils.interpolatePoint(p1, p2, (gh - p1.gh) / (p2.gh - p1.gh));
     }
-
-    const wind = _.wind2obj([pt.wind_u, pt.wind_v]);
+    const wind = wind2obj([pt.wind_u, pt.wind_v]);
 
     infoLine
         .select('.alt')
@@ -477,11 +470,11 @@ const setXScale = () => {
         return;
     }
 
-    let range = [Number.MAX_VALUE, Number.MIN_VALUE];
+    const range = [Number.MAX_VALUE, Number.MIN_VALUE];
 
     // Create range from all timestamps
     // pt.dewpoint <= pt.temp by definition
-    for (let hour in pointData.data) {
+    for (const hour in pointData.data) {
         const minMax = pointData.data[hour].reduce(
             (acc, pt) => [Math.min(acc[0], pt.dewpoint), Math.max(acc[1], pt.temp)],
             range,
@@ -508,9 +501,9 @@ const setYScale = () => {
         return;
     }
 
-    let range = [Number.MAX_VALUE, Number.MIN_VALUE];
-    for (let hour in pointData.data) {
-        let minMax = pointData.data[hour].reduce((acc, pt) => {
+    const range = [Number.MAX_VALUE, Number.MIN_VALUE];
+    for (const hour in pointData.data) {
+        const minMax = pointData.data[hour].reduce((acc, pt) => {
             return [Math.min(acc[0], pt.gh), Math.max(acc[1], pt.gh)];
         }, range);
 
@@ -531,14 +524,14 @@ const setYScale = () => {
 };
 
 // Handler for data request
-const load = (lat, lon, airData) => {
+export const load = (lat, lon, airData) => {
     pointData.lat = lat;
     pointData.lon = lon;
 
     const map = {};
     const surface = {};
-    for (let param in airData.data) {
-        let m = param.match(/(.+)-(?:(.+)h|surface)/); // param-level
+    for (const param in airData.data) {
+        const m = param.match(/(.+)-(?:(.+)h|surface)/); // param-level
         if (!m) {
             continue;
         }
@@ -569,15 +562,15 @@ const load = (lat, lon, airData) => {
     }
 
     // Set geopotential height of the surface to model elevation
-    for (let hour in surface) {
+    for (const hour in surface) {
         surface[hour].gh = airData.header.modelElevation;
     }
 
     // Transform level objects to sorted arrays, convert values
     const res = {};
-    for (let hour in map) {
-        for (let level in map[hour]) {
-            let levelData = map[hour][level];
+    for (const hour in map) {
+        for (const level in map[hour]) {
+            const levelData = map[hour][level];
 
             levelData.level = +level;
 
@@ -590,7 +583,7 @@ const load = (lat, lon, airData) => {
     }
 
     // Skip data under the ground, add the ground point
-    for (let hour in res) {
+    for (const hour in res) {
         let hourData = res[hour];
         const idx = hourData.findIndex(pt => pt.gh > airData.header.modelElevation);
 
@@ -612,6 +605,7 @@ const load = (lat, lon, airData) => {
     updateSettings();
 
     store.on('timestamp', redraw);
+    redraw();
 };
 
 // Shows/hides nodata label
@@ -621,7 +615,7 @@ function showNoData(show) {
 }
 
 // Handler for settings change
-const updateSettings = () => {
+function updateSettings() {
     setXScale();
     setYScale();
 
@@ -630,10 +624,10 @@ const updateSettings = () => {
     svg.select('.y.label').text(`${overlays.cloudtop.metric}/amsl`);
 
     redraw();
-};
+}
 
 // Handler for data or settings change
-const redraw = () => {
+function redraw() {
     if (!pointData.data) {
         showNoData(true);
         return;
@@ -682,6 +676,4 @@ const redraw = () => {
     svg.select('.temperature.chart').datum(currentData).attr('d', tempLine);
 
     svg.select('.dewpoint.chart').datum(currentData).attr('d', dewPointLine);
-};
-
-export default { load, init };
+}
