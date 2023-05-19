@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     /*
         Most important config variable is name of your plugin,
         which is defined in your package.json, since the name
