@@ -2,38 +2,30 @@
     "env": {
         "es6": true,
         "node": true,
-        "browser": true,
-        "jest": true
+        "browser": true
     },
     "parserOptions": {
-        "ecmaVersion": 2017,
+        "ecmaVersion": 2022,
         "sourceType": "module"
     },
     "globals": {
         "L": true,
         "W": true,
-        "console": true,
-        "cordova": true,
-        "riot": true,
-        "opts": true,
-        "d3": true,
-        "omnivore": true
+        "console": true
     },
     "extends": "eslint:recommended",
     "rules": {
-        "indent":"off",
+        "indent": "off",
         "curly": ["error", "all"],
         "dot-location": ["error", "property"],
-        "no-cond-assign":"off",
-        "no-console":"off",
-        "no-fallthrough":"off",
-        "no-mixed-spaces-and-tabs":"off",
+        "no-cond-assign": "off",
+        "no-console": "off",
+        "no-fallthrough": "off",
+        "no-mixed-spaces-and-tabs": "off",
         "no-multi-spaces": "error",
-        "no-undef-init":"error",
-        "no-undef":"error",
+        "no-undef-init": "error",
+        "no-undef": "error",
         "semi": "error"
     },
-    "plugins": [
-      "html"
-    ]
+    "plugins": ["html"]
 }

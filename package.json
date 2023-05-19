@@ -1,5 +1,6 @@
 {
     "name": "windy-plugin-examples",
+    "type": "module",
     "version": "0.5.0",
     "description": "Windy plugin system enables anyone, with basic knowledge of Javascript to enhance Windy with new functionality (default desc).",
     "main": "dist/plugin.js",
@@ -16,23 +17,29 @@
     "author": "Windyty, S.E.",
     "license": "MIT",
     "dependencies": {
-        "@babel/core": "^7.1.2",
-        "@babel/preset-env": "^7.1.0",
+        "@babel/preset-env": "^7.21.5",
+        "@rollup/plugin-babel": "^6.0.3",
+        "@rollup/plugin-commonjs": "^25.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.2",
+        "@rollup/plugin-terser": "^0.4.3",
         "chokidar": "^2.0.4",
         "colorette": "^1.0.6",
         "commander": "^2.19.0",
         "consola": "^1.4.4",
         "decache": "^4.4.0",
+        "estree-walker": "^3.0.3",
         "express": "^4.16.4",
         "fs-extra": "^7.0.0",
         "less": "^3.8.1",
+        "magic-string": "^0.30.0",
         "prompts": "^1.1.1",
-        "riot-compiler": "^3.5.1",
+        "rollup": "^3.22.0",
+        "rollup-plugin-cleanup": "^3.2.1",
         "ucfirst": "^1.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.1.0",
-        "eslint-plugin-html": "^6.2.0",
-        "prettier": "^2.4.1"
+        "eslint": "^8.40.0",
+        "eslint-plugin-html": "^7.1.0",
+        "prettier": "^2.8.8"
     }
 }
