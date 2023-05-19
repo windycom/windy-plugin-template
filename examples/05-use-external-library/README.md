@@ -7,19 +7,15 @@
 
 This is very complex example placing your plugin element inside Leaflet map on desktop, and in different location on mobile.
 
-When mounted to the page, your plugin contains some handy shortcuts to DOM elements inside your plugin. `this.node` contains el of your plugin, and for example `this.refs.graph` contains el with `data-ref="graph"` attribute.
+When mounted to the page, your plugin contains some handy shortcuts to DOM elements inside your plugin. `onmount` method contains el of your plugin, and for example `refs.graph` contains el with `data-ref="graph"` attribute.
 
-Module `$` can also act as shortcut to `document.querySelector`, so for instance `$('.closing-x', this.node )` will return el of closing button.
+Module `$` can also act as shortcut to `document.querySelector`, so for instance `$('.closing-x', node)` will return el of closing button.
 
 ### config.js
 
 As you can see `dependencies` can contain list of external libraries, that will be loaded before your plugin is even mounted to the page.
 
 `attachPoint` contains selector of el, where your plugin will be mounted to the page.
-
-### plugin.html
-
-Whenever your plugin is opened from `contextmenu` hook, `this.onopen` method receives { lat, lon } object with required coordinates.
 
 ---
 
