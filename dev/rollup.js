@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import less from 'less';
 import MagicString from 'magic-string';
+import { minify } from 'html-minifier';
 import { rollup } from 'rollup';
 import { walk } from 'estree-walker';
 import rollupNodeResolve from '@rollup/plugin-node-resolve';
@@ -300,10 +301,11 @@ export function buildPluginsHtml() {
     return {
         name: 'build-plugins-external-html',
         transform(code, id) {
+            // !!! disabled due to commonjs rollup plugin error - all files has false for `isEntry`
             // we want to process it only once for each module - entry file check is ideal solution
-            if (!this.getModuleInfo(id)?.isEntry) {
-                return;
-            }
+            // if (!this.getModuleInfo(id)?.isEntry) {
+            //     return;
+            // }
 
             const htmlFilePath = id.replace(/\.[a-zA-Z]+$/, '.html');
             const htmlContent = fs.existsSync(htmlFilePath)
@@ -313,10 +315,15 @@ export function buildPluginsHtml() {
                 return;
             }
 
+            const html = minify(htmlContent, {
+                removeComments: true,
+                collapseWhitespace: true,
+            });
+
             this.addWatchFile(htmlFilePath);
 
             // pass data to another rollup steps using meta
-            return { meta: { html: htmlContent } };
+            return { meta: { html } };
         },
     };
 }
@@ -325,10 +332,11 @@ export function buildPluginsCss() {
     return {
         name: 'build-plugins-external-css',
         async transform(code, id) {
+            // !!! disabled due to commonjs rollup plugin error - all files has false for `isEntry`
             // we want to process it only once for each module - entry file check is ideal solution
-            if (!this.getModuleInfo(id)?.isEntry) {
-                return;
-            }
+            // if (!this.getModuleInfo(id)?.isEntry) {
+            //     return;
+            // }
 
             const lessFilePath = id.replace(/\.[a-zA-Z]+$/, '.less');
             const lessContent = fs.existsSync(lessFilePath)
@@ -340,6 +348,7 @@ export function buildPluginsCss() {
 
             const lessResult = await less.render(lessContent, {
                 math: 'always',
+                compress: true,
                 filename: path.resolve(lessFilePath), // make relative import paths inside LESS files valid
             });
 

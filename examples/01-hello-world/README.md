@@ -16,16 +16,16 @@ But the most important config variable is name of your plugin, which is `name` p
 
 The name of your plugin, and your npm package must have form `windy-plugin-anyName`.
 
-### plugin.html
+### plugin.js
 
-This plugin does not have any HTML content, nor CSS. Windy API modules are imported with `import map from '@windy/map'`
+This plugin does not have any HTML content, nor CSS. Windy API modules are imported with `import { map } from '@windy/map'`
 
-`this.onopen` method is called when your plugin is being opened.
+`export const onopen => {}` method is called when your plugin is being opened.
 
-Remember, that `this.ononpen` method can be called repeatedly (without your plugin being closed before), so make sure, that you will not to subscribe
-to any listener twice.
+Remember, that `ononpen` method can be called repeatedly (without your plugin being closed before), so make sure, that you will not to subscribe
+to any listener twice. On the other hand `onmount` is called just once.
 
-`this.onclose` method is called when your plugin is being closed. Unsubscribe from all your listeners, and remove all your stuff from a map.
+`export const ondestroy => {}` method is called when your plugin is being closed. Unsubscribe from all your listeners, and remove all your stuff from a map.
 
 ---
 
