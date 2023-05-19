@@ -99,6 +99,9 @@ export const prompt = async () => {
 
 // Main
 (async () => {
+    if (!fs.existsSync(path.join(__dirname, 'dist'))) {
+        fs.mkdirSync(path.join(__dirname, 'dist'));
+    }
     console.log(`\nBuilding ${yellow(name)}, version ${yellow(version)}`);
 
     // Beginners example selection
