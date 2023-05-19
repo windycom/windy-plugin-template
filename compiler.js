@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert';
 import https from 'node:https';
 
-import prog from 'commander';
+import { program } from 'commander';
 import prompts from 'prompts';
 import ucfirst from 'ucfirst';
 import c from 'consola';
@@ -32,15 +32,19 @@ const { version, name, author, repository, description } = JSON.parse(
     fs.readFileSync(path.join(__dirname, 'package.json')),
 );
 
-prog.option('-b, --build', 'Build the plugin in required directory (default src)')
+const prog = program
+    .option('-b, --build', 'Build the plugin in required directory (default src)')
     .option('-w, --watch', 'Build plugin and watch file changes in required directory')
     .option('-s, --serve', `Serve dist directory on port ${port}`)
     .option('-p, --prompt', 'Show command line promt with all the examples')
     .option('-t, --transpile', 'Transpile your code with Babel')
-    .parse(process.argv);
+    .parse(process.argv)
+    .opts();
+
+console.log(prog);
 
 if (!process.argv.slice(2).length) {
-    prog.outputHelp();
+    program.outputHelp();
     process.exit();
 }
 
@@ -64,11 +68,11 @@ export const prompt = async () => {
         )}.\n`,
     );
 
-    let { value } = await prompts({
+    const { value } = await prompts({
         type: 'number',
         name: 'value',
         message: `Which example you want to launch? (press 0 - ${list.length}):`,
-        validate: value => (value >= 0 && value < list.length + 1 ? true : false),
+        validate: value => Boolean(value >= 0 && value < list.length + 1),
     });
 
     if (value > 0) {
@@ -169,10 +173,10 @@ function startServer() {
 
 /* This is main build function
 
-	Feel free to to use your own builder, transpiler, minifier or whatever
-	The result must be a single .js file with single W.loadPlugin() function
+    Feel free to to use your own builder, transpiler, minifier or whatever
+    The result must be a single .js file with single W.loadPlugin() function
 
-	Make sure to replace import XY from '@windy/XY' with W.require(XY)
+    Make sure to replace import XY from '@windy/XY' with W.require(XY)
 
 */
 async function build() {
@@ -200,10 +204,10 @@ async function reloadConfig() {
     return;
 }
 
-const onChange = async fullPath => {
+async function onChange(fullPath) {
     c.info(`watch: File changed ${gray(fullPath)}`);
 
     await reloadConfig();
 
     await build();
-};
+}

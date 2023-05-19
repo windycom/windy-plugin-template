@@ -1,0 +1,41 @@
+module.exports = {
+    env: {
+        es6: true,
+        node: true,
+        browser: true,
+    },
+    parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+    },
+    globals: {
+        L: true,
+        W: true,
+        console: true,
+    },
+    extends: 'eslint:recommended',
+    rules: {
+        indent: 'off',
+        'no-fallthrough': 'off',
+        'no-cond-assign': 'off',
+        'no-console': 'off',
+        'no-irregular-whitespace': 'off',
+        'no-prototype-builtins': 'off',
+        'no-mixed-spaces-and-tabs': 'error',
+        'no-const-assign': 'error',
+        'no-undef-init': 'error',
+        'no-undef': 'error',
+        curly: 'error',
+        'no-var': 'error',
+        'prefer-const': 'error',
+        'no-tabs': 'error',
+        'no-use-before-define': ['error', { functions: false }], // function declarations are hoisted, so it's safe
+        'one-var': ['error', { const: 'never' }],
+        'no-empty': 'error',
+        'no-redeclare': 'error',
+        'prefer-rest-params': 'off',
+        'prefer-spread': 'off',
+        'no-import-assign': 'warn',
+    },
+    plugins: ['html'],
+};
