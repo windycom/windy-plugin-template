@@ -30,29 +30,35 @@ The name of your plugin, and your npm package must have form `windy-plugin-anyNa
 Your `src/` directory should look like this:
 ```sh
 config.js
-plugin.html
+plugin.js
+plugin.html		// <-- optional
 plugin.less 	// <-- optional
-otherFiles.mjs 	// <-- optional
+# and other folders and files if needed
+```
+
+#### plugin.js
+The JS logic of your plugin, entry file.
+
+```js
+export const onmount = (node, refs) => {
+	console.log(`I am mounted and attached to HTML node ${node}. If you used "data-ref" attributes in HTML, here they are: ${refs}`);
+}
+
+export const onopen = () => {
+	console.log('I am open');
+}
+
+export const ondestroy = () => {
+	console.log('I am being closed');
+}
 ```
 
 #### plugin.html
-Similar to vue, svelte or riot tag, contains html, and also js code of your plugin.
+Simply contains html.
 
 ```html
-<plugin>
-	<!-- This is HTML code injected into Windy.com page -->
-	<b>Hello world</b>
-
-	<script>
-
-	console.log('I am mounted to the page')
-
-	this.onopen = () => console.log('I am opened')
-
-	this.onclose = () => console.log('I am being closed')
-
-	</script>
-</plugin>
+<!-- This is HTML code injected into Windy.com page -->
+<b>Hello world</b>
 ```
 
 #### plugin.less
@@ -92,7 +98,7 @@ module.exports = {
 
 	// Forces all other window panes, with same pane id to be closed
 	// Allowed: 'lhpane', 'rhpane' and 'all'
-	exclusive: 'lhpane',
+	pane: 'lhpane',
 
 	// The place in page, where your plugin element will be mounted
 	// to the page. By default all the plugins are attached to
@@ -116,8 +122,9 @@ Whenever your plugin is opened for the first time, it must be "mounted" to the p
  1) `html` code of your plugin is wrapped inside `div` with id `windy-plugin-anyName`. Inside is inserted another `div` element, that will act as closing button. Whole plugin element has style `display:none`.
  2) `css` code of your plugin is attached to `<head>` section of Windy
  3) Your plugin element is then inserted into the page inside element, where you required in `config.js` as `attachPoint` (by default inside `#plugins` DIV)
- 4) Js code inside `plugin.html` is launched
- 5) Then plugin is being opened
+ 4) Js code inside `plugin.js` is launched
+ 5) If method `onmount` is exported in your js code, it is called.
+ 6) Then plugin is being opened
 
 Resulting html code should look like this:
 ```html
@@ -130,16 +137,14 @@ Resulting html code should look like this:
 ### Opening
  1) The plugin element is enhanced with class `open` and its style is changed to `display: block;`
  2) CSS class `.onwindy-plugin-anyName` is attached to `<body>` element of page, so you can use CSS to modify other elements on page.
- 3) If method `this.onopen`  exists in your js code, it is called. If the plugin was opened from `contextmenu` hook `{ lat, lon }` object is provided as parameters.
+ 3) If method `onopen` is exported in your js code, it is called. If the plugin was opened from `contextmenu` hook `{ lat, lon }` object is provided as parameters.
 
 ### Closing
- 1) If method `this.onclose` exists in your js code it is called
+ 1) If method `ondestroy` exists in your js code it is called
  2) Class `open` is removed from the plugin element class to perform closing animation
  3) CSS class `.onwindy-plugin-anyName` is removed from `<body>` element of page
  4) The plugin element gets style `display: none;` after some time
 
-After closing, your plugin remains mounted in a page.
+After closing, your plugin is cleaned by default. But it is your responsibility to clean everything (hooks, elements created programatically, etc...) properly.
 
 Plugins can be closed by clicking on their close button or programatically by broadcasting message `broadcast.emit('rqstClose', 'name-of-plugin')`
-
-

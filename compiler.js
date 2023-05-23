@@ -27,7 +27,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 9999;
 
-// TODO add to plugin
 const { version, name, author, repository, description } = JSON.parse(
     fs.readFileSync(path.join(__dirname, 'package.json')),
 );
@@ -62,11 +61,7 @@ export const prompt = async () => {
         console.log(`  ${yellow(i + 1)}) ${ucfirst(d.replace(/^\d\d-/, '').replace(/-/g, ' '))}`),
     );
 
-    console.log(
-        `\n  ${yellow(0)}) F***K OFF with examples. I am pro. I want to develop ${yellow(
-            'my own plugin',
-        )}.\n`,
-    );
+    console.log(`\n  ${yellow(0)}) I want to develop ${yellow('my own plugin')}.\n`);
 
     const { value } = await prompts({
         type: 'number',
