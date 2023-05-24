@@ -25,7 +25,7 @@ export const builder = async function (id, srcDir, meta) {
             rollupCommonjs(),
             rollupCleanup({ comments: 'none' }),
             rollupBabel({
-                presets: [['@babel/preset-env', { targets: 'ie 11', modules: false }]],
+                presets: [['@babel/preset-env', { targets: 'defaults', modules: false }]],
                 allowAllFormats: true,
                 compact: false,
             }),
