@@ -67,8 +67,9 @@ It is strictly prohibited to use plugin to:
 There is no support at all. But you can drop a line in our [Community forum](https://community.windy.com/category/21/windy-plugins).
 
 ### CHANGELOG
-   * 0.5.0
-      - Remove ECMWF from `plugin-data-loader` - ECMWF fortunately added again!
+   * 1.0.0
+      - New rollup compiler, no more riot architecture
+      - Updated examples for Windy client v39
    * 0.4.0
       - Added `plugin-data-loader` to the Plugins API
    * 0.3.0
