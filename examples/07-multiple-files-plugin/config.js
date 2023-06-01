@@ -1,7 +1,4 @@
-/*
-	This is configuration file for your plugin
-*/
-module.exports = {
+export default {
     displayName: 'Graph as a plugin',
 
     hook: 'contextmenu',

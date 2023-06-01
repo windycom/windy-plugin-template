@@ -1,6 +1,7 @@
 {
     "name": "windy-plugin-examples",
-    "version": "0.5.0",
+    "type": "module",
+    "version": "1.0.0",
     "description": "Windy plugin system enables anyone, with basic knowledge of Javascript to enhance Windy with new functionality (default desc).",
     "main": "dist/plugin.js",
     "scripts": {
@@ -16,23 +17,29 @@
     "author": "Windyty, S.E.",
     "license": "MIT",
     "dependencies": {
-        "@babel/core": "^7.1.2",
-        "@babel/preset-env": "^7.1.0",
-        "chokidar": "^2.0.4",
-        "colorette": "^1.0.6",
-        "commander": "^2.19.0",
-        "consola": "^1.4.4",
-        "decache": "^4.4.0",
-        "express": "^4.16.4",
-        "fs-extra": "^7.0.0",
-        "less": "^3.8.1",
-        "prompts": "^1.1.1",
-        "riot-compiler": "^3.5.1",
+        "@babel/preset-env": "^7.21.5",
+        "@rollup/plugin-babel": "^6.0.3",
+        "@rollup/plugin-commonjs": "^25.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.2",
+        "@rollup/plugin-terser": "^0.4.3",
+        "chokidar": "^3.5.3",
+        "colorette": "^2.0.20",
+        "commander": "^10.0.1",
+        "consola": "^3.1.0",
+        "decache": "^4.6.1",
+        "estree-walker": "^3.0.3",
+        "express": "^4.18.2",
+        "html-minifier": "^4.0.0",
+        "less": "^4.1.3",
+        "magic-string": "^0.30.0",
+        "prompts": "^2.4.2",
+        "rollup": "^3.22.0",
+        "rollup-plugin-cleanup": "^3.2.1",
         "ucfirst": "^1.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.1.0",
-        "eslint-plugin-html": "^6.2.0",
-        "prettier": "^2.4.1"
+        "eslint": "^8.40.0",
+        "eslint-plugin-html": "^7.1.0",
+        "prettier": "^2.8.8"
     }
 }

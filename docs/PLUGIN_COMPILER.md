@@ -1,5 +1,5 @@
 # Windy Plugin Compiler
-Our custom compiler is based on [RIOT JS compiler](https://github.com/riot/compiler).
+Plugins are built using rollup using some custom plugins. Feel free to edit [dev/rollup.js](../dev/rollup.js) to fit your needs. Plugins `buildPluginsHtml`, `buildPluginsCss` and `transformToPlugin` are custom extensions for rollup. Feel free to edit it as well if needed. The only important thing is the output format granted by `transformToPlugin`. The way to the destination is not important. **Pull requests are welcome.**
 
 ```sh
 $ node ./compiler.js --help
@@ -14,30 +14,4 @@ Options:
   -h, --help       output usage information
 ```
 
-Feel free to hack it.
-
 It compiles your source files into single file `dest/plugin.js`. Run the compiler `node ./compiler.js --help` for CLI options.
-
-Feel free to use rollup, webpack,  sass, whatever you are used to. The result just must be correct file, with function `W.loadPlugin()` inside
-
-## Building plugin from multiple files
-Windy plugins compiler can build your plugin from more files. But is has some limitations:
- - Main js code inside `plugin.html` can not export anything
- - Other js files must be in the same directory as `plugin.html`
- - Other js files must have an `.mjs` extension, and required as `import xy from ./filename.mjs`
- - Other js files can have only default import and default export
-
-Usage:
-```js
-  // Windy's core modules
-  import map from '@windy/map'
-  import _ from '@windy/utils'
-
-  // Your own modules
-  import graph from './soundingGraph.mjs'
-
-  // ..your code
-
-  export default { myExport1, myExport2 }
-```
-Windy plugins compiler will throw an error if you will try to import something else than the cases above. Use rather the `dependencies` property inside your `config.js` to load 3rd party libraries.

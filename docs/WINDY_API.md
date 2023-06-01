@@ -1,5 +1,7 @@
 # Windy API (client v17.8)
 
+TODO - this is so damn outdated. Use typings instead.
+
 <!-- toc -->
 
 - [About Windy API](#about-windy-api)
@@ -383,7 +385,7 @@ Data loader function returns a Promise, that resolves into `{ status, data }` ob
 
 Example:
 ```js
-  import pluginDataLoader from '@windy/plugins/plugin-data-loader'
+  import pluginDataLoader from '@plugins/plugin-data-loader'
 
   // Create new dataLoder instance
   const load = pluginDataLoader({
@@ -399,13 +401,12 @@ Example:
   }
 
   // Loads point forecast for lat, lon
-  load('forecast', dataOptions ).then( result => {
+  load('forecast', dataOptions ).then(result => {
 
     // Returned object contains http status and data
-    const { status, data } = result
+    const { status, data } = result;
 
-    console.log( data )
-
+    console.log(data);
   })
 ```
 

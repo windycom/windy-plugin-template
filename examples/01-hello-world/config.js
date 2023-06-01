@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     /*
         Most important config variable is name of your plugin,
         which is defined in your package.json, since the name
@@ -6,18 +6,18 @@ module.exports = {
 
         The name of your plugin, and your npm package
         must have form 'windy-plugin-anyName'
-	*/
+    */
 
     /*
         Display name of your plugin, as it will
         appear in the menu
-	*/
+    */
     displayName: 'Hello world',
 
     /*
         Place, where opening link to your plugin
         will appear. So far only 'contextmenu'
         and 'menu' is allowed
-	*/
+    */
     hook: 'menu',
 };

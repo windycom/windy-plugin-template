@@ -3,16 +3,14 @@
 ### Windy plugins
 This repository acts as an documentation, playground and boilerplate for your own Windy plugin.
 
-Therefore always **fork this repository** before editing it.
-
-Plugins are written in Javascript and published as npm package, so you already know how to create them
+Plugins are written in Javascript and published as npm package. This is a prerequisite for writing plugins. If you are not fully familiar with it, this repo is not for you, sorry.
 
 ### Getting started
 Fork this repository and then clone it
 ```sh
 git clone https://github.com/yourUsername/windy-plugins
 cd windy-plugins
-npm i
+npm ci
 npm start
 ```
 Now open your browser browser at [https://localhost:9999/plugin.js](https://localhost:9999/plugin.js) to accept self signed SSL certificate.
@@ -34,6 +32,7 @@ If it fails, make sure that your plugin is correctly built and accessible with y
  - [Display CSV, GPX, KML, WKT and other](examples/08-display-csv-gpx-kml-formats)
  - [Interpolate weather values from a map](examples/09-reading-weather-values)
  - [Loading data from Windy API](examples/10-obtaining-meteorological-data)
+ - [Extension of Windy classes](examples/11-extension-of-classes)
 
 ### Other resources
  - [How Windy Plugin work](docs/WINDY_PLUGIN.md)
@@ -51,10 +50,10 @@ Our custom [Windy Plugin Compiler](docs/PLUGIN_COMPILER.md) does all the job for
     + description, describes what your plugin does
     + author and repository reflects your name and where the plugin hosted is
  2) Remove this `README.md` and put there few words about your plugin (and maybe some screenshot if you want). The text from README file will be used in our planned plugins gallery.
- 3) Publish your plugin as npm package by `npm publish`.  (If you are not familiar with npm, create and account and login:  https://docs.npmjs.com/creating-a-new-npm-user-account.)  
+ 3) Publish your plugin as npm package by `npm publish`.  (If you are not familiar with npm, create and account and login:  https://docs.npmjs.com/creating-a-new-npm-user-account.)
  4) Test your published npm package on [Windy's Plugin page](https://www.windy.com/plugins)
  5) Let [us know in our community](https://community.windy.com/category/21/windy-plugins) about your new achievement.
- 6) Once you are satisfied with your plugin,  you can request permission for it to be approved.  Your plugin will then be listed in the "windy.com/plugins" gallery,  and you will be able to use the url query string.
+ 6) Once you are satisfied with your plugin, you can request permission for it to be approved. Your plugin will then be listed in the "windy.com/plugins" gallery,  and you will be able to use the url query string.
  7) Commit your work and pull your repository back to GitHub. Rename your repository to reflect name of your plugin.
 
 ### Conditions
@@ -64,24 +63,8 @@ It is strictly prohibited to use plugin to:
  - Download any meteorological data from Windy to your own server or use them in any other scope than inside your plugin
  - Do any action that would harm our [privacy policy](https://www.windy.com/privacy)
 
-### Enterprise use
-We prepare **Windy Enterprise** project, that will enable to
- 1) Use private plugins (not published publicly)
- 2) Limit access to your data just to your invited users
- 3) Let us know if you want to be informed about this project
-
-### Things to remember
- - While providing coordinates to Leaflet can be done via object `{ lat, lng }` with **lng** property, Windy supports `{ lat, lon }` with **lon** property.
- - Using undocumented functions of Windy API can break your plugin, when we decide to upgrade our codes. If you miss something, rather [let us know here](https://community.windy.com/category/21/windy-plugins) and ask us to document and expose other features.
-
 ### Technical support
-Drop a line in our [Windy Plugins section](https://community.windy.com/category/21/windy-plugins) of our Community forum.
-
-### ROADMAP
- - Initial release
- - Extend Windy API on a basis users requests
- - Create gallery of the most useful plugins
- - Create system so anyone can publish its own forecast/climatological model on Windy
+There is no support at all. But you can drop a line in our [Community forum](https://community.windy.com/category/21/windy-plugins).
 
 ### CHANGELOG
    * 0.5.0

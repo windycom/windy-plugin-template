@@ -4,52 +4,107 @@
  * This is plugin building script. Feel free to modify it
  * All is MIT licenced
  */
-const prog = require('commander');
-const { join } = require('path');
-const c = require('consola');
-const fs = require('fs-extra');
-const { yellow, gray } = require('colorette');
-const riot = require('riot-compiler');
-const assert = require('assert');
-const express = require('express');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import assert from 'node:assert';
+import https from 'node:https';
+
+import { program } from 'commander';
+import prompts from 'prompts';
+import ucfirst from 'ucfirst';
+import c from 'consola';
+import { yellow, gray } from 'colorette';
+import express from 'express';
+import chokidar from 'chokidar';
+import decache from 'decache';
+
+import { builder } from './dev/rollup.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const less = require('less');
-const chokidar = require('chokidar');
-const decache = require('decache');
-const https = require('https');
-const babel = require('@babel/core');
-
-const utils = require('./dev/utils.js');
-
 const port = 9999;
 
-const { version, name, author, repository, description } = require('./package.json');
+const { version, name, author, repository, description } = JSON.parse(
+    fs.readFileSync(path.join(__dirname, 'package.json')),
+);
 
-prog.option('-b, --build', 'Build the plugin in required directory (default src)')
+const prog = program
+    .option('-b, --build', 'Build the plugin in required directory (default src)')
     .option('-w, --watch', 'Build plugin and watch file changes in required directory')
     .option('-s, --serve', `Serve dist directory on port ${port}`)
     .option('-p, --prompt', 'Show command line promt with all the examples')
     .option('-t, --transpile', 'Transpile your code with Babel')
-    .parse(process.argv);
+    .parse(process.argv)
+    .opts();
+
+console.log(prog);
 
 if (!process.argv.slice(2).length) {
-    prog.outputHelp();
+    program.outputHelp();
     process.exit();
 }
 
 let config,
     srcDir = 'src';
 
+export const prompt = async () => {
+    let dir = 'src';
+
+    const list = fs.readdirSync(path.join(__dirname, 'examples')).filter(d => /\d\d-/.test(d));
+
+    console.log(`\nSelect which example you want to test:\n`);
+
+    list.map((d, i) =>
+        console.log(`  ${yellow(i + 1)}) ${ucfirst(d.replace(/^\d\d-/, '').replace(/-/g, ' '))}`),
+    );
+
+    console.log(`\n  ${yellow(0)}) I want to develop ${yellow('my own plugin')}.\n`);
+
+    const { value } = await prompts({
+        type: 'number',
+        name: 'value',
+        message: `Which example you want to launch? (press 0 - ${list.length}):`,
+        validate: value => Boolean(value >= 0 && value < list.length + 1),
+    });
+
+    if (value > 0) {
+        dir = path.join('examples', list[value - 1]);
+    } else if (value === 0) {
+        console.log(`----------------------------------------------------
+    Please change ${yellow('package.json')} now:
+
+      ${yellow('name')}: Must contain name of your plugin in a form windy-plugin-AnyName
+      ${yellow('description')}: Should be description of what your plugin does
+      ${yellow('author')}: Should contain your name
+      ${yellow('repository')}: Should be actual link to your hosting repo
+
+    Also ${yellow('./README.md')} should contain some info about your plugin if you wish
+
+    For faster work use directlly ${yellow('npm run start-dev')} to skip this prompt
+
+    After you will be done use ${yellow('npm publish')} to publish your plugin.
+    -----------------------------------------------------`);
+    }
+
+    return dir;
+};
+
 // Main
 (async () => {
+    if (!fs.existsSync(path.join(__dirname, 'dist'))) {
+        fs.mkdirSync(path.join(__dirname, 'dist'));
+    }
     console.log(`\nBuilding ${yellow(name)}, version ${yellow(version)}`);
 
     // Beginners example selection
     if (prog.prompt) {
-        srcDir = await utils.prompt();
+        srcDir = await prompt();
     }
 
-    c.info(`Compiler will compile ${yellow(`./${srcDir}/plugin.html`)}`);
+    c.info(`Compiler will compile ${yellow(`./${srcDir}/`)}`);
 
     await reloadConfig();
 
@@ -97,8 +152,8 @@ function startServer() {
     return new Promise(resolve => {
         const httpsOptions = {
             // https://www.ibm.com/support/knowledgecenter/en/SSWHYP_4.0.0/com.ibm.apimgmt.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html
-            key: fs.readFileSync(join(__dirname, 'dev', 'key.pem'), 'utf8'),
-            cert: fs.readFileSync(join(__dirname, 'dev', 'certificate.pem'), 'utf8'),
+            key: fs.readFileSync(path.join(__dirname, 'dev', 'key.pem'), 'utf8'),
+            cert: fs.readFileSync(path.join(__dirname, 'dev', 'certificate.pem'), 'utf8'),
         };
 
         app.use(express.static('dist'));
@@ -116,132 +171,41 @@ function startServer() {
 
 /* This is main build function
 
-	Feel free to to use your own builder, transpiler, minifier or whatever
-	The result must be a single .js file with single W.loadPlugin() function
+    Feel free to to use your own builder, transpiler, minifier or whatever
+    The result must be a single .js file with single W.loadPlugin() function
 
-	Make sure to replace import XY from '@windy/XY' with W.require(XY)
+    Make sure to replace import XY from '@windy/XY' with W.require(XY)
 
 */
 async function build() {
-    // Riot parser options
-    const riotOpts = {
-        entities: true,
-        compact: false,
-        expr: true,
-        type: null,
-        template: null,
-        fileConfig: null,
-        concat: false,
-        modular: false,
-        debug: true,
+    const destination = path.join(__dirname, 'dist');
+    const meta = {
+        name,
+        version,
+        author,
+        repository,
+        description,
+        ...config,
     };
 
-    // Compile less - feel free to code your SCSS here
-    let css = await compileLess();
+    const { code } = await builder(name, srcDir, meta);
 
-    // Load source code of a plugin
-    const tagSrc = await fs.readFile(join(srcDir, 'plugin.html'), 'utf8');
-
-    // Compile it via riot compiler
-    // See: https://github.com/riot/compiler
-    const [compiled] = riot.compile(tagSrc, riotOpts);
-    let { html, js, imports } = compiled;
-
-    const options = Object.assign(
-        {},
-        {
-            name,
-            version,
-            author,
-            repository,
-            description,
-        },
-        config,
-    );
-
-    const internalModules = {};
-
-    //
-    // Rewrite imports into W.require
-    //
-    if (imports) {
-        let match;
-        const importsRegEx = /import\s+(?:\*\s+as\s+)?(\{[^}]+\}|\S+)\s+from\s+['"](@windy\/)?(plugins\/)?([^'"']+)['"]/gm;
-        while ((match = importsRegEx.exec(imports)) !== null) {
-            let [, lex, isCore, isPlugin, module] = match;
-            // detect syntax "import graph from './soundingGraph.mjs'"
-            // and loads external module
-            if (!isCore) {
-                module = await utils.externalMjs(srcDir, internalModules, module, name);
-            }
-            js = `\tconst ${lex} = W.require('${(isPlugin ? '@plugins/' : '') + module}');\n${js}`;
-        }
-    }
-
-    // Stringify output
-    let output = utils.stringifyPlugin(options, html, css, js);
-
-    // Add external modules
-    for (let ext in internalModules) {
-        output += `\n\n${internalModules[ext]}`;
-    }
-
-    // Save plugin to dest directory
-    const destination = join(__dirname, 'dist', 'plugin.js');
-
-    // Babel traspile
-    if (prog.transpile) {
-        c.info('Transpiling with babel');
-        let res = await babel.transformAsync(output, {
-            presets: ['@babel/preset-env'],
-        }); // => Promise<{ code, map, ast }>
-        output = res.code;
-    }
-
-    await fs.outputFile(destination, output);
+    fs.writeFileSync(path.join(destination, 'plugin.js'), code);
 
     c.success(`Your plugin ${gray(name)} has been compiled to ${gray(destination)}`);
 }
 
-//
-// L E S S compiler
-//
-async function compileLess() {
-    const lessOptions = {
-        cleancss: true,
-        compress: true,
-    };
-
-    const lessFile = join(srcDir, 'plugin.less');
-
-    if (!fs.existsSync(lessFile)) {
-        return null;
-    }
-
-    const lessSrc = await fs.readFile(lessFile, 'utf8');
-
-    let { css } = await less.render(lessSrc, lessOptions);
-
-    return css;
-}
-
-//
-// Reload config
-//
 async function reloadConfig() {
-    const dir = join(__dirname, srcDir, 'config.js');
+    const { default: dir } = await import(path.join(__dirname, srcDir, 'config.js'));
     decache(dir);
-    config = require(dir);
+    config = dir;
     return;
 }
 
-//
-// Watch change of file
-//
-const onChange = async fullPath => {
+async function onChange(fullPath) {
     c.info(`watch: File changed ${gray(fullPath)}`);
 
     await reloadConfig();
 
     await build();
-};
+}

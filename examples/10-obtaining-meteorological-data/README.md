@@ -4,7 +4,7 @@
 
 To communicate with our backend API get your own API key [here](https://api4.windy.com/api-key/). Ignore "Allowed domains" fields it this case.
 
-Then use `@windy/plugins/plugin-data-loader` module to retrieve the data. More info inside the `plugin.html` or in our [Windy API documentation](../../docs/WINDY_API.md)
+Then use `@plugins/plugin-data-loader` module to retrieve the data. More info inside the `plugin.js` or in our [Windy API documentation](../../docs/WINDY_API.md)
 
 Please note, this is an **exception**, all other modules are imported as `@windy/plugin-name`.
 
