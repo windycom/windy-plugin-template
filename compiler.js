@@ -196,7 +196,7 @@ async function build() {
 }
 
 async function reloadConfig() {
-    const { default: dir } = await import(path.join(__dirname, srcDir, 'config.js'));
+    const { default: dir } = await import(path.join('file:',__dirname, srcDir, 'config.js'));
     decache(dir);
     config = dir;
     return;
