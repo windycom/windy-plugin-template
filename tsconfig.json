@@ -24,6 +24,6 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
     },
-    "include": ["**/*.ts", "**/*.svelte"],
+    "include": ["**/*.ts", "**/*.svelte", "src/pluginConfig.js", "src/pluginConfig.json5"],
     "exclude": ["node_modules"]
 }

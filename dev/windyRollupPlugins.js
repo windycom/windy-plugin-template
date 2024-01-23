@@ -3,21 +3,18 @@
 import MagicString from 'magic-string';
 import { walk } from 'estree-walker';
 
-const encloseInSingleQuotes = text => {
-    if (!text) {
-        return "''";
-    }
-    return "'" + text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '') + "'";
-};
+// Does not work with parsing TS file
+// import { TypescriptParser } from 'typescript-parser';
+
+// simport pluginConfig from '../src/pluginConfig.js';
 
 /**
  * Replaces @windy/, @plugins/ virtual imports in the given AST with the appropriate code modifications.
  *
  * @param ast - The Abstract Syntax Tree (AST) representing the code.
  * @param msCode - The MagicString object representing the code with source maps.
- * @param type - The type of the code ('chunk' or 'plugin').
  */
-const replaceVirualImports = (ast, msCode, type) => {
+const replaceVirualImports = (ast, msCode) => {
     walk(ast, {
         enter(node) {
             if (node.type === 'ImportDeclaration') {
@@ -41,8 +38,6 @@ const replaceVirualImports = (ast, msCode, type) => {
                         const originalString = msCode.slice(start, end);
                         const windyModuleId = source.replace('@windy/', '');
                         let newCode = `// transformCode: ${originalString}\n`;
-
-                        importedWindyModules.add(windyModuleId);
 
                         const multipleSpecifiers = [];
                         for (const specifier of specifiers) {
@@ -116,22 +111,26 @@ const replaceExports = (ast, msCode, addedLiterars) => {
 /**
  * Transforms the code based on the provided parameters.
  *
- * @param id - The identifier of the code.
- * @param type - The type of the code ('chunk' or 'plugin').
  * @param code - The code to be transformed.
  * @param sourcemaps - A boolean indicating whether sourcemaps should be generated.
  * @param pluginContext - The plugin context.
  * @returns An object containing the transformed code and optional sourcemaps.
  */
-const transformCode = (id, type, code, sourcemaps, pluginContext) => {
+const transformCode = async (code, sourcemaps, pluginContext, path) => {
     const ast = pluginContext.parse(code);
     const msCode = new MagicString(code);
 
-    replaceVirualImports(ast, msCode, type);
-    // If we have inserted either __html of __css, we need to modify export statement
-    /*if (addLiterals2export.length) {
-        replaceExports(ast, msCode, addLiterals2export);
-    }*/
+    // AST does not conatin any infor abiut exported Object configure
+    // const parser = new TypescriptParser();
+    // const parsed = await parser.parseFile('src/pluginConfig.ts', '');
+    // console.log(parsed);
+
+    replaceVirualImports(ast, msCode);
+
+    const { default: pluginConfig } = await import(`${path}/pluginConfig.js`);
+
+    msCode.prepend(`const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`);
+    replaceExports(ast, msCode, ['__pluginConfig']);
 
     return {
         code: msCode.toString(),
@@ -158,8 +157,8 @@ export function transformCodeToESMPlugin() {
         },
         renderChunk(code, chunk) {
             const { facadeModuleId } = chunk;
-            const type = 'plugin';
-            return transformCode(facadeModuleId, type, code, shouldGenerateSourcemaps, this);
+            const pathOfTheFile = facadeModuleId.replace(/\/[^/]*$/, '');
+            return transformCode(code, shouldGenerateSourcemaps, this, pathOfTheFile);
         },
     };
 }
