@@ -1,93 +1,134 @@
-# Windy Plugins 2.0
+# Nova verze externiho plugin systemu
 
+## Hlavni cile
 
+1. Zachovat system externich pluginu
 
-## Getting started
+2. Zjednodusit vyvoj pluginu pro vyvojare
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+3. Omezit moznosti umisteni a chovani eternich pluginu v clientovi. Externi pluginy maji nekolik moznych umisteni v UI a do tech se musi vejit.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+4. Zjednodusit lifecycle pluginu v clientovi, taky aby pouziti pluginu pro uzivatele Windy.com bylo jednoduche
 
-## Add your files
+## Zmeny pro vyvojare pluginu
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+-   Pro vyvojare zustane hlavni repo na GitHubu na `windycom/windy-plugins`. System clonu, prikladu a dokumentace bude podobny jako nyni.
 
-```
-cd existing_repo
-git remote add origin https://kody.windy.com/windy/frontend/windy-plugins.git
-git branch -M master
-git push -uf origin master
-```
+-   Soucasti repa jsou i vyexportovane typingy z clienta (oemzeny na nekolik uzitecnych modulu)
 
-## Integrate with your tools
+-   K dispozici je Windy CSS styleguice (`styles.windy.com`) a dokumentace API clienta generovana z komentaru pomoci nastroje`typedoc` (pouze ty casti klienta, ktere mohou vyvajari vyuzit)
 
-- [ ] [Set up project integrations](https://kody.windy.com/windy/frontend/windy-plugins/-/settings/integrations)
+-   Pluginy se budou buildit ve Svelte. Kazdy plugin bude mit pouze 2 soubory. `plugin.svelte` a `pluginConfig.ts`
 
-## Collaborate with your team
+-   Vyvojar, ktery neumi Typescript, ci Svelte muze zustat u nativniho JS. Do Svelte souboru pouze vlozi HTML., CSS a JS kod tak jak je zvykly
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+-   Externi knihovny, ktere chce vyvojar pouzit si nejdrive nainstaluje `npm i` a do kodu prilinkuje pomoci `import ...`
 
-## Test and Deploy
+-   Build system je jednoduchy rollup.config, ktery provadi i watch a serve na portu 9999
 
-Use the built-in continuous integration in GitLab.
+-   Ukazky budou obsahovat i verze pro mobilni UI
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+-   Priklady pluginu:
+    -   Hello World (plnohodnotny RHpane plugin)
+    -   Race tracker (embedovany plugin)
+    -   Sounding (ukazka pouziti 3rd party knihovny `d3` a lat lon pluginu)
+    -   Windy UI (ukazka Windy like UI controls + odkaz na nasi CSS knihovnu)
+    -   Sun position (plnohodnotny RHpane plugin + maly mobilni plugin a lat lon pluginu + ukazka mobilniho kalendare)
 
-***
+## Proces vyvoje
 
-# Editing this README
+1. Vyvojar si udela git clone z https://github.com/windycom/windy-plugins
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+2. Zalozi si novou branch branch `developement` (do `masteru` nejde commitovat), prejmenuje si repositar a zacne si psat vlastni plugin.
 
-## Suggestions for a good README
+3. Rollup watch & serve plugin zbuildni a bude jej serverovat na https://localhost:9999 stejne jako nyni. Soucastgi buildu budou i sourcemapy, pro snadne debugovani.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+4. Probiha vyvoj pluginu a jeho testovani pres `www.windy.com/developer-mode` stejne jako nyni.
 
-## Name
-Choose a self-explaining name for your project.
+5. Pokud chce developer skript publikovat vygeneruje si u nas API klic na https://api.windy.com/keys a ten ulozi do souboru `.secrets` (ten je v .gitignore aby se nedostal ven). Tento klic bude pouzit pro CI/CD proces.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+6. Pokud vyvojar provede push do `masteru` spusit na GitHubu CI/CD proces. Hlavni CI/CD skript neni soucasti repositary, abychom neprozrazovali nasi infrastukturu.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+7. CI/CD provede build pluginu a zkopiruje ho k nam na bucket. Pozor, CI/CD plugin obohati o server name, github username a repo name, aby bylo mozne plugin jednoznacne identifikovat. Dale pak jej obohati o Windy.com user ID, jenz je spojene s API klicem.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+8. Z bucketu bude mozne plugin spustit v clientovi
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Ulozeni pluginu v nasem bucketu
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Vysledne URL bucketu bude `https://windy-plugins.com/github.com/github-username/github-repo-name/commitHash.mjs`
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Toto URL je naprosto unikatni a navic nam hend rekne, odkud plugin pochazi a informace o serveru
+username a repu nam napraska CI/CD proces.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Zatimco soubor `.mjs` obsahuje minifikovany plugin, CI/CD navic na stejne URL ulozi i soubor
+`commitHash.js` (pristupny pouze z nasi VPN), ktery bude obsahovat neminifikovany kod, s
+originalnimi komentari ktery se da pouzit pro rychle zjisteni, co to dela.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+V kazdem adresari bude navic soubor `latest.json`, ktery bude obsahovat informace o posledne
+nahranem commitHashi a datumu nahrani, takze bude (napriklad pro korporatni klienty) mozne
+zjistit novou verzi klienta (pozor schvelenych pluginy berou posledni commitHash z Community kde
+bude info o poslednim schvalenem commitHashi)
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+V danem bucketu se nemuze prepisovat, pouze pridavat soubory, tj jednou schvaleny plugin bude
+stale dostupny na danem URL.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Format URL umozni vyuzivat plugin system i pro korporatni pluginy, ktere nebudou verejne na GitHubu.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Podrobna analyza navstevnosti pluginu zjisti, kdo plugin pouziva a jak casto, uvidime aktivitu
+jednotlivych vyvojaru atd.
 
-## License
-For open source projects, say how it is licensed.
+## Schvalovani pluginu do galerie Pluginu
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Pro schvaleni pluginu do galerie pluginu je potreba videt zdrojove kody. Jakmile udelame zbezny check
+plugin pridame do gelerie. Do galerie se pridava URL na plugin obsahujici commitHash, takze nova
+verze pluginu znamena opetovne schvaleni.
+
+## Lifecycle pluginu v clientovi
+
+Pouze schvalene pluginy se zobrazi v clientovi v Plugin Galerii. Ostatni pluginy se daji nainstalovat
+pomoci vyse uvedenho URL, ale nebudou zobrazeny v galerii.
+
+Lifecycle pluginu vypada nasledovne:
+
+**1. Instalace pluginu**
+
+Plugin se stahe a z .mjs souboru se precte vyexportovana konfigurace `__config`, typu
+`ExternalPluginConfig`. Plugin se nespusti, pouze se...
+
+-   Config informace se ulozi do `installedPlugins` v nastaveni klienta
+
+-   Odkaz na plugin se zobrazi v menu v novem boxiku `Installed plugins`. Kazdy plugin je odtud
+    mozne otevrit nebo odinstalovat
+
+-   U pluinu s `requiresLatLon: true` na nej odkaz do contextmenu a do mobilniho pickeru, ci do praveho prostoru v detailu
+
+**2. Spusteni pluginu**
+
+-   V hlavnim menu vpravo nahore je boxik `Installed plugins` s odkazy na vsechny nainstalovane pluginy
+
+-   Kliknutim na odkaz v menu nebo contextmenu se spusti plugin
+
+**3. Spusteni pluginu z URL**
+
+-   Instalovane pluginy je mozne spustit z URL `https://www.windy.com/plugins/name`
+
+-   V pripade, ze se jedna o plugin `requiresLatLon: true` je nutne plugin spustits parametry `https://www.windy.com/plugins/name/:lat/:lon`
+
+-   Parametry query stringu se predaji se pluginu
+
+**4. Reload clienta**
+
+-   Po reloadu clienta se precte config z `installedPlugins`
+
+-   Do contextmenu, mobilniho pickeru se praji odkazy na pluginy s `requeresLatLon: true`
+
+-   Pokud ma user `installedPlugins` zkontroluje se pripadna nova verze pluginu a ta se nabidne uzivateli na instalaci
+
+V plugin galerii `www.windy.com/plugins` je mozne plugin pouze nainstalovat, ci kliknout na tlacitko About.
+
+## Konfigurace pluginu (config.ts)
+
+## Nastroje ktere muzeme vyuzit na dokumentaci
+
+https://squidfunk.github.io/mkdocs-material/
+https://typedoc.org/guides/overview/

@@ -1,0 +1,10 @@
+docs/*
+dev/*
+test/*
+package-lock.json
+.editorconfig
+.eslintrc.json
+.git
+.gitignore
+.npmignore
+

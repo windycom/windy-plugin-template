@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "types": ["@types/node"],
+        "noEmit": true
+    },
+    "include": ["**/*.svelte", ".eslintrc.js"]
+}
