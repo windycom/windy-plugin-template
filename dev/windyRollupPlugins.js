@@ -120,6 +120,7 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
     const { default: pluginConfig } = await import(`${path}/pluginConfig.js`);
 
     pluginConfig.built = Date.now();
+    pluginConfig.builtReadable = new Date().toISOString();
 
     msCode.prepend(`const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`);
     replaceExports(ast, msCode, ['__pluginConfig']);

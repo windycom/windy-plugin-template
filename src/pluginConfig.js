@@ -7,4 +7,5 @@ export default {
     repository: 'https://github.com/windycom/windy-plugins',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
+    desktopWidth: 250,
 };

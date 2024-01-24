@@ -7,6 +7,7 @@ const config: ExternalPluginConfig = {
     repository: 'git+https://github.com/windycom/windy-plugins.git',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
+    desktopWidth: 250,
 };
 
 export default config;
