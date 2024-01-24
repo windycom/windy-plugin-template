@@ -4,7 +4,7 @@ export default {
     title: 'Hello World plugin',
     description: 'This plugin demonstrates capabilities of Windy Plugin System',
     author: 'John Doe (optional company name)',
-    repository: 'git+https://github.com/windycom/windy-plugins.git',
+    repository: 'https://github.com/windycom/windy-plugins',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
 };

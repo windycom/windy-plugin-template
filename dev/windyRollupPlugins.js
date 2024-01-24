@@ -3,11 +3,6 @@
 import MagicString from 'magic-string';
 import { walk } from 'estree-walker';
 
-// Does not work with parsing TS file
-// import { TypescriptParser } from 'typescript-parser';
-
-// simport pluginConfig from '../src/pluginConfig.js';
-
 /**
  * Replaces @windy/, @plugins/ virtual imports in the given AST with the appropriate code modifications.
  *
@@ -120,14 +115,11 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
     const ast = pluginContext.parse(code);
     const msCode = new MagicString(code);
 
-    // AST does not conatin any infor abiut exported Object configure
-    // const parser = new TypescriptParser();
-    // const parsed = await parser.parseFile('src/pluginConfig.ts', '');
-    // console.log(parsed);
-
     replaceVirualImports(ast, msCode);
 
     const { default: pluginConfig } = await import(`${path}/pluginConfig.js`);
+
+    pluginConfig.built = Date.now();
 
     msCode.prepend(`const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`);
     replaceExports(ast, msCode, ['__pluginConfig']);

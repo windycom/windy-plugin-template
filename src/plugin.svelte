@@ -2,7 +2,7 @@
     Hello World
 </b>
 
-<script lang="ts">
+<script>
     import config from './pluginConfig';
     import { map } from '@windy/map';
 
