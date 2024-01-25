@@ -1,5 +1,5 @@
 // Transferred via https://transform.tools/typescript-to-javascript
-
+import fs from 'fs';
 import MagicString from 'magic-string';
 import { walk } from 'estree-walker';
 
@@ -117,12 +117,26 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
 
     replaceVirualImports(ast, msCode);
 
-    const { default: pluginConfig } = await import(`${path}/pluginConfig.js`);
+    const configPath = `${path}/pluginConfig.ts`;
+    try {
+        const configFile = await fs.readFileSync(configPath, 'utf8');
 
-    pluginConfig.built = Date.now();
-    pluginConfig.builtReadable = new Date().toISOString();
+        // https://regex101.com/r/0VX3vT/1
+        const getObjectParser = /^[^{]+(?<body>{(?:.*|\n)+})[^}]+$/gm;
+        const dirtyBody = getObjectParser.exec(configFile)?.groups?.body;
+        const pluginConfig = eval(`(${dirtyBody})`);
 
-    msCode.prepend(`const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`);
+        pluginConfig.built = Date.now();
+        pluginConfig.builtReadable = new Date().toISOString();
+
+        msCode.prepend(
+            `const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`,
+        );
+    } catch (e) {
+        console.error(`Error while opening and parsing ${configPath}`, e);
+        process.exit(1);
+    }
+
     replaceExports(ast, msCode, ['__pluginConfig']);
 
     return {
