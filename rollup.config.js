@@ -3,8 +3,8 @@ import rollupSvelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve'; // pro importování z node_modules
 import commonjs from '@rollup/plugin-commonjs'; // pro konverzi CommonJS modulů do ES6
 import typescript from '@rollup/plugin-typescript';
-//import rollupSwc from 'rollup-plugin-swc3';
 import { less } from 'svelte-preprocess-less';
+import sveltePreprocess from 'svelte-preprocess';
 import fs from 'fs';
 
 import { transformCodeToESMPlugin } from './dev/windyRollupPlugins.js';
@@ -24,16 +24,6 @@ export default {
         exclude: 'node_modules/**',
     },
     plugins: [
-        /*rollupSwc({
-            include: ['** / *.ts', '** / *.svelte'],
-            sourceMaps: useSourceMaps,
-            tsconfig: 'tsconfig.json',
-        }),*/
-
-        typescript({
-            sourceMap: useSourceMaps,
-            inlineSources: false,
-        }),
         rollupSvelte({
             emitCss: false,
             preprocess: {
@@ -41,7 +31,15 @@ export default {
                     sourceMap: useSourceMaps ? { sourceMapFileInline: true } : undefined,
                     math: 'always',
                 }),
+                script: data => {
+                    const preprocessed = sveltePreprocess({ sourceMap: useSourceMaps });
+                    return preprocessed.script(data);
+                },
             },
+        }),
+        typescript({
+            sourceMap: useSourceMaps,
+            inlineSources: false,
         }),
         resolve({
             browser: true,

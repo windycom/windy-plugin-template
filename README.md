@@ -131,4 +131,11 @@ V plugin galerii `www.windy.com/plugins` je mozne plugin pouze nainstalovat, ci 
 ## Nastroje ktere muzeme vyuzit na dokumentaci
 
 https://squidfunk.github.io/mkdocs-material/
+
+Docusaurus
+
+KSS Styles
+
+TSDoc
+
 https://typedoc.org/guides/overview/

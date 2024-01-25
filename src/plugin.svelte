@@ -9,6 +9,7 @@
     </div>
 
     <p>
+        This is example of standard <code></code>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, vitae aliquam
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, vitae aliquam
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, vitae aliquam
@@ -19,30 +20,27 @@
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, vitae aliquam
     </p>
 </section>
-<script>
-    import config from './pluginConfig';
+<script lang="ts">
     import { map } from '@windy/map';
 
     import { onMount, onDestroy } from 'svelte';
 
-    let marker; //: L.Marker;
+    let marker: L.Marker | null = null;
 
     onMount(() => {
-        console.log('mounted');
+        console.log('Your plugin was mounted');
         marker = new L.Marker(map.getCenter()).addTo(map);
     });
 
-    onDestroy(() => {
-        console.log('destroyed');
-        marker.remove();
-    });
-
-    const onopen = () => {
-        console.log('opened');
+    export const onopen = (params: unknown) => {
+        console.log('Your plugin was opened');
     };
 
-    export { config, onopen };
-
+    onDestroy(() => {
+        console.log('Your plugin was destroyed');
+        marker?.remove();
+        marker = null;
+    });
 </script>
 
 <style lang="less">
