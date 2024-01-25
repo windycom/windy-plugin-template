@@ -564,8 +564,7 @@ declare namespace L {
         _fixTileDef(tileDef: TileDef): TileDef;
     }
 
-    export class CanvasLayer extends (await import('@windy/src/leafletExt/CanvasLayer'))
-        .CanvasLayer {}
+    export class CanvasLayer extends (await import('@windy/CanvasLayer.d')).CanvasLayer {}
 
     export interface TileLayerOptions extends GridLayerOptions {
         minZoom?: number;

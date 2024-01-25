@@ -7,7 +7,7 @@
         "removeComments": true,
         "outDir": "dist",
         "target": "es2022",
-        "typeRoots": ["./types", "./node_modules/@types/"],
+        "typeRoots": ["./types", "./node_modules/@types/","./client","./client/types"],
         "resolveJsonModule": false,
         "sourceMap": false,
         "incremental": true,
@@ -23,7 +23,28 @@
         "strictBindCallApply": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
+        "paths": {
+            "@windy/*": [
+                "client/src/weatherClasses/*",
+                "client/src/weather/*",
+                "client/src/utils/*",
+                "client/src/uiClasses/*",
+                "client/src/ui/*",
+                "client/src/services/*",
+                "client/src/search/*",
+                "client/src/renderClasses/*",
+                "client/src/render/*",
+                "client/src/pluginSystem/*",
+                "client/src/mapClasses/*",
+                "client/src/map/*",
+                "client/src/leafletExt/*",
+                "client/src/capacitor/*",
+                "client/src/wgUtils/*",
+                "client/src/shaders/*",
+                "client/types/*"
+            ],
+        }
     },
-    "include": ["**/*.ts", "**/*.svelte", "src/pluginConfig.js", "src/pluginConfig.json5"],
+    "include": ["**/*.ts", "**/*.svelte"],
     "exclude": ["node_modules"]
 }

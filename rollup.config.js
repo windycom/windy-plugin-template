@@ -3,6 +3,7 @@ import rollupSvelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve'; // pro importování z node_modules
 import commonjs from '@rollup/plugin-commonjs'; // pro konverzi CommonJS modulů do ES6
 import typescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
 import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
 import fs from 'fs';
@@ -10,6 +11,7 @@ import fs from 'fs';
 import { transformCodeToESMPlugin } from './dev/windyRollupPlugins.js';
 
 const useSourceMaps = true;
+const minifyOutput = false;
 
 export default {
     input: 'src/plugin.svelte',
@@ -28,7 +30,7 @@ export default {
             emitCss: false,
             preprocess: {
                 style: less({
-                    sourceMap: useSourceMaps ? { sourceMapFileInline: true } : undefined,
+                    sourceMap: false,
                     math: 'always',
                 }),
                 script: data => {
@@ -46,9 +48,8 @@ export default {
             dedupe: ['svelte'],
         }),
         commonjs(),
-
         transformCodeToESMPlugin(),
-        // TODO: add terser()
+        minifyOutput && terser(),
         serve({
             contentBase: 'dist',
             host: 'localhost',
