@@ -1,9 +1,11 @@
 .tmp
-nohup.out
 .DS_Store
+.vscode
+.rollup.cache
+nohup.out
 node_modules
 package-lock.json
 *.log
-.vscode
 dist
-.rollup.cache
+examples
+
