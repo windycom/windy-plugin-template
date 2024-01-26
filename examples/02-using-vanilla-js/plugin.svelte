@@ -2,12 +2,18 @@
     <p>
         <a>[ ⬅️ Go back to menu ]</a>
     </p>
+    <p m-10>
+        <img src="https://www.windy.com/img/windy-plugins/borat-great-success-ed.png" alt="Borat" />
+    </p>
     <p>
         This plugin is written in plain vanilla JS. It also does not use LESS or SCSS
         (just pure CSS) and does not use any Windy.com classes.
     </p>
     <p>
-        It does not use any advanced Svelte features, like reactive statements,
+        It does not use any advanced Svelte features, like reactive statements.
+    </p>
+    <p>
+        You can start developing with skills you already have.
     </p>
     <button>Click me</button>
     <div></div>
@@ -61,7 +67,7 @@
     /* Remove lang="less" and you can use plain CSS */
 
     section {
-        background: rgb(43, 43, 43);
+        background: #565656;
         color: white;
         line-height: 1.8;
         position: absolute;
@@ -79,6 +85,9 @@
     }
     a {
         text-decoration: underline;
+    }
+    img {
+        width: 70%;
     }
 </style>
 

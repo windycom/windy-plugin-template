@@ -9,7 +9,13 @@
     { title }
     </div>
     <p>
-        This plugin requires lat, lon as params. It can be opened from the contextmenu (RH mouse click on map).
+        This plugin requires lat, lon as starting parameter.
+    </p>
+    <p>
+        It can be opened from the contextmenu (RH mouse click on map) and it is sensitive to singleclicks on the map.
+    </p>
+    <p class="size-l">
+        Click on the map to change the location.
     </p>
     <hr />
     {#each aircrafts as aircraft,index }
@@ -34,8 +40,9 @@
     import { setTitle, setUrl, reset } from '@windy/location';
     import { openPlugin } from '@windy/pluginsCtrl';
     import { normalizeLatLon } from '@windy/utils';
+    import { singleclick } from '@windy/singleclick';
 
-    import { onDestroy } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
     import config from './pluginConfig';
     import { database, type Airplane } from './aircraftDb';
@@ -45,49 +52,73 @@
     const { name, title } = config;
 
     let marker: L.Marker | null = null;
+    let circle: L.Circle | null = null;
 
     let selected = 0;
+    let selectedLat: number = 50;
+    let selectedLon: number = 14;
 
-    const aircrafts: Airplane[] = database.filter(aircraft => /Citation/.test(aircraft.model));
+    const filteredAircrafts = database.filter(({range}) => range > 500 && range < 2500);
 
-    // This plugin is ALWAYS opened wit { lat, lon } as params
-    export const onopen = (params: LatLon & { source: string }) => {
-        const { lat, lon } = params;
+    // Randomize an array
+    for (let i = filteredAircrafts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredAircrafts[i], filteredAircrafts[j]] = [filteredAircrafts[j], filteredAircrafts[i]];
+    }
 
+    const aircrafts: Airplane[] = filteredAircrafts;
+
+    const removeMapItems = () => {
         if(marker) {
             marker.remove();
             marker = null;
         }
+        if(circle) {
+            circle.remove();
+            circle = null;
+        }
+    }
 
+    const drawMarkerAndCircle = ( latLon: LatLon, range: number) => {
+        removeMapItems();
+
+        const { lat, lon } = latLon ;
         marker = new L.Marker({ lat, lng: lon },{ icon: markers.pulsatingIcon }).addTo(map);
+        circle = new L.Circle({ lat, lng: lon }, { radius: range * 1000 }).addTo(map);
+    }
 
-        const circle = new L.GeodesicCircle({ lat, lng: lon }, 1000, {
-            color: 'red',
-            weight: 2,
-            opacity: 0.5,
-            fillColor: 'red',
-            fillOpacity: 0.1,
-        }).addTo(map);
+    $: drawMarkerAndCircle({ lat: selectedLat, lon: selectedLon }, aircrafts[selected].range );
 
-        centerMap(params);
+    const setLocation = (latLon: LatLon) => {
+        const { lat, lon } = latLon;
+        selectedLat = lat;
+        selectedLon = lon;
 
-        setTitle(title);
+        removeMapItems();
 
         // Lat, lon should be displayed in URL as /plugins/aircraft-range/lat/lon
         // in order to enable sharing and reloads
         setUrl(name,`/plugins/${name}/${normalizeLatLon(lat)}/${normalizeLatLon(lon)}`);
+    }
+
+    // This plugin is ALWAYS opened wit { lat, lon } as params
+    export const onopen = (params: LatLon) => {
+        const { lat, lon } = params;
+        setTitle(title);
+        centerMap({ lat, lon, zoom: 3});
+        setLocation(params);
     };
 
-    onDestroy(() => {
-        // Your plugin will be destroyed
-        // Make sure you clenup after yourself
-        if(marker) {
-            marker.remove();
-            marker = null;
-        }
+    onMount(() => {
 
-        // Whenever closing your plugin you MUST reset
-        // modified title and URL
+        // Whenever is this plugin opened, it will recieve a singleclick event
+        // with topic 'aircraft-range'
+        singleclick.on(name, setLocation)
+    });
+
+    onDestroy(() => {
+        removeMapItems();
+        singleclick.off(name, setLocation);
         reset(name);
     });
 </script>
