@@ -118,11 +118,13 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
     replaceVirualImports(ast, msCode);
 
     const configPath = `${path}/pluginConfig.ts`;
-    try {
-        const configFile = await fs.readFileSync(configPath, 'utf8');
 
-        // https://regex101.com/r/0VX3vT/1
-        const getObjectParser = /^[^{]+(?<body>{(?:.*|\n)+})[^}]+$/gm;
+    try {
+        // This part of code reads the pluginConfig.ts file and
+        // make the most stupid regex/eval extracting of the object
+        // properties. It is not perfect, but it works.
+        const configFile = fs.readFileSync(configPath, 'utf8');
+        const getObjectParser = /^[^{]+(?<body>{(?:.*|\n)+})[^}]+$/gm; // https://regex101.com/r/0VX3vT/1
         const dirtyBody = getObjectParser.exec(configFile)?.groups?.body;
         const pluginConfig = eval(`(${dirtyBody})`);
 

@@ -21,6 +21,8 @@ const jsRules = {
     'prefer-rest-params': 'off',
     'prefer-spread': 'off',
     'no-import-assign': 'warn',
+    'a11y-no-static-element-interactions': 'off',
+    'a11y-missing-attribute': 'off',
 };
 
 const tsRules = {

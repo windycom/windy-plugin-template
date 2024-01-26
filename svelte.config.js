@@ -1,12 +1,2 @@
-import sveltePreprocess from 'svelte-preprocess';
-
-// only IDE specific settings, not used in make process
-export default {
-    preprocess: sveltePreprocess({
-        sourceMap: true,
-        less: {
-            prependData: `@import 'dev/windyLessDefinitions.less';`,
-            math: 'always',
-        },
-    }),
-};
+// So far it seems, that we are fine with default configuration.
+export default {};

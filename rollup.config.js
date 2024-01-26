@@ -13,17 +13,47 @@ import { transformCodeToESMPlugin } from './dev/windyRollupPlugins.js';
 const useSourceMaps = true;
 const minifyOutput = false;
 
+const buildConfigurations = {
+    src: {
+        input: 'src/plugin.svelte',
+        out: 'plugin.js',
+    },
+    exmple01: {
+        input: 'examples/01-hello-world/plugin.svelte',
+        out: 'example01.js',
+    },
+    example02: {
+        input: 'examples/02-using-vanilla-js/plugin.svelte',
+        out: 'example02.js',
+    },
+    example03: {
+        input: 'examples/03-boat-tracker/plugin.svelte',
+        out: 'example03.js',
+    },
+    example04: {
+        input: 'examples/04-aircraft-range/plugin.svelte',
+        out: 'example04.js',
+    },
+};
+
+const requiredConfig = process.env.CONFIG || 'src';
+const { input, out } = buildConfigurations[requiredConfig];
+
 export default {
-    input: 'src/plugin.svelte',
+    input,
     output: {
-        file: 'dist/plugin.js',
+        file: `dist/${out}`,
         format: 'module',
         sourcemap: useSourceMaps,
     },
+    onwarn: () => {
+        /* We disable all warning messages */
+    },
     external: id => id.startsWith('@windy/'),
     watch: {
-        include: 'src/**',
+        include: ['src/**', 'examples/**'],
         exclude: 'node_modules/**',
+        clearScreen: false,
     },
     plugins: [
         rollupSvelte({
