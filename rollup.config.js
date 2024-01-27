@@ -1,9 +1,13 @@
 import serve from 'rollup-plugin-serve';
 import rollupSvelte from 'rollup-plugin-svelte';
-import resolve from '@rollup/plugin-node-resolve'; // pro importování z node_modules
-import commonjs from '@rollup/plugin-commonjs'; // pro konverzi CommonJS modulů do ES6
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import rollupSwc from 'rollup-plugin-swc3';
+
 import typescript from '@rollup/plugin-typescript';
+
 import terser from '@rollup/plugin-terser';
+import rollupCleanup from 'rollup-plugin-cleanup';
 import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
 import fs from 'fs';
@@ -18,7 +22,7 @@ const buildConfigurations = {
         input: 'src/plugin.svelte',
         out: 'plugin.js',
     },
-    exmple01: {
+    example01: {
         input: 'examples/01-hello-world/plugin.svelte',
         out: 'example01.js',
     },
@@ -56,6 +60,15 @@ export default {
         clearScreen: false,
     },
     plugins: [
+        typescript({
+            sourceMap: useSourceMaps,
+            inlineSources: false,
+        }),
+        rollupSwc({
+            include: ['**/*.ts', '**/*.svelte'],
+            sourceMaps: useSourceMaps,
+            //tsconfig: './make/tsconfig.json',
+        }),
         rollupSvelte({
             emitCss: false,
             preprocess: {
@@ -69,16 +82,16 @@ export default {
                 },
             },
         }),
-        typescript({
-            sourceMap: useSourceMaps,
-            inlineSources: false,
-        }),
+
         resolve({
             browser: true,
+            mainFields: ['module', 'jsnext:main', 'main'],
+            preferBuiltins: false,
             dedupe: ['svelte'],
         }),
         commonjs(),
         transformCodeToESMPlugin(),
+        minifyOutput && rollupCleanup({ comments: 'none', extensions: ['ts'] }),
         minifyOutput && terser(),
         serve({
             contentBase: 'dist',

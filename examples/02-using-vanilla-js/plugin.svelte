@@ -2,7 +2,7 @@
     <p>
         <a>[ ⬅️ Go back to menu ]</a>
     </p>
-    <p m-10>
+    <p>
         <img src="https://www.windy.com/img/windy-plugins/borat-great-success-ed.png" alt="Borat" />
     </p>
     <p>
@@ -23,14 +23,11 @@
     // In order to write a plugin in plain JS remove the lang="ts" attribute
     // from script tag
 
-    import { setTitle, setUrl, reset } from '@windy/location';
     import { openPlugin } from '@windy/pluginsCtrl';
 
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
 
     import config from './pluginConfig';
-
-    const { name, title } = config;
 
     let pluginElement;
 
@@ -50,16 +47,6 @@
             openPlugin('menu');
         };
 
-    });
-
-    export const onopen = (params) => {
-        setTitle(title);
-        setUrl(name,`/plugins/${name}`);
-
-    };
-
-    onDestroy(() => {
-        reset(name);
     });
 </script>
 

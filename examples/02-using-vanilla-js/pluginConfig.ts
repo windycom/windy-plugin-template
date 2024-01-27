@@ -1,5 +1,7 @@
+import type { ExternalPluginConfig } from '@windy/interfaces';
+
 const config: ExternalPluginConfig = {
-    name: 'using-vanilla-js',
+    name: 'windy-plugin-using-vanilla-js',
     version: '1.0.0',
     title: 'Using Vanilla JS',
     description: 'Plugin written in vanilla JS',
@@ -7,6 +9,9 @@ const config: ExternalPluginConfig = {
     repository: 'https://github.com/windycom/windy-plugins',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
+
+    // This plugin does not have optional routerPath, thus it
+    // will not modify browser's URL
 };
 
 export default config;

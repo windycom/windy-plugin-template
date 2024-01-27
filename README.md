@@ -55,7 +55,19 @@
 
 ## Ulozeni pluginu v nasem bucketu
 
-Vysledne URL bucketu bude `https://windy-plugins.com/github.com/github-username/github-repo-name/commitHash.mjs`
+# Export do bucketu (myslenka)
+
+-   URL bude vypdat takto: `/userID(cislo)/windy-plugin-.....`
+
+-   userID vezmeme z klice v API
+
+-   V kazdem adresari budou sobory `commitHash.js`, `commitHash.js.map` a `commitHash.min.js` s tim, ze `*.js` a `*.min.js` bude pristupne pouze pro nasi VPN
+
+-   V kazdem adresati bude take soubor `latest.json` s kopii posledniho configu informaci o poslednim commitHashi a vsech mnoznych informacich (repository, github username, server name, ...)
+
+-   server bude browsovatelny z nasi VPN takze uvidime vsechny adrease v bucketu a muzeme z nich vysochat latest.json
+
+~~Vysledne URL bucketu bude `https://windy-plugins.com/github.com/github-username/github-repo-name/commitHash.mjs`
 
 Toto URL je naprosto unikatni a navic nam hend rekne, odkud plugin pochazi a informace o serveru
 username a repu nam napraska CI/CD proces.
@@ -75,7 +87,7 @@ stale dostupny na danem URL.
 Format URL umozni vyuzivat plugin system i pro korporatni pluginy, ktere nebudou verejne na GitHubu.
 
 Podrobna analyza navstevnosti pluginu zjisti, kdo plugin pouziva a jak casto, uvidime aktivitu
-jednotlivych vyvojaru atd.
+jednotlivych vyvojaru atd.~~
 
 ## Schvalovani pluginu do galerie Pluginu
 
@@ -125,8 +137,6 @@ Plugin se stahe a z .mjs souboru se precte vyexportovana konfigurace `__config`,
 -   Pokud ma user `installedPlugins` zkontroluje se pripadna nova verze pluginu a ta se nabidne uzivateli na instalaci
 
 V plugin galerii `www.windy.com/plugins` je mozne plugin pouze nainstalovat, ci kliknout na tlacitko About.
-
-## Konfigurace pluginu (config.ts)
 
 ## Nastroje ktere muzeme vyuzit na dokumentaci
 

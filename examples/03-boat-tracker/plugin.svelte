@@ -22,19 +22,16 @@
 </section>
 <script lang="ts">
     import { map } from '@windy/map';
-    import { setTitle, setUrl, reset } from '@windy/location';
     import { openPlugin } from '@windy/pluginsCtrl';
 
     import { onMount, onDestroy } from 'svelte';
 
-    import config from './pluginConfig';
     import { boatIcon } from './boatIcon';
 
-    // IMPORTANT: all types must be import as `type` otherwise
+    // IMPORTANT: all types must be imported as `type` otherwise
     // Svelte TS compiler will fail
     import type { BoatResult, DisplayedBoat } from './boatTypes';
 
-    const { name, title } = config;
 
     let markers: L.Marker[] = [];
     let lines: L.Polyline[] = [];
@@ -111,8 +108,6 @@
     };
 
     export const onopen = () => {
-        setTitle(title);
-        setUrl(name,`/plugins/${name}`);
         loadResults();
         map.setView([14, -29], 4);
     };
@@ -124,7 +119,6 @@
     });
 
     onDestroy(() => {
-        reset(name);
         removeAllMapFeatures();
 
         map.off('zoom', updateIconStyles);

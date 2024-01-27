@@ -1,7 +1,45 @@
 // Transferred via https://transform.tools/typescript-to-javascript
 import fs from 'fs';
+import assert from 'assert';
 import MagicString from 'magic-string';
 import { walk } from 'estree-walker';
+
+const testLoadedPlugin = config => {
+    const { name, version, title, desktopUI, mobileUI, routerPath } = config;
+
+    assert(
+        typeof name === 'string' && /^windy-plugin-([a-z0-9-]+)$/.test(name),
+        'Plugin name MUST be prefixed with windy-plugin- string and can contain only lowercase letters, numbers and dashes',
+    );
+
+    assert(
+        typeof version === 'string' && version.match(/^\d+\.\d+\.\d+$/),
+        'Plugin version is not defined or is not in semversion format (example: 1.3.7)',
+    );
+
+    assert(
+        !routerPath ||
+            (typeof routerPath === 'string' &&
+                routerPath.length > 5 &&
+                /^[a-z0-9-]+$/.test(routerPath)),
+        'Reouter path MUST be longer than 5 characters and can contain only lowercase letters, numbers and dashes (example hello-world)',
+    );
+
+    assert(
+        typeof title === 'string' && title.length > 8 && title.length < 50,
+        'Plugin title is not defined or is too short or too long',
+    );
+
+    assert(
+        typeof desktopUI === 'string' && desktopUI.match(/^(rhpane|embeded|none)$/),
+        'Plugin desktopUI is not defined or is not one of rhpane, embeded or none',
+    );
+
+    assert(
+        typeof mobileUI === 'string' && mobileUI.match(/^(fullscreen|small|none)$/),
+        'Plugin mobileUI is not defined or is not one of fullscreen, small or none',
+    );
+};
 
 /**
  * Replaces @windy/, @plugins/ virtual imports in the given AST with the appropriate code modifications.
@@ -124,9 +162,11 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
         // make the most stupid regex/eval extracting of the object
         // properties. It is not perfect, but it works.
         const configFile = fs.readFileSync(configPath, 'utf8');
-        const getObjectParser = /^[^{]+(?<body>{(?:.*|\n)+})[^}]+$/gm; // https://regex101.com/r/0VX3vT/1
+        const getObjectParser = /^[^{]+(?<body>{(?:[^}]*name:[^}]+)+})[^}]+$/gm; // https://regex101.com/r/0VX3vT/2
         const dirtyBody = getObjectParser.exec(configFile)?.groups?.body;
         const pluginConfig = eval(`(${dirtyBody})`);
+
+        testLoadedPlugin(pluginConfig);
 
         pluginConfig.built = Date.now();
         pluginConfig.builtReadable = new Date().toISOString();

@@ -1,7 +1,7 @@
+import type { ExternalPluginConfig } from '@windy/interfaces';
+
 const config: ExternalPluginConfig = {
-    // This must be lowercase and SEO friendly string, that can be used
-    // in URL to open plugin from URL https://www.windy.com/plugins/name-of-plugin
-    name: 'hello-world',
+    name: 'windy-plugin-hello-world',
     version: '1.0.0',
     title: 'Hello World plugin',
     description: 'This plugin demonstrates capabilities of Windy Plugin System',
@@ -9,6 +9,7 @@ const config: ExternalPluginConfig = {
     repository: 'git+https://github.com/windycom/windy-plugins.git',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
+    routerPath: 'hello-world',
 
     // Default width of rhpane plugins is 400px, but you can change it
     // desktopWidth: 400,

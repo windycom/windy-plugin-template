@@ -24,7 +24,7 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "paths": {
-            "@windy/*": [
+            /*"@windy/*": [
                 "client/src/weatherClasses/*",
                 "client/src/weather/*",
                 "client/src/utils/*",
@@ -42,6 +42,25 @@
                 "client/src/wgUtils/*",
                 "client/src/shaders/*",
                 "client/types/*"
+            ],*/
+            "@windy/*": [
+                "../client/src/weatherClasses/*",
+                "../client/src/weather/*",
+                "../client/src/utils/*",
+                "../client/src/uiClasses/*",
+                "../client/src/ui/*",
+                "../client/src/services/*",
+                "../client/src/search/*",
+                "../client/src/renderClasses/*",
+                "../client/src/render/*",
+                "../client/src/pluginSystem/*",
+                "../client/src/mapClasses/*",
+                "../client/src/map/*",
+                "../client/src/leafletExt/*",
+                "../client/src/capacitor/*",
+                "../client/src/wgUtils/*",
+                "../client/src/shaders/*",
+                "../client/types/*"
             ],
         }
     },

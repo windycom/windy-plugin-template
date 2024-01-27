@@ -37,9 +37,7 @@
 </section>
 <script lang="ts">
     import { map, centerMap, markers } from '@windy/map';
-    import { setTitle, setUrl, reset } from '@windy/location';
     import { openPlugin } from '@windy/pluginsCtrl';
-    import { normalizeLatLon } from '@windy/utils';
     import { singleclick } from '@windy/singleclick';
 
     import { onDestroy, onMount } from 'svelte';
@@ -96,30 +94,22 @@
 
         removeMapItems();
 
-        // Lat, lon should be displayed in URL as /plugins/aircraft-range/lat/lon
-        // in order to enable sharing and reloads
-        setUrl(name,`/plugins/${name}/${normalizeLatLon(lat)}/${normalizeLatLon(lon)}`);
     }
 
     // This plugin is ALWAYS opened wit { lat, lon } as params
     export const onopen = (params: LatLon) => {
         const { lat, lon } = params;
-        setTitle(title);
         centerMap({ lat, lon, zoom: 3});
         setLocation(params);
     };
 
     onMount(() => {
-
-        // Whenever is this plugin opened, it will recieve a singleclick event
-        // with topic 'aircraft-range'
         singleclick.on(name, setLocation)
     });
 
     onDestroy(() => {
         removeMapItems();
         singleclick.off(name, setLocation);
-        reset(name);
     });
 </script>
 
