@@ -15,32 +15,31 @@ import fs from 'fs';
 import { transformCodeToESMPlugin } from './dev/windyRollupPlugins.js';
 
 const useSourceMaps = true;
-const minifyOutput = false;
 
 const buildConfigurations = {
     src: {
         input: 'src/plugin.svelte',
-        out: 'plugin.js',
+        out: 'plugin',
     },
     example01: {
         input: 'examples/01-hello-world/plugin.svelte',
-        out: 'example01.js',
+        out: 'example01/plugin',
     },
     example02: {
         input: 'examples/02-using-vanilla-js/plugin.svelte',
-        out: 'example02.js',
+        out: 'example02/plugin',
     },
     example03: {
         input: 'examples/03-boat-tracker/plugin.svelte',
-        out: 'example03.js',
+        out: 'example03/plugin',
     },
     example04: {
         input: 'examples/04-aircraft-range/plugin.svelte',
-        out: 'example04.js',
+        out: 'example04/plugin',
     },
     example05: {
         input: 'examples/05-airspace-map/plugin.svelte',
-        out: 'example05.js',
+        out: 'example05/plugin',
     },
 };
 
@@ -49,11 +48,19 @@ const { input, out } = buildConfigurations[requiredConfig];
 
 export default {
     input,
-    output: {
-        file: `dist/${out}`,
-        format: 'module',
-        sourcemap: useSourceMaps,
-    },
+    output: [
+        {
+            file: `dist/${out}.js`,
+            format: 'module',
+            sourcemap: true,
+        },
+        {
+            file: `dist/${out}.min.js`,
+            format: 'module',
+            plugins: [rollupCleanup({ comments: 'none', extensions: ['ts'] }), terser()],
+        },
+    ],
+
     onwarn: () => {
         /* We disable all warning messages */
     },
@@ -95,19 +102,18 @@ export default {
         }),
         commonjs(),
         transformCodeToESMPlugin(),
-        minifyOutput && rollupCleanup({ comments: 'none', extensions: ['ts'] }),
-        minifyOutput && terser(),
-        serve({
-            contentBase: 'dist',
-            host: 'localhost',
-            port: 9999,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            https: {
-                key: fs.readFileSync('dev/key.pem'),
-                cert: fs.readFileSync('dev/certificate.pem'),
-            },
-        }),
+        process.env.SERVE !== 'false' &&
+            serve({
+                contentBase: 'dist',
+                host: 'localhost',
+                port: 9999,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                https: {
+                    key: fs.readFileSync('dev/key.pem'),
+                    cert: fs.readFileSync('dev/certificate.pem'),
+                },
+            }),
     ],
 };

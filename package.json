@@ -5,12 +5,13 @@
     "main": "dist/plugin.min.js",
     "type": "module",
     "scripts": {
-        "start": "./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
-        "example01": "CONFIG=example01 ./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
-        "example02": "CONFIG=example02 ./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
-        "example03": "CONFIG=example03 ./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
-        "example04": "CONFIG=example04 ./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
-        "example05": "CONFIG=example05 ./node_modules/rollup/dist/bin/rollup -w -c ./rollup.config.js",
+        "start": "rollup -w -c",
+        "example01": "CONFIG=example01 rollup -w -c",
+        "example02": "CONFIG=example02 rollup -w -c",
+        "example03": "CONFIG=example03 rollup -w -c",
+        "example04": "CONFIG=example04 rollup -w -c",
+        "example05": "CONFIG=example05 rollup -w -c",
+        "build:all-examples": "for number in 01 02 03 04 05; do CONFIG=example$number SERVE=false rollup -c; done",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
