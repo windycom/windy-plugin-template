@@ -6,6 +6,8 @@
 -   Pridat router (express style routing /url/:param)
 -   onopen() dostane jako parametr params, qs a setUrlAndTitle()
 
+Na backend pro gallerii pouzit supbase
+
 ## Windy Plugins
 
 -   Zjednodusit examply (odstranit settovani URL)

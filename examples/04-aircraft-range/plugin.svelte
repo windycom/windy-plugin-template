@@ -4,7 +4,7 @@
 <section class="plugin__content">
     <div
         class="plugin__title plugin__title--chevron-back"
-        on:click={ () => openPlugin('menu') }
+        on:click={ () => bcast.emit('rqstOpen', 'menu') }
     >
     { title }
     </div>
@@ -36,9 +36,10 @@
     {/each}
 </section>
 <script lang="ts">
+    import bcast from "@windy/broadcast";
     import { map, centerMap, markers } from '@windy/map';
-    import { openPlugin } from '@windy/pluginsCtrl';
     import { singleclick } from '@windy/singleclick';
+    import { getMyLatestPos } from "@windy/geolocation";
 
     import { onDestroy, onMount } from 'svelte';
 
@@ -96,8 +97,14 @@
 
     }
 
-    // This plugin is ALWAYS opened wit { lat, lon } as params
-    export const onopen = (params: LatLon) => {
+    export const onopen = (params?: LatLon) => {
+
+        if(!params) {
+            // Plugin was opened from main menu, and therefore we
+            // lack any opening parameters
+            params = getMyLatestPos();
+        }
+
         const { lat, lon } = params;
         centerMap({ lat, lon, zoom: 3});
         setLocation(params);

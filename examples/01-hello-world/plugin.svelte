@@ -4,7 +4,7 @@
 <section class="plugin__content">
     <div
         class="plugin__title plugin__title--chevron-back"
-        on:click={ () => openPlugin('menu') }
+        on:click={ () => bcast.emit('rqstOpen', 'menu') }
     >
     { title }
     </div>
@@ -35,9 +35,9 @@
     </div>
 </section>
 <script lang="ts">
+    import bcast from "@windy/broadcast";
     import { map, centerMap } from '@windy/map';
     import { getGPSlocation } from '@windy/geolocation';
-    import { openPlugin } from '@windy/pluginsCtrl';
 
     import { onDestroy } from 'svelte';
 

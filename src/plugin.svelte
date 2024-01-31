@@ -4,82 +4,36 @@
 <section class="plugin__content">
     <div
         class="plugin__title plugin__title--chevron-back"
-        on:click={ () => openPlugin('menu') }
+        on:click={ () => bcast.emit('rqstOpen', 'menu') }
     >
     { title }
     </div>
-
-    <p class="mt-30 mb-30">
-        <img src="https://www.windy.com/img/windy-plugins/borat-great-success-ed.png" alt="Borat" />
-    </p>
-
-    <p class="size-l">
-        Congratulations, you have just launched your first Windy plugin!
-    </p>
-
-    <p>
-        This is example of standard <code>desktopUI: 'rhpane'</code> plugin layout. Default width of the plugin is 400px, but it can be changed by setting <code>desktopWidth</code> property in <code>pluginConfig.ts</code> file.
-    </p>
-
-    <p>
-        Please allow GPS location in your browser to see your location on the map.
-    </p>
-    <div class="centered m-15">
-        <button
-            class="button button--variant-orange"
-            class:button--loading={ loader }
-            on:click={ getMyLoc }
-        >
-            Show my location
-        </button>
-    </div>
+    Put your plugin code here
 </section>
 <script lang="ts">
-    import { map, centerMap } from '@windy/map';
-    import { getGPSlocation } from '@windy/geolocation';
-    import { openPlugin } from '@windy/pluginsCtrl';
-
-    import { onDestroy } from 'svelte';
+    import bcast from "@windy/broadcast";
+    import { onDestroy, onMount } from 'svelte';
 
     import config from './pluginConfig';
 
     const { title } = config;
 
-    let marker: L.Marker | null = null;
-    let loader = false;
 
-    const getMyLoc = async () => {
-        loader = true;
-        const loc = await getGPSlocation();
-        loader = false;
-        if (loc) {
-            centerMap(loc);
-            const { lat, lon: lng } = loc;
-            marker = new L.Marker({ lat, lng }).addTo(map);
-        }
+    export const onopen = (_params: unknown) => {
+        // Your plugin was opened with parameters parsed from URL
+        // or with LatLon object if opened from contextmenu
     };
 
+    onMount(() => {
+        // Your plugin was mounted
+    });
+
     onDestroy(() => {
-        // Your plugin will be destroyed
-        // Make sure you clenup after yourself
-        if(marker) {
-            marker.remove();
-            marker = null;
-        }
+        // Your plugin was destroyed
     });
 </script>
 
 <style lang="less">
-    p {
-        line-height: 1.8;
-    }
-    code {
-        color: lightgray;
-    }
-    img {
-        display: block;
-        width: 70%;
-        margin: 0 auto;
-    }
+    // Put any LESS of CSS styles here
 </style>
 

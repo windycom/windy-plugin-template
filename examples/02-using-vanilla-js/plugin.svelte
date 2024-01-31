@@ -23,7 +23,7 @@
     // In order to write a plugin in plain JS remove the lang="ts" attribute
     // from script tag
 
-    import { openPlugin } from '@windy/pluginsCtrl';
+    import bcast from "@windy/broadcast";
 
     import { onMount } from 'svelte';
 
@@ -44,7 +44,7 @@
         };
 
         goBackLink.onclick = () => {
-            openPlugin('menu');
+            bcast.emit('rqstOpen', 'menu');
         };
 
     });

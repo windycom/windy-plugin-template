@@ -1,6 +1,6 @@
 <section class="plugin__content">
     <div class="mb-30 centered">
-        <div class="button button--variant-orange size-s" on:click={ () => openPlugin('menu') }>Back to menu</div>
+        <div class="button button--variant-orange size-s" on:click={ () => bcast.emit('rqstOpen', 'menu') }>Back to menu</div>
     </div>
     {#each listOfBoats as boat}
         {@const { sail, color, rank, heading, total_time } = boat}
@@ -21,8 +21,8 @@
     {/each}
 </section>
 <script lang="ts">
+    import bcast from '@windy/broadcast';
     import { map } from '@windy/map';
-    import { openPlugin } from '@windy/pluginsCtrl';
 
     import { onMount, onDestroy } from 'svelte';
 

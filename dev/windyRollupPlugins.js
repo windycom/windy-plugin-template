@@ -21,8 +21,8 @@ const testLoadedPlugin = config => {
         !routerPath ||
             (typeof routerPath === 'string' &&
                 routerPath.length > 5 &&
-                /^[a-z0-9-]+$/.test(routerPath)),
-        'Reouter path MUST be longer than 5 characters and can contain only lowercase letters, numbers and dashes (example hello-world)',
+                /^\/[a-z0-9-/:?]+$/.test(routerPath)),
+        'Router path MUST be longer than 5 characters and can contain only lowercase letters, numbers and dashes (example hello-world). It must have leading slash "/".',
     );
 
     assert(
@@ -31,13 +31,13 @@ const testLoadedPlugin = config => {
     );
 
     assert(
-        typeof desktopUI === 'string' && desktopUI.match(/^(rhpane|embeded|none)$/),
-        'Plugin desktopUI is not defined or is not one of rhpane, embeded or none',
+        typeof desktopUI === 'string' && desktopUI.match(/^(rhpane|embedded)$/),
+        'Plugin desktopUI is not defined or is not one of allowed values',
     );
 
     assert(
-        typeof mobileUI === 'string' && mobileUI.match(/^(fullscreen|small|none)$/),
-        'Plugin mobileUI is not defined or is not one of fullscreen, small or none',
+        typeof mobileUI === 'string' && mobileUI.match(/^(fullscreen|small|embedded)$/),
+        'Plugin mobileUI is not defined or is not one of allowed values',
     );
 };
 

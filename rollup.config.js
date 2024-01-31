@@ -38,6 +38,10 @@ const buildConfigurations = {
         input: 'examples/04-aircraft-range/plugin.svelte',
         out: 'example04.js',
     },
+    example05: {
+        input: 'examples/05-airspace-map/plugin.svelte',
+        out: 'example05.js',
+    },
 };
 
 const requiredConfig = process.env.CONFIG || 'src';

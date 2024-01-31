@@ -9,7 +9,7 @@ const config: ExternalPluginConfig = {
     repository: 'git+https://github.com/windycom/windy-plugins.git',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
-    routerPath: 'hello-world',
+    routerPath: '/hello-world',
 
     // Default width of rhpane plugins is 400px, but you can change it
     // desktopWidth: 400,

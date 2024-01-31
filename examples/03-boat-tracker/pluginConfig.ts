@@ -10,7 +10,7 @@ const config: ExternalPluginConfig = {
     desktopUI: 'rhpane',
     mobileUI: 'small',
     desktopWidth: 200,
-    routerPath: 'boat-tracker',
+    routerPath: '/boat-tracker',
 };
 
 export default config;
