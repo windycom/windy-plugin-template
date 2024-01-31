@@ -12,6 +12,9 @@
         This is just example for our plugin developers,
         so <b>airspace data are obsolete</b> and not updated ☠️
     </small>
+    <small class="size-xxs mt-5">
+        Airspaces provided by <a href="https://www.openaip.net/" class="clickable dotted" target="_top">Open AIP</a>
+    </small>
 {:else}
     <small class="rounded-box bg-error size-s mt-10">
         Error: {error}
@@ -25,7 +28,7 @@
     import { countries } from "./countries";
     import { onDestroy } from 'svelte';
 
-    const dataLocation = 'https://www.flymap.org.za/openaip/geojsonbr';
+    const dataLocation = 'https://www.windy.com/img/windy-plugins';
 
     const userCC = store.get('country');
     const isCountrySupported = countries.some(c => c.cc === userCC);
