@@ -2,7 +2,7 @@ import { Weekday } from '@windy/Calendar.d';
 import { ExtendedTileParams } from '@windy/DataTiler.d';
 import { FullRenderParameters } from '@windy/Layer.d';
 import { Particles } from '@windy/Particles';
-import { PluginsOpenParams } from '@windy/plugin-params.d';
+import { PluginsOpenParams, type PluginsQsParams } from '@windy/plugin-params.d';
 import { Plugins } from '@windy/plugins.d';
 import {
     AcTimes,
@@ -95,7 +95,7 @@ export interface GeolocationInfo extends LatLon {
 }
 
 /**
- * TODO: This is basically copied favourite
+ * TODO: This is basically copied favorite
  */
 export interface HomeLocation extends LatLon {
     title: string;
@@ -214,7 +214,7 @@ export interface AlertProps {
     timestamps: Timestamp[];
 
     /**
-     * Timestamp where the state of the alert has been chacked on server last time
+     * Timestamp where the state of the alert has been checked on server last time
      */
     checked: Timestamp;
 
@@ -224,7 +224,7 @@ export interface AlertProps {
     /** Whether alert is active (true) or not (false) */
     triggered: boolean;
 
-    /** Wheter alert is temporarily disabled (true) or not (false) */
+    /** Weather alert is temporarily disabled (true) or not (false) */
     suspended?: boolean;
 }
 
@@ -431,7 +431,7 @@ export interface Celestial {
     TZoffset: number;
 
     /**
-     * TZ offset nicelly formatter
+     * TZ offset nicely formatted
      */
     TZoffsetFormatted: string;
 
@@ -1477,6 +1477,11 @@ export interface PluginOpeningOptions<P extends keyof Plugins> extends WindowOpe
      * Opening parameters
      */
     params?: PluginsOpenParams[P];
+
+    /**
+     * Additional query string passed from URL
+     */
+    qs?: PluginsQsParams[P];
 }
 
 /**
@@ -1561,42 +1566,69 @@ export interface WindyOfflinePlugin {
 // TODO: This must be in sync with windy-plugins repository
 export interface ExternalPluginConfig {
     /**
-     * SEO friendly name of the plugin, that will be displayed in URL
-     * if plugin is opened from URL (for example `name-of-plugin`)
+     * Name of the plugin, that (in order to separate external and
+     * our internal plugins) MUST contain `windy-plugin-` prefix
      *
-     * Installed plugins can  user access via URL
-     * https://www.windy.com/plugins/name-of-plugin so choose your name
-     * wisely.
-     *
-     * For example: 'hello-world'
-     *
+     * @example 'windy-plugin-hello-world'
      */
-    name: string;
+    name: `windy-plugin-${string}`;
 
     /**
-     * Version of the plugin. Use semver format.
+     * If set, indicates, that plugin is private and should not be
+     * offered to other users in plugins gallery. Companies and
+     * institutions, can display their sensitive data on Windy.com
+     * without any fear, that their API endpoints will be exposed.
+     */
+    private?: boolean;
+
+    /**
+     * Optional path to be used for routing and displaying of plugin's
+     * path as URL in browser. Must have form of SEO friendly string,
+     * with express.js inspired parameters.
+     *
+     * If defined installed plugins can user access via URL
+     * https://www.windy.com/plugin/hello-world
+     *
+     * @example '/hello-world'
+     * @example '/hello-world/:lat/:lon'
+     * @example '/hello-world/:optional?'
+     */
+    routerPath?: `/${string}`;
+
+    /**
+     * Version of the plugin in semver format.
+     *
+     * @example '1.0.0'
      */
     version: string;
 
     /**
-     * Official title of the plugin, that will be displayed alse as browser title,
+     * Official title of the plugin, that will be displayed as a browser title,
      * when plugin will be opened
      *
-     * For example: 'Hello World plugin'
+     * @example 'Hello World plugin'
      */
     title: string;
 
     /**
+     * Unicode emoji icon, that will be displayed in plugins gallery
+     * and in menu associated with this plugin
+     *
+     * @example '👋'
+     */
+    icon: string;
+
+    /**
      * Optional plugin description that will be displayed in plugins gallery
      *
-     * For example: 'This plugin demonstrates capabilities of Windy Plugin System'
+     * @example 'This plugin demonstrates capabilities of Windy Plugin System'
      */
     description?: string;
 
     /**
-     * Plugin author name
+     * Plugin's author name
      *
-     * For example: 'John Doe (optional company name)'
+     * @example 'John Doe (optional company name)'
      */
     author: string;
 
@@ -1611,25 +1643,16 @@ export interface ExternalPluginConfig {
     homepage?: string;
 
     /**
-     * Most of the plugins, provide information for some specific location
-     * (sounding, sun tracker, etc). Therefore these plugins require lat, lon
-     * information on their startup. Without location, they are useless.
-     *
-     * If plugin requires lat, lon, then it should be set to true, and plugin
-     * can be launched from context menu on map (RH button mouse click),
-     * or from menu on mobile picker.
-     *
-     * These types of plugin can be opened (after user installs them) from URL
-     * https://www.windy.com/plugins/name-of-plugin/:lat/:lon
-     *
-     * When plugin is already opened, you can listen to changes of lat, lon
-     * via `singleclick` event, that is fired on map or via change of
-     * weather picker.
-     *
-     * Remember, launching plugin first, and then asking user to position
-     * picker on map is not good UI practice.
+     * If user can open plugin from context menu on map (RH button mouse click)
+     * so plugin can be opened with lat, lon parameters.
      */
-    requiresLatLon?: boolean;
+    addToContextmenu?: boolean;
+
+    /**
+     * Whether plugin (if opened) want to receive singleclick events
+     * from map.
+     */
+    listenToSingleclick?: boolean;
 
     /**
      * Plugin behavior on desktop and tablet devices
@@ -1637,15 +1660,14 @@ export interface ExternalPluginConfig {
      * `rhpane` plugins occupy RH pane on desktop, which provides
      * enormous amount of space, and enables to scroll down, but
      * results in automatic closing or the plugin, when any other
-     * UI element opens from right side (menu, settings etc...)
+     * UI element opens from right side (menu, settings etc...).
      *
-     * You can use `embeded` position, whose space is limited, buui plugin
-     * is embeded into main menu and stays open.
+     * Simply put only one rhpane plugin can be opened at the same time.
      *
-     * Plugins with `none` have no UI on Windy.com and its purpose is
-     * to display data on a map.
+     * You can use `embedded` position, whose space is limited, but plugin
+     * is embedded into main page and stays open.
      */
-    desktopUI: 'rhpane' | 'embeded' | 'none';
+    desktopUI: 'rhpane' | 'embedded';
 
     /**
      * Width of `rhpane` plugin in pixels (default is 400).
@@ -1657,22 +1679,22 @@ export interface ExternalPluginConfig {
      *
      * `fullscreen` plugin occupies whole screen, while `small` takes only minimum
      * space on the bottom of the screen.
-     *
-     * Plugins with `none` have no UI on Windy.com and its purpose is (for example)
-     * to display data on map.
      */
-    mobileUI: 'fullscreen' | 'small' | 'none';
+    mobileUI: 'fullscreen' | 'small';
+}
 
+export interface CompiledExternalPluginConfig extends ExternalPluginConfig {
     /**
      * When was this plugin built
      */
     built: Timestamp;
+    builtReadable: ISODateString;
 }
 
 /**
  * Already installed external plugin
  */
-export interface LoadedExternalPluginConfig extends ExternalPluginConfig {
+export interface InstalledExternalPluginConfig extends CompiledExternalPluginConfig {
     /**
      * URL of the plguin is used as unique identifier
      */

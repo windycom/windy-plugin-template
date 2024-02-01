@@ -6,7 +6,7 @@ export type PluginIdent = keyof Plugins;
 export type PluginPane = 
 /** Right Hand pane */
 'rhpane'
-/** Small bottom location (like radar controll) that can adjust its size and coexist with LH,RHpane */
+/** Small bottom location (like radar control) that can adjust its size and coexist with LH,RHpane */
  | 'small-bottom'
 /** Big bottom location, that cant coexist with LH, RH panes like detail/station/rplanner */
  | 'bottom'
@@ -14,10 +14,12 @@ export type PluginPane =
  | 'center'
 /** Top location on mobile devices like picker-mobile, distance etc */
  | 'top'
-/** Plugin is embeded into detail as nearest webcam/station/airq */
+/** Plugin is embedded into detail as nearest webcam/station/airq */
  | 'nearest'
 /** Bottom plugin that ducks under mobile time controls (use only in exception) */
- | 'small-bottom-bottom';
+ | 'small-bottom-bottom'
+/** External plugin embedded to HP */
+ | 'embedded';
 /** Allowed params to Plugin constructor (private and protected props are omited by default) */
 export type PluginInitParams<P extends PluginIdent> = Pick<Plugin<P>, 'ident'> & Partial<Omit<Plugin<P>, 'isLoaded' | 'isOpen' | 'load' | 'open'>>;
 export declare class Plugin<P extends PluginIdent> {

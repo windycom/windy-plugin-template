@@ -1,26 +1,6 @@
 export type EventedInitParams = {
     ident: string;
 };
-/**
- * Basic class for evented object.
- *
- * @module Evented
- * @example
- *
- * // Holla myObject is now evented object
- * const myObject = W.Evented.instance({
- *     ident: identifier
- *     // additional methods and stuff
- * });
- *
- * myObject.emit('downloadFinished',a,b,c);
- *
- * const handle = myObject.on('downloadFinished',function(a,b,c) {
- *     // do the stuff
- * });
- *
- * myObject.off(handle);
- */
 export declare class Evented<T> {
     /**
      * Unique ID of each event subscription (incremental)
@@ -30,6 +10,10 @@ export declare class Evented<T> {
      * Store of all active subscriptions. It holds all needed data for trigger listeners for any event.
      */
     private _eventedCache;
+    /**
+     * For purpose of developer mode
+     */
+    private listenAllMethod?;
     /**
      * Only for DEBUG purposes. Color for console.log printing
      */
@@ -75,4 +59,5 @@ export declare class Evented<T> {
     once<K extends keyof T, Q extends T[K]>(topic: K, callback: (...data: TrimUndefinedFromRight<Arrayify<Q>>) => void, context?: ThisType<unknown>): number;
     off(id: number): void;
     off<K extends keyof T, Q extends T[K]>(topic: K, callback: (...data: TrimUndefinedFromRight<Arrayify<Q>>) => void, context?: ThisType<unknown>): void;
+    listenAll(callback: (topic: keyof T, ...args: unknown[]) => void): void;
 }

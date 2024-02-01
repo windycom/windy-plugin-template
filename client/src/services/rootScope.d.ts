@@ -8,7 +8,7 @@ export declare const version: string;
 /**
  * Target
  */
-export declare const target: "index" | "mobile" | "lib" | "embed2";
+export declare const target: "mobile" | "index" | "lib" | "embed2";
 /**
  * Platform
  */

@@ -5,7 +5,7 @@ import MagicString from 'magic-string';
 import { walk } from 'estree-walker';
 
 const testLoadedPlugin = config => {
-    const { name, version, title, desktopUI, mobileUI, routerPath } = config;
+    const { name, version, title, desktopUI, mobileUI, routerPath, icon } = config;
 
     assert(
         typeof name === 'string' && /^windy-plugin-([a-z0-9-]+)$/.test(name),
@@ -18,15 +18,20 @@ const testLoadedPlugin = config => {
     );
 
     assert(
-        !routerPath ||
-            (typeof routerPath === 'string' &&
-                routerPath.length > 5 &&
-                /^\/[a-z0-9-/:?]+$/.test(routerPath)),
-        'Router path MUST be longer than 5 characters and can contain only lowercase letters, numbers and dashes (example hello-world). It must have leading slash "/".',
+        typeof icon === 'string' && /^.$/u.test(icon),
+        'Plugin icon MUSt be just single emoji character',
     );
 
     assert(
-        typeof title === 'string' && title.length > 8 && title.length < 50,
+        !routerPath ||
+            (typeof routerPath === 'string' &&
+                routerPath.length > 4 &&
+                /^\/[a-z0-9-/:?]+$/.test(routerPath)),
+        'Router path MUST be longer than 4 characters and can contain only lowercase letters, numbers and dashes (example hello-world). It must have leading slash "/".',
+    );
+
+    assert(
+        typeof title === 'string' && title.length > 7 && title.length < 50,
         'Plugin title is not defined or is too short or too long',
     );
 
@@ -143,13 +148,8 @@ const replaceExports = (ast, msCode, addedLiterars) => {
 
 /**
  * Transforms the code based on the provided parameters.
- *
- * @param code - The code to be transformed.
- * @param sourcemaps - A boolean indicating whether sourcemaps should be generated.
- * @param pluginContext - The plugin context.
- * @returns An object containing the transformed code and optional sourcemaps.
  */
-const transformCode = async (code, sourcemaps, pluginContext, path) => {
+const transformCode = async (code, sourcemaps, pluginContext, path, output) => {
     const ast = pluginContext.parse(code);
     const msCode = new MagicString(code);
 
@@ -171,12 +171,28 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
         pluginConfig.built = Date.now();
         pluginConfig.builtReadable = new Date().toISOString();
 
+        fs.writeFileSync(`${output}/plugin.json`, JSON.stringify(pluginConfig, undefined, 2));
+
         msCode.prepend(
             `const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`,
         );
     } catch (e) {
         console.error(`Error while opening and parsing ${configPath}`, e);
         process.exit(1);
+    }
+
+    // Copy screenshot.jpg
+
+    try {
+        for (const type of ['jpg', 'png', 'webp', 'jpeg']) {
+            const screenshotPath = `${path}/screenshot.${type}`;
+            if (fs.existsSync(screenshotPath)) {
+                fs.copyFileSync(screenshotPath, `${output}/screenshot.${type}`);
+                break;
+            }
+        }
+    } catch (e) {
+        console.error(`Error while copying screenshot`, e);
     }
 
     replaceExports(ast, msCode, ['__pluginConfig']);
@@ -193,6 +209,7 @@ const transformCode = async (code, sourcemaps, pluginContext, path) => {
  */
 export function transformCodeToESMPlugin() {
     let shouldGenerateSourcemaps = false;
+    let outputDirectory = null;
     return {
         name: 'transform-to-esm-plugin',
         options(options) {
@@ -201,13 +218,20 @@ export function transformCodeToESMPlugin() {
                 : options.output ?? {};
 
             shouldGenerateSourcemaps = Boolean(outputOptions.sourcemap);
+            outputDirectory = outputOptions.file.replace(/\/[^/]+$/, '');
 
             return undefined;
         },
         renderChunk(code, chunk) {
             const { facadeModuleId } = chunk;
             const pathOfTheFile = facadeModuleId.replace(/\/[^/]*$/, '');
-            return transformCode(code, shouldGenerateSourcemaps, this, pathOfTheFile);
+            return transformCode(
+                code,
+                shouldGenerateSourcemaps,
+                this,
+                pathOfTheFile,
+                outputDirectory,
+            );
         },
     };
 }

@@ -1,5 +1,7 @@
 /**
- * @module format Various formatting utils based on user language and settings
+ * @module format
+ *
+ * Various formatting utils based on user language and settings
  */
 import type { DirectionFunction, HowOldOptions, TimeFormatFunction } from '@windy/format.d';
 import type { Timestamp } from '@windy/types';

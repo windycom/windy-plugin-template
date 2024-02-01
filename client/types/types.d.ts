@@ -304,3 +304,5 @@ export type ProductIdent =
     | 'nasa-firms';
 
 export type PickerOpener = LatLon & { id: string };
+
+export type ExternalPluginIdent = `windy-plugin-${string}`;

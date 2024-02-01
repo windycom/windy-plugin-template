@@ -55,39 +55,35 @@
 
 ## Ulozeni pluginu v nasem bucketu
 
-# Export do bucketu (myslenka)
+Pro zachovani bezpecnosti je nutne aby:
 
--   URL bude vypdat takto: `/userID(cislo)/windy-plugin-.....`
+1. Plugin byl ulozen v nasem bucketu na `windy-plugins.com`
 
--   userID vezmeme z klice v API
+2. Jednou ulozeny plugin se neda prepsat/zemint (muze se totiz jednat o nami schvaleny kod)
 
--   V kazdem adresari budou sobory `commitHash.js`, `commitHash.js.map` a `commitHash.min.js` s tim, ze `*.js` a `*.min.js` bude pristupne pouze pro nasi VPN
+3. Client umozni nacitat pluginy POUZE z `windy-plugins.com`, `windy.com` a `localhost`
 
--   V kazdem adresati bude take soubor `latest.json` s kopii posledniho configu informaci o poslednim commitHashi a vsech mnoznych informacich (repository, github username, server name, ...)
+# Export do bucketu
 
--   server bude browsovatelny z nasi VPN takze uvidime vsechny adrease v bucketu a muzeme z nich vysochat latest.json
+-   Vyvojar musi byt registrovany Windy user a musi mit vytvoreny API klic na `api.windt.com/keys`
 
-~~Vysledne URL bucketu bude `https://windy-plugins.com/github.com/github-username/github-repo-name/commitHash.mjs`
+-   Klic si ulozi nekam do secrets v danem repozitari
 
-Toto URL je naprosto unikatni a navic nam hend rekne, odkud plugin pochazi a informace o serveru
-username a repu nam napraska CI/CD proces.
+-   Zbuildeny plugin do naseho bucketu pomoci `npm deploy`
 
-Zatimco soubor `.mjs` obsahuje minifikovany plugin, CI/CD navic na stejne URL ulozi i soubor
-`commitHash.js` (pristupny pouze z nasi VPN), ktery bude obsahovat neminifikovany kod, s
-originalnimi komentari ktery se da pouzit pro rychle zjisteni, co to dela.
+-   Do tohoto bucketu je mozne pouze uploadivat. Snaha prepsat existujici soubor vrati exception
 
-V kazdem adresari bude navic soubor `latest.json`, ktery bude obsahovat informace o posledne
-nahranem commitHashi a datumu nahrani, takze bude (napriklad pro korporatni klienty) mozne
-zjistit novou verzi klienta (pozor schvelenych pluginy berou posledni commitHash z Community kde
-bude info o poslednim schvalenem commitHashi)
+-   Kazdy build daneho pluginu se sestava z techto souboru `plugin.js`, `plugin.js.map`, `plugin.json`, `plugin.min.js`, `screenshot.jpg`, ty jsoiu ulozeny v adresari `dist/`
 
-V danem bucketu se nemuze prepisovat, pouze pridavat soubory, tj jednou schvaleny plugin bude
-stale dostupny na danem URL.
+-   Vyse uvedne soubory se v nasem bucketu ulozi tak aby byly pristupne pod: `windy-plugins.com/cisloUserID/windy-plugin-nazev-pluginu/v1.0.2/*`
 
-Format URL umozni vyuzivat plugin system i pro korporatni pluginy, ktere nebudou verejne na GitHubu.
+-   Kazda verze tedy bude mit vlastni adresar, ktery bude obsahovat vsechny soubory pluginu
 
-Podrobna analyza navstevnosti pluginu zjisti, kdo plugin pouziva a jak casto, uvidime aktivitu
-jednotlivych vyvojaru atd.~~
+-   V adresari `.../windy-plugin-nazev-pluginu/` bychom mohli udelat automaticky symlink latest, ktery bude ukazovat na posledni verzi pluginu (ciste pro ucely vyvoje a ladeni)
+
+-   Schvalene pluginy, tj ty co pujdou do Galerie zatim budeme udrzovat na Community zde v tomto topicu (`https://community.windy.com/topic/31066/list-of-finished-windy-plugins-v42`)
+
+-   Schvaleny plugin je identifikovan pomoci celeho URL vsetne verze (napr `.../1234567890/windy-plugin-nazev-pluginu/v1.0.2/plugin.min.js`) takze kdyz nekdo vypusti novou verzi pluginu, nic se nedeje, uzivatele si stale tahaji starou verzi.
 
 ## Schvalovani pluginu do galerie Pluginu
 
@@ -122,17 +118,11 @@ Plugin se stahe a z .mjs souboru se precte vyexportovana konfigurace `__config`,
 
 **3. Spusteni pluginu z URL**
 
--   Instalovane pluginy je mozne spustit z URL `https://www.windy.com/plugins/name`
-
--   V pripade, ze se jedna o plugin `requiresLatLon: true` je nutne plugin spustits parametry `https://www.windy.com/plugins/name/:lat/:lon`
-
--   Parametry query stringu se predaji se pluginu
+-   Instalovane pluginy je mozne spustit z URL `https://www.windy.com/plugin/name`
 
 **4. Reload clienta**
 
 -   Po reloadu clienta se precte config z `installedPlugins`
-
--   Do contextmenu, mobilniho pickeru se praji odkazy na pluginy s `requeresLatLon: true`
 
 -   Pokud ma user `installedPlugins` zkontroluje se pripadna nova verze pluginu a ta se nabidne uzivateli na instalaci
 

@@ -4,10 +4,11 @@ import type { PluginInitParams } from '@windy/Plugin';
 import type { WindowInitParams } from '@windy/Window';
 import type { PluginOpeningOptions, WindowClosingOptions } from '@windy/interfaces.d';
 import type { InterpolatorFactory } from '@windy/interpolator';
-import type { PluginsOpenParams } from '@windy/plugin-params.d';
+import type { PluginsOpenParams, PluginsQsParams } from '@windy/plugin-params.d';
 import type { BottomTagPlugins, SveltePanePlugins, SveltePlugins, TagPlugins } from '@windy/plugins.d';
 import type { LoadedTranslations } from '@windy/trans.d';
 import type { ParsedQueryString } from '@windy/queryString';
+import type { ListeningPriority } from '@windy/singleclick.d';
 export interface WindowPlugins extends TagPlugins, SveltePlugins, SveltePanePlugins, BottomTagPlugins {
 }
 /** Allowed params to WindowPlugin constructor (private and protected props are omited by default) */
@@ -42,14 +43,24 @@ export declare abstract class WindowPlugin<P extends keyof WindowPlugins> extend
     /**
      * Simple router, that matches URL and opens plugin
      *
-     * Use either simple express style string or RegExp for more complex matching
-     * with named groups (e.g. /distance/(?<tab>\S+))
+     * Use either simple expressJs style string or RegExp for more complex matching
+     * with named groups
+     *
+     * @example /path/:lat/:lon
+     * @example /path-with-optional-param/:param?
+     * @example /^(distance|rplanner)/(?<tab>\S+)$/  ... for complex matches
      */
-    router?: RegExp | string;
+    router?: RegExp | `/${string}`;
     /**
-     * Sets page tile and URL location automatically to /${ident} and ${title}
+     * If router is typeof RegExp, we need some string, that will enable us to construct
+     * URL from params, so basically this string (which should have expressJs style syntax)
+     * is for that purpose.
+     *
+     * Of course, if your router is typeof string, you do not need this property at all
+     *
+     * @example /path/:lat/:lon
      */
-    defaultLocationAndTitle: boolean;
+    path?: `/${string}`;
     /**
      * Prepends URL with SEO friendly string (e.g. /-Nastveni) in local language
      * works only with defaultLocationAndTitle
@@ -68,10 +79,6 @@ export declare abstract class WindowPlugin<P extends keyof WindowPlugins> extend
      * Android stuff: does not close plugin on back button tap
      */
     noCloseOnBackButton?: boolean;
-    /**
-     * Used for loading of externel 3d party plugins to Windy
-     */
-    hook?: 'contextmenu' | 'menu' | null;
     interpolator?: InterpolatorFactory;
     /**
      * Does the window reguires keyboard input?
@@ -104,38 +111,46 @@ export declare abstract class WindowPlugin<P extends keyof WindowPlugins> extend
      * normal tags and attachement points
      */
     attachPoint: string;
+    /**
+     * Indicates, that this plugin wants to recieve singleclick map events
+     * when opened and at which priority
+     */
+    singleclickPriority: ListeningPriority | undefined;
     constructor(params: WindowPluginInitParams<P>);
     /**
      * Check if plugin is loaded and decides if load or open. Params are passed to onopen fun
      */
-    open({ params, disableOpeningAnimation }?: PluginOpeningOptions<P>): Promise<void | boolean>;
+    open({ params, disableOpeningAnimation, qs }?: PluginOpeningOptions<P>): Promise<void | boolean>;
     close(opts?: WindowClosingOptions): void;
+    /**
+     * Displays URL & tile
+     */
+    displayURLAndTitle(params?: PluginsOpenParams[P]): void;
     /**
      * Ready to be overloaded: Will be called after open
      */
-    onopen(params?: PluginsOpenParams[P]): void | boolean;
+    onopen(params?: PluginsOpenParams[P], _qs?: PluginsQsParams[P]): void;
     /**
      * Ready to be overloaded: Will be called before unmounting
      */
     ondestroy(opts?: WindowClosingOptions): void;
     /**
-     * Ready to be overloaded: Will be called after close
-     */
-    onclosed(..._args: unknown[]): void;
-    /**
      * Ready to be overloaded: Will be called before plugin is loaded, sync action called immediatelly after rqstOpen is fired
      */
     beforeLoad(..._args: unknown[]): void;
     /**
-     * Displays URL & tile
-     */
-    displayURLAndTitle(): void;
-    /**
      * Called by router when URL matches plugin's router (feel free to overload it)
      */
     onRouteMatch({ groups }: string[] & {
-        groups?: Record<string, string>;
+        groups: PluginsOpenParams[P];
     }, _qs?: ParsedQueryString): PluginsOpenParams[P] | null;
+    /**
+     * When called with params, it will create valid URL for plugin
+     * as defined in router property.
+     *
+     * This is basically reverse operation of parsing URL in router
+     */
+    getPluginUrl(params?: PluginsOpenParams[P]): string;
     get node(): HTMLDivElement | undefined;
     createWindow(): Window;
     getCss(): string | undefined;
@@ -153,7 +168,4 @@ export declare abstract class WindowPlugin<P extends keyof WindowPlugins> extend
      * After module is being mounted and fully in HTML DOM
      */
     protected onmounted(): void;
-    private onWindowOpen;
-    private onWindowClose;
-    private onWindowClosed;
 }

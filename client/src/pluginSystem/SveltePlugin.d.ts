@@ -1,22 +1,26 @@
 import { WindowPlugin } from '@windy/WindowPlugin';
 import type { WindowPluginInitParams } from '@windy/WindowPlugin';
-import type { PluginsOpenParams } from '@windy/plugin-params.d';
+import type { PluginsOpenParams, PluginsQsParams } from '@windy/plugin-params.d';
 import type { SveltePanePlugins, SveltePlugins } from '@windy/plugins.d';
 export declare class SvelteApp<P extends keyof SveltePlugins | keyof SveltePanePlugins> {
     constructor(_args: {
         target: HTMLElement;
         anchor: HTMLElement;
     });
-    onopen(params?: PluginsOpenParams[P]): void;
+    onopen(params?: PluginsOpenParams[P], qs?: PluginsQsParams[P]): void;
     onclose(): void;
     $destroy(): void;
 }
+/**
+ * Same as SvelteApp type, but without any information, about required
+ * types for params & qs
+ */
 export declare class ExternalSvelteApp {
     constructor(_args: {
         target: HTMLElement;
         anchor: HTMLElement;
     });
-    onopen(params?: unknown): void;
+    onopen(params?: unknown, qs?: unknown): void;
     onclose(): void;
     $destroy(): void;
 }
@@ -29,7 +33,7 @@ export declare class SveltePlugin<P extends keyof SveltePlugins | keyof SveltePa
     private svelteApp?;
     ident: P;
     plugin: WPluginModules[`@plugins/${P}`] & AdditionalSvelteAssets;
-    onopen(): void | boolean;
+    onopen(params?: PluginsOpenParams[P], _qs?: PluginsQsParams[P]): void;
     ondestroy(): void;
     protected mount(): void;
     protected unmount(): void;

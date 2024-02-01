@@ -4,6 +4,7 @@ const config: ExternalPluginConfig = {
     name: 'windy-plugin-hello-world',
     version: '1.0.0',
     title: 'Hello World plugin',
+    icon: '👋',
     description: 'This plugin demonstrates capabilities of Windy Plugin System',
     author: 'John Doe (optional company name)',
     repository: 'git+https://github.com/windycom/windy-plugins.git',

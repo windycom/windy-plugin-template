@@ -1150,6 +1150,10 @@ export interface MainLangFile {
      */
     EMBED: string;
     /**
+     * Embed widget
+     */
+    EMBED2: string;
+    /**
      * Awesome weather forecast at
      */
     E_MESSAGE: string;

@@ -24,7 +24,7 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "paths": {
-            /*"@windy/*": [
+            "@windy/*": [
                 "client/src/weatherClasses/*",
                 "client/src/weather/*",
                 "client/src/utils/*",
@@ -42,8 +42,8 @@
                 "client/src/wgUtils/*",
                 "client/src/shaders/*",
                 "client/types/*"
-            ],*/
-            "@windy/*": [
+            ],
+            /*"@windy/*": [
                 "../client/src/weatherClasses/*",
                 "../client/src/weather/*",
                 "../client/src/utils/*",
@@ -61,7 +61,7 @@
                 "../client/src/wgUtils/*",
                 "../client/src/shaders/*",
                 "../client/types/*"
-            ],
+            ],*/
         }
     },
     "include": ["**/*.ts", "**/*.svelte"],

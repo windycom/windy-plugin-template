@@ -1,4 +1,7 @@
+import type { ExternalPluginIdent } from '@windy/types.d';
 import type { PluginIdent } from '@windy/Plugin';
+import type { WindowPlugins } from '@windy/WindowPlugin';
+import type { PluginsOpenParams } from '@windy/plugin-params';
 export declare const description: (desc: string) => void;
 /**
  * gets url of self
@@ -12,12 +15,10 @@ export declare function resetTitle(): void;
  * Set URL of page. PluginId makes sure, that only plugin that changed URL can
  * reset it later on.
  *
- * @param pluginId Plugin ident (or null if called not from plugin)
- * @param newURL New URL (with leading "/"")
- * @param newVisibleURL Optional visible URL for SEO purposes
- * @param newSearch Optional associated search string
+ * TODO: After refactor of WindyPlugin class, this method can recieve
+ * plugin opening source and not update history, when `back-button` was used
  */
-export declare const setUrl: (pluginId: PluginIdent | null, newURL: string, newVisibleURL?: string) => void;
+export declare const setUrl: <P extends keyof WindowPlugins>(pluginId: `windy-plugin-${string}` | P, pluginParams?: PluginsOpenParams[P] | undefined, seoPrefix?: string) => void;
 /**
  * set title of a page
  */
@@ -36,4 +37,4 @@ export declare const setSearch: (newSearch?: string) => void;
  *
  * @param pluginId Plugin ident (or null if called not from plugin)
  */
-export declare const reset: (pluginId: PluginIdent | null) => void;
+export declare const reset: (pluginId?: PluginIdent | ExternalPluginIdent) => void;

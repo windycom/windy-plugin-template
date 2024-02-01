@@ -1,7 +1,7 @@
 import { type ParsedQueryString } from '../utils/queryString';
-import type { WindowPlugins } from '@windy/WindowPlugin';
 import type { Coords, PickerCoords } from '@windy/interfaces.d';
-import type { RouterResult } from '@windy/router.d';
+import type { ExternalPluginIdent } from '@windy/types';
+import type { PluginIdent } from '@windy/Plugin';
 type StartupCoords = {
     sharedCoords: Coords | null;
     pickerCoords: PickerCoords | null;
@@ -9,10 +9,9 @@ type StartupCoords = {
 /**
  * Parse URL to plugin and its parameters (if any)
  *
- * @param purl Pure URL
- * @returns Parsed parameters from the URL, or undefined if cannot be parsed
+ * @returns true if some of the plugins was matched, false otherwise
  */
-export declare function resolveRoute(purl: string, parsedQs?: ParsedQueryString): RouterResult<keyof WindowPlugins> | void;
+export declare function resolveRoute(purl: string, source: 'url' | 'back-button', parsedQs?: ParsedQueryString): ExternalPluginIdent | PluginIdent | void;
 /**
  * Parse search part of the URL
  * eg: https://www.windy.com/?overlay,level,acTime,lat,lon,zoom,marker
@@ -25,15 +24,7 @@ export declare function resolveRoute(purl: string, parsedQs?: ParsedQueryString)
  */
 export declare function parseSearch(searchQuery: string | undefined, parsedQs?: ParsedQueryString): StartupCoords | undefined;
 /**
- * Path part of the startup url (if could be parsed, empty string otherwise)
- */
-export declare const url: string;
-/**
  * Parsed coordinates from URL
  */
 export declare const sharedCoords: Coords | null | undefined;
-/**
- * Windy.com was launched with detail or plugin in URL
- */
-export declare const startupDetail: boolean;
 export {};

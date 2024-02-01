@@ -51,7 +51,7 @@ export declare class Bar {
     private maxWidth;
     private pxRatio;
     private timecode;
-    private b?;
+    private nowMark?;
     private played?;
     private ghostTxt?;
     private throttledBcast;

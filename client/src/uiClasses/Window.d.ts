@@ -80,7 +80,7 @@ export declare class Window {
     /**
      * Ready to be overloaded: Will be called before close
      */
-    onclose(_opts: unknown): void;
+    onclose(_opts?: WindowClosingOptions): void;
     /**
      * Ready to be overloaded: Will be called after close
      */

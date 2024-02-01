@@ -271,7 +271,7 @@ export declare const getAdjustedNow: (syncTime?: number) => number;
  * @param lang Language code
  * @returns True if language is supported, false otherwise
  */
-export declare const isValidLang: (lang: string) => lang is "ca" | "lt" | "id" | "es" | "en" | "zh-TW" | "zh" | "ja" | "fr" | "ko" | "it" | "ru" | "nl" | "cs" | "tr" | "pl" | "sv" | "fi" | "ro" | "el" | "hu" | "hr" | "da" | "ar" | "fa" | "hi" | "ta" | "sk" | "uk" | "bg" | "he" | "is" | "et" | "vi" | "sl" | "sr" | "th" | "sq" | "pt" | "nb" | "de" | "bn";
+export declare const isValidLang: (lang: string) => lang is "en" | "zh-TW" | "zh" | "ja" | "fr" | "ko" | "it" | "ru" | "nl" | "cs" | "tr" | "pl" | "sv" | "fi" | "ro" | "el" | "hu" | "hr" | "ca" | "da" | "ar" | "fa" | "hi" | "ta" | "sk" | "uk" | "bg" | "he" | "is" | "lt" | "et" | "vi" | "sl" | "sr" | "id" | "th" | "sq" | "pt" | "nb" | "es" | "de" | "bn";
 /**
  * Safely joins server name (without trailing / ) and path
  *
@@ -422,10 +422,3 @@ export declare const wrapCoords: (tilePoint: TilePoint) => TilePoint;
  * @param location
  */
 export declare const getLoacationOfJsAssets: (location: string) => string;
-/**
- * Asserts that a condition is true. If the condition is false, an error is thrown.
- * @param condition - The condition to be checked.
- * @param msg - Optional message to be included in the error.
- * @throws {Error} - Throws an error if the condition is false.
- */
-export declare const assert: (condition: any, msg?: string) => void;

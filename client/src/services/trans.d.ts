@@ -34,7 +34,7 @@ declare const getFile: (filename: string, options?: LoadingOptions) => Promise<T
  * @param lang Optionally forced language, client lang is used by default
  * @returns Translations in key-pair object. Missing translations are presented in default english lang.
  */
-declare const loadLangFile: (id: keyof SupportedLangFiles, lang?: "ca" | "lt" | "id" | "es" | "en" | "zh-TW" | "zh" | "ja" | "fr" | "ko" | "it" | "ru" | "nl" | "cs" | "tr" | "pl" | "sv" | "fi" | "ro" | "el" | "hu" | "hr" | "da" | "ar" | "fa" | "hi" | "ta" | "sk" | "uk" | "bg" | "he" | "is" | "et" | "vi" | "sl" | "sr" | "th" | "sq" | "pt" | "nb" | "de" | "bn") => Promise<void | Translations>;
+declare const loadLangFile: (id: keyof SupportedLangFiles, lang?: "en" | "zh-TW" | "zh" | "ja" | "fr" | "ko" | "it" | "ru" | "nl" | "cs" | "tr" | "pl" | "sv" | "fi" | "ro" | "el" | "hu" | "hr" | "ca" | "da" | "ar" | "fa" | "hi" | "ta" | "sk" | "uk" | "bg" | "he" | "is" | "lt" | "et" | "vi" | "sl" | "sr" | "id" | "th" | "sq" | "pt" | "nb" | "es" | "de" | "bn") => Promise<void | Translations>;
 /**
  * Replace all `[data-*]` translation tags with proper translation in HTML element. It overrides its innerHTML
  * Supported data suffixes: 'title', 'placeholder', 't', 'afterbegin', 'beforeend', 'tooltipsrc'
