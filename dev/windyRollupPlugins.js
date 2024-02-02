@@ -156,6 +156,21 @@ const transformCode = async (code, sourcemaps, pluginContext, path, output) => {
     replaceVirualImports(ast, msCode);
 
     const configPath = `${path}/pluginConfig.ts`;
+    let screenshot;
+
+    // Copy screenshot.jpg/png/webp/jpeg to the output directory
+    try {
+        for (const type of ['jpg', 'png', 'webp', 'jpeg']) {
+            const screenshotPath = `${path}/screenshot.${type}`;
+            if (fs.existsSync(screenshotPath)) {
+                fs.copyFileSync(screenshotPath, `${output}/screenshot.${type}`);
+                screenshot = `screenshot.${type}`;
+                break;
+            }
+        }
+    } catch (e) {
+        console.error(`Error while copying screenshot`, e);
+    }
 
     try {
         // This part of code reads the pluginConfig.ts file and
@@ -170,29 +185,16 @@ const transformCode = async (code, sourcemaps, pluginContext, path, output) => {
 
         pluginConfig.built = Date.now();
         pluginConfig.builtReadable = new Date().toISOString();
+        pluginConfig.screenshot = screenshot;
 
-        fs.writeFileSync(`${output}/plugin.json`, JSON.stringify(pluginConfig, undefined, 2));
+        const formattedConfig = JSON.stringify(pluginConfig, undefined, 2);
 
-        msCode.prepend(
-            `const __pluginConfig =  ${JSON.stringify(pluginConfig, undefined, 2)};\n\n`,
-        );
+        fs.writeFileSync(`${output}/plugin.json`, formattedConfig);
+
+        msCode.prepend(`const __pluginConfig =  ${formattedConfig};\n\n`);
     } catch (e) {
         console.error(`Error while opening and parsing ${configPath}`, e);
         process.exit(1);
-    }
-
-    // Copy screenshot.jpg
-
-    try {
-        for (const type of ['jpg', 'png', 'webp', 'jpeg']) {
-            const screenshotPath = `${path}/screenshot.${type}`;
-            if (fs.existsSync(screenshotPath)) {
-                fs.copyFileSync(screenshotPath, `${output}/screenshot.${type}`);
-                break;
-            }
-        }
-    } catch (e) {
-        console.error(`Error while copying screenshot`, e);
     }
 
     replaceExports(ast, msCode, ['__pluginConfig']);
