@@ -1,4 +1,4 @@
-<section bind:this={pluginElement}>
+<section bind:this={pluginElement} class="this-is-body-of-my-plugin">
     <p>
         <a>[ ⬅️ Go back to menu ]</a>
     </p>
@@ -27,8 +27,6 @@
 
     import { onMount } from 'svelte';
 
-    import config from './pluginConfig';
-
     let pluginElement;
 
     onMount(() => {
@@ -53,7 +51,7 @@
 <style>
     /* Remove lang="less" and you can use plain CSS */
 
-    section {
+    .this-is-body-of-my-plugin {
         background: #565656;
         color: white;
         line-height: 1.8;

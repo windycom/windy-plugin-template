@@ -40,6 +40,7 @@
     import { map, centerMap, markers } from '@windy/map';
     import { singleclick } from '@windy/singleclick';
     import { getMyLatestPos } from "@windy/geolocation";
+    import { setUrl } from "@windy/location";
 
     import { onDestroy, onMount } from 'svelte';
 
@@ -85,6 +86,12 @@
         marker = new L.Marker({ lat, lng: lon },{ icon: markers.pulsatingIcon }).addTo(map);
         circle = new L.Circle({ lat, lng: lon }, { radius: range * 1000 }).addTo(map);
     }
+
+    // IMPORTANT: Whenever user clicks on a map and location is changed,
+    // we need to update the URL so that the plugin can be opened with the same location
+    // after reload. setUrl method is used for this purpose and as a parameters requires
+    // the name of the plugin and same object as the plugin was opened with.
+    $: setUrl( name, { lat: selectedLat, lon: selectedLon });
 
     $: drawMarkerAndCircle({ lat: selectedLat, lon: selectedLon }, aircrafts[selected].range );
 
