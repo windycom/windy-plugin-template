@@ -128,14 +128,14 @@ Plugin se stahe a z .mjs souboru se precte vyexportovana konfigurace `__config`,
 
 V plugin galerii `www.windy.com/plugins` je mozne plugin pouze nainstalovat, ci kliknout na tlacitko About.
 
-## Nastroje ktere muzeme vyuzit na dokumentaci
+# Vypublikovane pluginy
 
-https://squidfunk.github.io/mkdocs-material/
+https://windy-plugins.com/3/windy-plugin-hello-world/1.0.0/
 
-Docusaurus
+https://windy-plugins.com/3/windy-plugin-using-vanilla-js/1.0.0/
 
-KSS Styles
+https://windy-plugins.com/3/windy-plugin-boat-tracker/1.0.0/
 
-TSDoc
+https://windy-plugins.com/3/windy-plugin-aircraft-range/1.0.0/
 
-https://typedoc.org/guides/overview/
+https://windy-plugins.com/3/windy-plugin-airspace-example/1.0.0/
