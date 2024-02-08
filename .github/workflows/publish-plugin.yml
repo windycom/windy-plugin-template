@@ -1,28 +1,30 @@
 name: publish-plugin
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  publish-plugin:
-    runs-on: ubuntu-latest
-    env:
-      WINDY_API_KEY: "${{ secrets.WINDY_API_KEY }}"
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: |
-        npm install
-        npm run build
-    - name: Publish Plugin
-      run: |
-        if [ -z "$WINDY_API_KEY" ]; then
-          echo "Secret WINDY_API_KEY is not configured" >&2
-          exit 1
-        fi
-        cd dist
-        echo "Creating plugin archive..."
-        echo "{\"repository_name\": \"${{ github.repository }}\", \"commit_sha\": \"${{ github.sha }}\", \"repository_owner\": \"${{ github.repository_owner }}\"}" > plugin-info.json
-        tar cf ../plugin.tar .
-        echo "Publishing plugin..."
-        curl -s --fail-with-body -XPOST 'https://api.windy.com/api/windy-plugins/v1.0/upload' -H "x-windy-api-key: ${WINDY_API_KEY}" -F "plugin_archive=@../plugin.tar"
+    publish-plugin:
+        runs-on: ubuntu-latest
+        env:
+            WINDY_API_KEY: '${{ secrets.WINDY_API_KEY }}'
+        steps:
+            - uses: actions/checkout@v2
+            - name: Build
+              run: |
+                  npm install
+                  npm run build
+            - name: Publish Plugin
+              run: |
+                  if [ -z "$WINDY_API_KEY" ]; then
+                    echo "Secret WINDY_API_KEY is not configured" >&2
+                    exit 1
+                  fi
+                  cd dist
+                  echo "Creating plugin archive..."
+                  echo "{\"repositoryName\": \"${{ github.repository }}\", \"commitSha\": \"${{ github.sha }}\", \"repositoryOwner\": \"${{ github.repository_owner }}\"}" > /tmp/plugin-info.json
+                  mv plugin.json /tmp
+                  jq -s '.[0] * .[1]' /tmp/plugin.json /tmp/plugin-info.json > plugin.json
+                  tar cf ../plugin.tar .
+                  echo "Publishing plugin..."
+                  curl -s --fail-with-body -XPOST 'https://api.windy.com/api/windy-plugins/v1.0/upload' -H "x-windy-api-key: ${WINDY_API_KEY}" -F "plugin_archive=@../plugin.tar"

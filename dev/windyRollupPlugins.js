@@ -227,6 +227,11 @@ export function transformCodeToESMPlugin() {
         renderChunk(code, chunk) {
             const { facadeModuleId } = chunk;
             const pathOfTheFile = facadeModuleId.replace(/\/[^/]*$/, '');
+
+            if (!fs.existsSync(outputDirectory)) {
+                fs.mkdirSync(outputDirectory, { recursive: true });
+            }
+
             return transformCode(
                 code,
                 shouldGenerateSourcemaps,
