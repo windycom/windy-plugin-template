@@ -1,18 +1,17 @@
-import serve from 'rollup-plugin-serve';
-import rollupSvelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import rollupSwc from 'rollup-plugin-swc3';
-
 import typescript from '@rollup/plugin-typescript';
-
 import terser from '@rollup/plugin-terser';
+
+import serve from 'rollup-plugin-serve';
+import rollupSvelte from 'rollup-plugin-svelte';
+import rollupSwc from 'rollup-plugin-swc3';
 import rollupCleanup from 'rollup-plugin-cleanup';
+
 import { less } from 'svelte-preprocess-less';
 import sveltePreprocess from 'svelte-preprocess';
-import fs from 'fs';
 
-import { transformCodeToESMPlugin } from './dev/windyRollupPlugins.js';
+import { transformCodeToESMPlugin, keyPEM, certificatePEM } from '@windycom/plugin-devtools';
 
 const useSourceMaps = true;
 
@@ -78,7 +77,6 @@ export default {
         rollupSwc({
             include: ['**/*.ts', '**/*.svelte'],
             sourceMaps: useSourceMaps,
-            //tsconfig: './make/tsconfig.json',
         }),
         rollupSvelte({
             emitCss: false,
@@ -111,8 +109,8 @@ export default {
                     'Access-Control-Allow-Origin': '*',
                 },
                 https: {
-                    key: fs.readFileSync('dev/key.pem'),
-                    cert: fs.readFileSync('dev/certificate.pem'),
+                    key: keyPEM,
+                    cert: certificatePEM,
                 },
             }),
     ],

@@ -1,8 +1,8 @@
 # Windy Plugin Template
 
-This is template (or boilerplate) for development Windy Plugin.
+Template for development of Windy Plugins.
 
-## All documentation can be found at: [https://www.windy-plugins.com/](https://www.windy-plugins.com/)
+**All documentation can be found at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
 
 # CHANGELOG
 

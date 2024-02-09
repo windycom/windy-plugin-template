@@ -7,10 +7,10 @@ const config: ExternalPluginConfig = {
     title: 'This is my first plugin',
     description: 'This is my first plugin.',
     author: 'John Doe (optional company name)',
-    repository: 'git+https://github.com/windycom/windy-plugins.git',
+    repository: 'https://github.com/windycom/windy-plugin-template',
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
-    routerPath: '/my-plugin/:lat?/:lon?',
+    routerPath: '/my-plugin',
 };
 
 export default config;
