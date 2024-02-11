@@ -7,7 +7,7 @@
         "removeComments": true,
         "outDir": "dist",
         "target": "es2022",
-        "typeRoots": ["./types", "./node_modules/@types/","./node_modules/@windycom/plugin-devtools/types"],
+        "typeRoots": [ "./node_modules/@types/","./declarations", "./node_modules/@windycom/plugin-devtools/types/"],
         "resolveJsonModule": false,
         "sourceMap": false,
         "incremental": true,
@@ -26,9 +26,9 @@
         "paths": {
             "@windy/*": [
                 "./node_modules/@windycom/plugin-devtools/types/*",
+                "./node_modules/@windycom/plugin-devtools/types/client/*",
             ],
         }
     },
     "include": ["**/*.ts", "**/*.svelte"],
-    "exclude": ["node_modules"]
 }

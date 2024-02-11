@@ -33,10 +33,22 @@
             Show my location
         </button>
     </div>
+
+    <hr />
+
+    {#each [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] as _line  }
+        <p>
+           The major advantage of rhpane and mobile fullscreen layout is ability to display a lot of information in a single view.
+        </p>
+        <p>
+            Overflowed content is scrollable and it works like a charm especially on mobile devices.
+        </p>
+    {/each}
+
 </section>
 <script lang="ts">
     import bcast from "@windy/broadcast";
-    import { map, centerMap } from '@windy/map';
+    import { map, markers } from '@windy/map';
     import { getGPSlocation } from '@windy/geolocation';
 
     import { onDestroy } from 'svelte';
@@ -53,15 +65,15 @@
         const loc = await getGPSlocation();
         loader = false;
         if (loc) {
-            centerMap(loc);
             const { lat, lon: lng } = loc;
-            marker = new L.Marker({ lat, lng }).addTo(map);
+            map.setView({ lat, lng }, 8);
+            marker = new L.Marker({ lat, lng }, { icon: markers.myLocationIcon }).addTo(map);
         }
     };
 
     onDestroy(() => {
         // Your plugin will be destroyed
-        // Make sure you clenup after yourself
+        // Make sure you cleanup after yourself
         if(marker) {
             marker.remove();
             marker = null;

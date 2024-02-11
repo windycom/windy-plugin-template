@@ -26,7 +26,7 @@ const jsRules = {
 };
 
 const tsRules = {
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/array-type': [
         'error',
         {
@@ -100,7 +100,7 @@ const importOrder = {
         {
             groups: [['builtin', 'internal', 'external'], ['parent', 'sibling', 'index'], 'type'],
 
-            // NOTE: Using @windy/**, @capacitor/**  pattern colides, with 'type' group
+            // NOTE: Using @windy/**, @capacitor/**  pattern collides, with 'type' group
             pathGroups: [
                 {
                     pattern: 'svelte',

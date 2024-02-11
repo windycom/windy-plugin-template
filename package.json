@@ -1,7 +1,7 @@
 {
     "name": "windy-plugin-template",
     "version": "2.0.0",
-    "description": "Boilerplate for developing Windy Plugins",
+    "description": "Template for developing Windy Plugins",
     "main": "dist/plugin.min.js",
     "type": "module",
     "scripts": {
@@ -12,12 +12,13 @@
         "example03": "CONFIG=example03 rollup -w -c",
         "example04": "CONFIG=example04 rollup -w -c",
         "example05": "CONFIG=example05 rollup -w -c",
-        "build:all-examples": "for number in 01 02 03 04 05; do CONFIG=example$number SERVE=false rollup -c; done",
+        "example06": "CONFIG=example06 rollup -w -c",
+        "build:all-examples": "for number in 01 02 03 04 05 06; do CONFIG=example$number SERVE=false rollup -c; done",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/windycom/windy-plugins.git"
+        "url": "git+https://github.com/windycom/windy-plugin-template.git"
     },
     "keywords": [
         "windy",
@@ -27,15 +28,15 @@
     "author": "Windyty, S.E.",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/windycom/windy-plugins/issues"
+        "url": "https://github.com/windycom/windy-plugin-template/issues"
     },
-    "homepage": "https://github.com/windycom/windy-plugins#readme",
+    "homepage": "https://docs.windy-plugins.com/",
     "dependencies": {
         "@rollup/plugin-commonjs": "^25.0.7",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-typescript": "^11.1.6",
-        "@types/leaflet": "^1.9.8",
+        "@types/geojson": "^7946.0.14",
         "@windycom/plugin-devtools": "file:../windy-plugins-devtools/dist",
         "eslint-import-resolver-typescript": "^3.6.1",
         "eslint-plugin-svelte": "^2.35.1",
@@ -49,17 +50,20 @@
         "rollup-plugin-swc3": "^0.11.0",
         "svelte": "^4.2.9",
         "svelte-preprocess": "^5.1.3",
-        "svelte-preprocess-less": "^0.4.0"
+        "svelte-preprocess-less": "^0.4.0",
+        "typescript": "^5.3.3"
     },
     "devDependencies": {
+        "@types/d3": "^7.4.3",
         "@types/rollup": "^0.54.0",
         "@typescript-eslint/eslint-plugin": "^6.19.1",
+        "d3": "^7.8.5",
         "eslint": "^8.56.0",
         "eslint-config-standard-with-typescript": "^43.0.1",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-n": "^16.6.2",
         "eslint-plugin-promise": "^6.1.1",
         "prettier": "^3.2.4",
-        "typescript": "^5.3.3"
+        "prettier-plugin-svelte": "^3.1.2"
     }
 }
