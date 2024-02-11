@@ -24,8 +24,8 @@
     <h2 class="mb-10">Bise Chart</h2>
     <p>The Bise chart shows the pressure difference between Lake Constance and Lake Geneva.</p>
     <Chart
-        pointTop={locations.LakeConstance}
-        pointBottom={locations.LakeGeneva}
+        pointTop={locations.LakeGeneva}
+        pointBottom={locations.LakeConstance}
         nameOfThisPlugin={name}
         bottomText="Bise ⬅"
     />
