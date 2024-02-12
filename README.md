@@ -2,7 +2,7 @@
 
 Template for development of Windy Plugins.
 
-**All documentation can be found at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
+**Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
 
 # CHANGELOG
 
