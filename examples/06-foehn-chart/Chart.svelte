@@ -9,6 +9,7 @@
 
     import type { DataHash, LatLon, WeatherDataPayload, SummaryDay } from '@windy/interfaces.d';
     import type { Timestamp, YearMonthDay } from '@windy/types.d';
+    import type { HttpPayload } from '@windy/http.d';
 
     export let pointTop: LatLon;
     export let pointBottom: LatLon;
@@ -27,7 +28,9 @@
             const pointBottomPromise = getPointForecastData('ecmwf', pointBottom, nameOfThisPlugin);
 
             Promise.all([pointTopPromise, pointBottomPromise]).then(
-                ([{ data: top }, { data: bottom }]: { data: WeatherDataPayload<DataHash> }[]) => {
+                ([{ data: top }, { data: bottom }]: HttpPayload<
+                    WeatherDataPayload<DataHash>
+                >[]) => {
                     const topData = top.data;
                     const bottomData = bottom.data;
                     const tsValues = calculatePressureDifference(topData, bottomData);
