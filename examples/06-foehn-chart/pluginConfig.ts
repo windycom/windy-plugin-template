@@ -2,7 +2,7 @@ import type { ExternalPluginConfig } from '@windy/interfaces';
 
 const config: ExternalPluginConfig = {
     name: 'windy-plugin-foehn-chart',
-    version: '1.0.0',
+    version: '1.0.1',
     title: 'Foehn and Bise Chart',
     icon: '⛰️',
     description: 'Displays Foehn and Bise diagram for Switzerland.',

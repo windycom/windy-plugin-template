@@ -7,7 +7,7 @@
         "removeComments": true,
         "outDir": "dist",
         "target": "es2022",
-        "typeRoots": [ "./node_modules/@types/","./declarations", "./node_modules/@windycom/plugin-devtools/types/"],
+        "typeRoots": [ "./node_modules/@types/","./declarations"],
         "resolveJsonModule": false,
         "sourceMap": false,
         "incremental": true,

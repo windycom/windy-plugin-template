@@ -2,12 +2,12 @@ import type { ExternalPluginConfig } from '@windy/interfaces';
 
 const config: ExternalPluginConfig = {
     name: 'windy-plugin-boat-tracker',
-    version: '1.0.0',
+    version: '1.0.2',
     title: 'Boat Tracker',
     icon: '🛥',
     description: 'This plugin demonstrates how to create simple race tracker.',
     author: 'John Doe (optional company name)',
-    repository: 'https://github.com/windycom/windy-plugins',
+    repository: 'https://github.com/windycom/windy-plugin-template',
     desktopUI: 'rhpane',
     mobileUI: 'small',
     desktopWidth: 200,
