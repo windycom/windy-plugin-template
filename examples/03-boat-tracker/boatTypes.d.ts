@@ -17,3 +17,9 @@ export interface DisplayedBoat extends BoatResult {
     // We attach color later
     color: string;
 }
+
+export interface ExtendedMarker {
+    sail: string;
+    marker: L.Marker;
+    latestPosition: [number, number];
+}
