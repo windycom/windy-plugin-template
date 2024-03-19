@@ -44,6 +44,10 @@ const buildConfigurations = {
         input: 'examples/06-foehn-chart/plugin.svelte',
         out: 'example06/plugin',
     },
+    example07: {
+        input: 'examples/07-meteoblue-meteograms/plugin.svelte',
+        out: 'example07/plugin',
+    },
 };
 
 const requiredConfig = process.env.CONFIG || 'src';
