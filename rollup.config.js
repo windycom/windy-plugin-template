@@ -111,7 +111,7 @@ export default {
         process.env.SERVE !== 'false' &&
             serve({
                 contentBase: 'dist',
-                host: 'localhost',
+                host: '0.0.0.0',
                 port: 9999,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
