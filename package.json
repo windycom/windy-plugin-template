@@ -1,6 +1,6 @@
 {
     "name": "windy-plugin-template",
-    "version": "2.0.2",
+    "version": "3.0.0",
     "description": "Template for developing Windy Plugins",
     "main": "dist/plugin.min.js",
     "type": "module",
@@ -33,6 +33,6 @@
     },
     "homepage": "https://docs.windy-plugins.com/",
     "dependencies": {
-        "@windycom/plugin-devtools": "^1.0.8"
+        "@windycom/plugin-devtools": "^2.0.0"
     }
 }

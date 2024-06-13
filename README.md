@@ -6,6 +6,8 @@ Template for development of Windy Plugins.
 
 # CHANGELOG
 
+-   3.0.0
+    -   Updated `@windycom/plugin-devtools` for client v42.2.0
 -   2.0.0
     -   Completely new version of the plugin system based in Windy client v42+
 -   1.0.0
