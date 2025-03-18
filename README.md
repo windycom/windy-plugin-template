@@ -1,25 +1,23 @@
-# Windy Plugin Template
+# Windy.com Plug-in – Feels Like Temperature
 
-Template for development of Windy Plugins.
+This Windy plug-in creates a new overlay named “Feels Like” that displays wind chill-based temperature values using a Met Office-like formula for cold conditions.
 
-**Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
+## Installation
 
-# CHANGELOG
+1. Clone or download this repository into your local Windy plug-in folder.
+2. Open Windy.com in a browser (or your dev environment).
+3. Ensure the plug-in is recognised by referencing its index.js file, or by installing as per the official Windy Plugin documentation.
 
--   4.0.0
-    -   Updated `@windycom/plugin-devtools` for client v45.0.0
--   3.0.0
-    -   Updated `@windycom/plugin-devtools` for client v42.2.0
--   2.0.0
-    -   Completely new version of the plugin system based in Windy client v42+
--   1.0.0
-    -   New rollup compiler, no more riot architecture
-    -   Updated examples for Windy client v39
--   0.4.0
-    -   Added `plugin-data-loader` to the Plugins API
--   0.3.0
-    -   Examples moved to examples dir
--   0.2.0
-    -   Fixed wrong examples
--   0.1.1
-    -   Initial version of this repo
+## Usage
+
+- Open the Windy overlay selector.
+- Choose “Feels Like” from the list of overlays (or set `store.set('overlay', 'feelslike')` in the console).
+
+## Customising
+
+- If you’d like to handle higher temperatures with humidity, incorporate a humidex or heat index calculation for `airTempC > 10`.
+- Modify colour scales or legends in the overlay as you see fit.
+
+## Licence
+
+[MIT License]
