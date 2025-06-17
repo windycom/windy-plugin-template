@@ -6,6 +6,8 @@ Template for development of Windy Plugins.
 
 # CHANGELOG
 
+-   4.2.0
+    -   Fixed compiler sourcemap error
 -   4.1.0
     -   Updated plugin upload URL
 -   4.0.0
