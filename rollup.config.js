@@ -78,14 +78,6 @@ export default {
         clearScreen: false,
     },
     plugins: [
-        typescript({
-            sourceMap: useSourceMaps,
-            inlineSources: false,
-        }),
-        rollupSwc({
-            include: ['**/*.ts', '**/*.svelte'],
-            sourceMaps: useSourceMaps,
-        }),
         rollupSvelte({
             emitCss: false,
             preprocess: {
@@ -99,7 +91,10 @@ export default {
                 },
             },
         }),
-
+        rollupSwc({
+            include: ['**/*.ts', '**/*.svelte'],
+            sourceMaps: useSourceMaps,
+        }),
         resolve({
             browser: true,
             mainFields: ['module', 'jsnext:main', 'main'],
