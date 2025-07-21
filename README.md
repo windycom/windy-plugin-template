@@ -6,6 +6,8 @@ Template for development of Windy Plugins.
 
 # CHANGELOG
 
+-   4.2.1
+    -   Updated `@windycom/plugin-devtools` for client v46.1.0
 -   4.2.0
     -   Fixed compiler sourcemap error
 -   4.1.0
