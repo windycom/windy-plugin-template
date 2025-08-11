@@ -11,6 +11,7 @@ const config: ExternalPluginConfig = {
     desktopUI: 'rhpane',
     mobileUI: 'fullscreen',
     routerPath: '/my-plugin',
+    private: true,
 };
 
 export default config;

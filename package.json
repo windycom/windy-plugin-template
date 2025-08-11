@@ -1,6 +1,6 @@
 {
     "name": "windy-plugin-template",
-    "version": "4.2.1",
+    "version": "4.2.2",
     "description": "Template for developing Windy Plugins",
     "main": "dist/plugin.min.js",
     "type": "module",
