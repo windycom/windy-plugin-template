@@ -1,0 +1,34 @@
+export const windyPlugin = {
+  async oninit(windyAPI) {
+    // Перевіряємо, чи підключились модулі
+    if (typeof rp === 'undefined') {
+      console.error('rplannerWrapper не знайдено');
+      return;
+    }
+    rp.init(windyAPI);
+
+    if (typeof pc === 'undefined') {
+      console.error('pluginCoordinator не знайдено');
+      return;
+    }
+    pc.init(windyAPI);
+
+    // Тут можна додати додаткову логіку, UI і роботу плагіна
+
+    console.log('Flight planner запущено');
+  }
+};
+export default {
+  name: 'windy-plugin-fp',
+  version: '0.0.6',
+  title: 'Flight planner',
+  author: '@rittels',
+  description: 'Flight planner for VFR flights.',
+  dependencies: [
+    'https://unpkg.com/windyplugin-module-rplanner-wrapper@0.0.99/dist/rplannerWrapper.js',
+    'https://unpkg.com/windyplugin-module-pluginCoordinator@0.0.99/dist/pluginCoordinator.js',
+    'https://unpkg.com/windyplugin-module-pickerTools@0.0.99/dist/pickerTools.js',
+    'https://unpkg.com/windyplugin-module-infobox@0.0.99/dist/infobox.js',
+    'https://unpkg.com/windyplugin-module-airspaces@0.0.99/dist/airspaces.js'
+  ]
+};
