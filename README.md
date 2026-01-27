@@ -4,8 +4,23 @@ Template for development of Windy Plugins.
 
 **Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
 
-# CHANGELOG
+## Quick start
 
+- Install dependencies with `npm i`
+- Compile the plugin in watch mode with `npm start`
+- Navigate to <https://www.windy.com/developer-mode>
+- Load your plugin from the URL <https://localhost:9999/plugin.js>
+- Code away!
+
+For running the examples:
+
+- Build the desired example in watch mode with `npm run example01` (or `example02`, etc.)
+- Load the example in Windy's developer mode using the URL <https://localhost:9999/example01/plugin.js>
+
+## CHANGELOG
+
+-   5.0.0
+    -   Updated example code for the new Leaflet GL map library introduced in client v49.0.0
 -   4.2.2
     -   New plugins are marked as private by default
 -   4.2.1
