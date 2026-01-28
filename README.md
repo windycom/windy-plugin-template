@@ -4,6 +4,8 @@ Template for development of Windy Plugins.
 
 **Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
 
+**Documentation for the Leaflet GL library is at [https://windycom.github.io/LeafletGL/docs/](https://windycom.github.io/LeafletGL/docs/)**
+
 ## Quick start
 
 - Install dependencies with `npm i`
@@ -16,6 +18,14 @@ For running the examples:
 
 - Build the desired example in watch mode with `npm run example01` (or `example02`, etc.)
 - Load the example in Windy's developer mode using the URL <https://localhost:9999/example01/plugin.js>
+
+## Known issues
+
+- In *example03* the boat orientation resets after the user zooms.
+This is likely related to Leaflet GL executing `zoom` events in slightly different order.
+Markers now also internally subscribe to the map's `zoom` event to update their CSS positioning,
+which likely executes *after* the user's `zoom` event in this example.
+- In *example04* map clicks within the rendered cycle do not fire the `singleclick` event, as they have before Leaflet LG.
 
 ## CHANGELOG
 
