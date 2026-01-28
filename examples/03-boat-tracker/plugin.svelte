@@ -175,7 +175,7 @@
                     }).addTo(map);
 
                     markers.push({ sail, marker, latestPosition });
-                    marker._icon.setAttribute('data-heading', String(heading));
+                    marker._icon?.setAttribute('data-heading', String(heading));
                     marker.on('click', () => displayPopup(sail));
 
                     lines.push(layer);
