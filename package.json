@@ -1,7 +1,7 @@
 {
-    "name": "windy-plugin-template",
-    "version": "5.0.0",
-    "description": "Template for developing Windy Plugins",
+    "name": "windy-plugin-astronomy-seeing",
+    "version": "1.0.0",
+    "description": "Professional astrophotography decision-making engine based on atmospheric and astronomical conditions",
     "main": "dist/plugin.min.js",
     "type": "module",
     "scripts": {
@@ -20,20 +20,25 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/windycom/windy-plugin-template.git"
+        "url": "git+https://github.com/coderGo93/windy-plugin-astronomy-seeing.git"
     },
     "keywords": [
         "windy",
         "windy.com",
-        "plugins"
+        "plugins",
+        "astronomy",
+        "astrophotography",
+        "seeing",
+        "weather"
     ],
-    "author": "Windyty, S.E.",
+    "author": "Edgar Lopez",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/windycom/windy-plugin-template/issues"
+        "url": "https://github.com/coderGo93/windy-plugin-astronomy-seeing/issues"
     },
-    "homepage": "https://docs.windy-plugins.com/",
+    "homepage": "https://github.com/coderGo93/windy-plugin-astronomy-seeing",
     "dependencies": {
-        "@windycom/plugin-devtools": "^3.0.1"
+        "@windycom/plugin-devtools": "^3.0.1",
+        "suncalc": "^1.9.0"
     }
 }

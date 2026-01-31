@@ -1,58 +1,58 @@
-# Windy Plugin Template
+# 🌌 Windy Plugin: Astronomy Seeing & Transparency
 
-Template for development of Windy Plugins.
+A professional-grade decision-making engine for astrophotographers and astronomers, integrated directly into Windy.com. 
 
-**Documentation at: [https://docs.windy-plugins.com/](https://docs.windy-plugins.com/)**
+This plugin analyzes complex atmospheric data to predict **Seeing** (turbulence) and **Transparency** (clarity), helping you decide *if* and *what* to shoot tonight.
 
-**Documentation for the Leaflet GL library is at [https://windycom.github.io/LeafletGL/docs/](https://windycom.github.io/LeafletGL/docs/)**
+![Plugin Screenshot](dist/screenshot.png) <!-- Placeholder -->
 
-## Quick start
+## ✨ Key Features
 
-- Install dependencies with `npm i`
-- Compile the plugin in watch mode with `npm start`
-- Navigate to <https://www.windy.com/developer-mode>
-- Load your plugin from the URL <https://localhost:9999/plugin.js>
-- Code away!
+### 🔭 Advanced Forecasting
+- **Seeing Prediction:** Uses Jet Stream velocity (>200hPa) and surface wind to estimate atmospheric stability (arcseconds approximation).
+- **Transparency Score:** Analyzes cloud layers (High/Mid/Low), humidity, and Precipitable Water Vapor (PWV).
+- **Air Quality Integration (CAMS):** Real-time fetches of **PM2.5** and **Dust Mass** to detect smoke, haze, or calima that might ruin deep-sky imaging.
 
-For running the examples:
+### 🧠 Smart Decision Engine
+- **Scoring System:** A weighted 0-100% score customized for:
+  - **DSO Mode:** Prioritizes transparency and darkness (Moon phase).
+  - **Planetary Mode:** Prioritizes atmospheric stability (Seeing) above all else.
+- **Equipment Recommendations:** Suggests optimal focal lengths and warns if a Dew Heater is required.
 
-- Build the desired example in watch mode with `npm run example01` (or `example02`, etc.)
-- Load the example in Windy's developer mode using the URL <https://localhost:9999/example01/plugin.js>
+### 📊 Detailed Diagnostics
+- **Cloud Structure:** Breakdown of high, medium, and low clouds.
+- **Deep Sky Darkness:** "Astro Twilight" usage and Moon illumination impact.
+- **Interactive UI:** Hourly forecast table for the next 48h to find the perfect weather window.
 
-## Known issues
+## 🚀 Getting Started
 
-- In *example03* the boat orientation resets after the user zooms.
-This is likely related to Leaflet GL executing `zoom` events in slightly different order.
-Markers now also internally subscribe to the map's `zoom` event to update their CSS positioning,
-which likely executes *after* the user's `zoom` event in this example.
-- In *example04* map clicks within the rendered cycle do not fire the `singleclick` event, as they have before Leaflet LG.
+1. **Install:**
+   ```bash
+   npm install
+   ```
+2. **Run:**
+   ```bash
+   npm start
+   ```
+3. **Open Windy:**
+   Go to [https://www.windy.com/developer-mode](https://www.windy.com/developer-mode) and load from `https://localhost:9999/plugin.js`.
 
-## CHANGELOG
+## 🧮 How it Works
 
--   5.0.0
-    -   Updated example code for the new Leaflet GL map library introduced in client v49.0.0
--   4.2.2
-    -   New plugins are marked as private by default
--   4.2.1
-    -   Updated `@windycom/plugin-devtools` for client v46.1.0
--   4.2.0
-    -   Fixed compiler sourcemap error
--   4.1.0
-    -   Updated plugin upload URL
--   4.0.0
-    -   Updated `@windycom/plugin-devtools` for client v45.0.0
--   3.0.0
-    -   Updated `@windycom/plugin-devtools` for client v42.2.0
--   2.0.0
-    -   Completely new version of the plugin system based in Windy client v42+
--   1.0.0
-    -   New rollup compiler, no more riot architecture
-    -   Updated examples for Windy client v39
--   0.4.0
-    -   Added `plugin-data-loader` to the Plugins API
--   0.3.0
-    -   Examples moved to examples dir
--   0.2.0
-    -   Fixed wrong examples
--   0.1.1
-    -   Initial version of this repo
+The plugin retrieves Point Forecast data (European ECMWF & CAMS models) for the clicked location:
+
+1. **Jet Stream Analysis (250hPa):** High winds in the upper tropopause are the #1 killer of good seeing.
+2. **Moisture Check:** High humidity (>85%) or high PWV (>20mm) scatters light, reducing contrast.
+3. **Pollution Check:** PM2.5 > 5µg/m³ or Dust Mass > 10µg/m³ triggers a transparency penalty.
+4. **Calculated Score:** A subtractive algorithm starts at 100% and applies penalties based on the above factors.
+
+## 🛠 Tech Stack
+
+- Svelte 3 (UI)
+- Windy.com API (Maps & Data)
+- TypeScript
+
+## 👨‍💻 Author
+
+**Edgar Lopez**  
+*Clear Skies!*
