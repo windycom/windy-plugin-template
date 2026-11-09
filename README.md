@@ -29,6 +29,8 @@ which likely executes *after* the user's `zoom` event in this example.
 
 ## CHANGELOG
 
+-   5.1.0
+    -   Added example 08: plugin storage, a per-user key/value store for plugins
 -   5.0.0
     -   Updated example code for the new Leaflet GL map library introduced in client v49.0.0
 -   4.2.2
