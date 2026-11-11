@@ -47,6 +47,10 @@ const buildConfigurations = {
         input: 'examples/07-meteoblue-meteograms/plugin.svelte',
         out: 'example07/plugin',
     },
+    example08: {
+        input: 'examples/08-plugin-storage/plugin.svelte',
+        out: 'example08/plugin',
+    },
 };
 
 const requiredConfig = process.env.CONFIG || 'src';

@@ -1,6 +1,6 @@
 {
     "name": "windy-plugin-template",
-    "version": "5.0.1",
+    "version": "5.1.0",
     "description": "Template for developing Windy Plugins",
     "main": "dist/plugin.min.js",
     "type": "module",
@@ -15,6 +15,7 @@
         "example05": "CONFIG=example05 rollup -w -c",
         "example06": "CONFIG=example06 rollup -w -c",
         "example07": "CONFIG=example07 rollup -w -c",
+        "example08": "CONFIG=example08 rollup -w -c",
         "build:all-examples": "for number in 01 02 03 04 05 06; do CONFIG=example$number SERVE=false rollup -c; done",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
