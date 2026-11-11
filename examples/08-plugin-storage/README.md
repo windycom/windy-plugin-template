@@ -51,7 +51,12 @@ Fields:
 
 - `authorUserId`: **your** numeric Windy user ID (the plugin author's, not the user's). Plugin names are not unique until a plugin is published, so the author ID keeps two authors' unpublished plugins apart.
 - `pluginName`: your plugin's `name` from `pluginConfig.ts`: lowercase letters, digits and `-`, starting with a letter or digit, at most 100 characters.
-- The example uses `0:windy-plugin-storage-example`.
+- The example uses `0:windy-plugin-storage-example`. `0` is a placeholder: use your own user ID in your plugin.
+
+The namespace is a convention, not access control. The server only checks its format; it cannot verify the author ID or which plugin sent a request, because a request carries only the user's login. So:
+
+- Users are always separated: data is stored under the user ID from the login, so a plugin only ever reaches the data of the user who runs it.
+- Plugins of the same user are not separated: plugins that use the same namespace share, and can overwrite, that user's data, and a plugin can read another plugin's namespace if it knows it.
 
 ### Keys
 
