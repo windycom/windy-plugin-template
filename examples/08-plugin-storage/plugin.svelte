@@ -78,7 +78,7 @@
         version: string;
     }
 
-    // Namespace = <your Windy user id as the plugin author>:<plugin name>.
+    // Namespace = <your Windy user id as the plugin author>:<plugin name>. Replace 0 with your own user id.
     // Every user gets their own copy of the namespace, so users never see each other's data.
     const AUTHOR_USER_ID = 0;
     const STORAGE_URL = `/plugins/v1/storage/${AUTHOR_USER_ID}:${config.name}`;
